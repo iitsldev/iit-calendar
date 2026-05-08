@@ -19,7 +19,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: 22
       - name: Install Dependencies
         run: npm ci
       - name: Build Web
@@ -39,7 +39,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: 22
       - name: Setup Java
         uses: actions/setup-java@v4
         with:
@@ -70,13 +70,18 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: 22
       - name: Install Rust
         uses: dtolnay/rust-toolchain@stable
       - name: Install Dependencies
         run: npm ci
       - name: Build Frontend
         run: npm run build
+      - name: Fix Tauri Icons
+        run: |
+          mkdir -p public
+          node -e "require('fs').writeFileSync('public/app-icon.png', Buffer.from('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII=', 'base64'))"
+          npx @tauri-apps/cli icon public/app-icon.png || true
       - name: Build Tauri
         run: npx @tauri-apps/cli build
       - name: Upload Mac Artifact
