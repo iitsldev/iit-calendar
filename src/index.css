@@ -1,0 +1,64 @@
+@import url('https://fonts.googleapis.com/css2?family=Noto+Serif:wght@400;700&family=Manrope:wght@400;500;600;700&display=swap');
+@import "tailwindcss";
+
+@theme {
+  --font-serif: "Noto Serif", serif;
+  --font-sans: "Manrope", ui-sans-serif, system-ui, sans-serif;
+
+  --color-saffron: var(--saffron, #7f5700);
+  --color-lotus: #95445b;
+  --color-gold: #e8ac41;
+  --color-zen-cream: #fbf9f6;
+  --color-zen-gray: #e5e9ec;
+
+  --spacing-container: 24px;
+  --spacing-glass: 20px;
+  --spacing-section: 40px;
+}
+
+@layer base {
+  body {
+    @apply bg-zen-cream text-slate-900 transition-colors duration-300;
+    min-height: 100vh;
+  }
+  
+:root {
+    --bg-main: #fffffd;
+    --bg-header: #e5e5e5;
+    --text-primary: #0e0e14;
+    --text-secondary: #1c212f;
+    --btn-header-bg: #a8b6d0;
+    --btn-header-text: #000000;
+    --saffron: #7f5700;
+  }
+
+  .dark {
+    --bg-main: #020617;
+    --bg-header: #0f172a;
+    --text-primary: #f8fafc;
+    --text-secondary: #94a3b8;
+    --btn-header-bg: #1e293b;
+    --btn-header-text: #ffffff;
+    --saffron: #e8ac41;
+  }
+
+  body {
+    @apply transition-colors duration-300;
+    background-color: var(--bg-main);
+    color: var(--text-primary);
+    min-height: 100vh;
+  }
+}
+
+.glass-card {
+  @apply backdrop-blur-3xl border transition-colors duration-300;
+  @apply bg-white/70 border-white/80;
+}
+
+.dark .glass-card {
+  @apply bg-slate-900/40 border-slate-800/80;
+}
+
+.progress-glow {
+  box-shadow: 0 0 15px rgba(232, 172, 65, 0.4);
+}

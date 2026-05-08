@@ -1,0 +1,214 @@
+{
+  "calendar_name": "Buddhist Events and IIT 2027 Schedule",
+  "version": "1.2",
+  "supported_calendar_types": [
+    "day_of_week",
+    "day",
+    "day_month",
+    "day_month_year"
+  ],
+
+  "srilanka_events": [
+    {
+      "calendar_type": "day_month",
+      "event_name": "Vesak Poya Day",
+      "month": 5,
+      "day": 12
+    },
+    {
+      "calendar_type": "day_month_year",
+      "event_name": "Special in a year",
+      "month": 5,
+      "day": 12,
+      "year": 2026
+    },
+    {
+      "calendar_type": "day",
+      "event_name": "Monthly Poya Observance",
+      "day": 15
+    }
+  ],
+
+  "myanmar_events": [
+    {
+      "calendar_type": "day_month",
+      "event_name": "Waso Full Moon Day",
+      "month": 7,
+      "day": 20
+    }
+  ],
+
+  "thai_events": [
+    {
+      "calendar_type": "day_month",
+      "event_name": "Magha Puja",
+      "month": 2,
+      "day": 24
+    }
+  ],
+
+  "vietnam_events": [
+    {
+      "calendar_type": "day_month",
+      "event_name": "Vu Lan Festival",
+      "month": 8,
+      "day": 15
+    },
+    {
+      "calendar_type": "day_month",
+      "event_name": "Buddha Birthday Celebration",
+      "month": 4,
+      "day": 8
+    }
+  ],
+
+  "IIT_2027_schedule": [
+    {
+      "calendar_type": "day_of_week",
+      "day_of_week": "Monday",
+      "time": "8:00-8:45",
+      "subject": "Khuddaka Nikāya"
+    },
+    {
+      "calendar_type": "day_of_week",
+      "day_of_week": "Monday",
+      "time": "8:50-9:35",
+      "subject": "Suttanta"
+    },
+    {
+      "calendar_type": "day_of_week",
+      "day_of_week": "Monday",
+      "time": "9:40-10:25",
+      "subject": "Fundamentals"
+    },
+    {
+      "calendar_type": "day_of_week",
+      "day_of_week": "Monday",
+      "time": "13:30-14:15",
+      "subject": "Samatha"
+    },
+    {
+      "calendar_type": "day_of_week",
+      "day_of_week": "Monday",
+      "time": "14:20-15:05",
+      "subject": "Pāḷi"
+    },
+    {
+      "calendar_type": "day_of_week",
+      "day_of_week": "Monday",
+      "time": "15:10-15:55",
+      "subject": "Vibhaṅga Vinaya"
+    },
+
+    {
+      "calendar_type": "day_of_week",
+      "day_of_week": "Tuesday",
+      "time": "8:00-8:45",
+      "subject": "Samatha (Practical)"
+    },
+    {
+      "calendar_type": "day_of_week",
+      "day_of_week": "Tuesday",
+      "time": "8:50-9:35",
+      "subject": "Vibhaṅga Vinaya"
+    },
+    {
+      "calendar_type": "day_of_week",
+      "day_of_week": "Tuesday",
+      "time": "9:40-10:25",
+      "subject": "Khandhaka Vinaya"
+    },
+    {
+      "calendar_type": "day_of_week",
+      "day_of_week": "Tuesday",
+      "time": "13:30-14:15",
+      "subject": "Fundamentals"
+    },
+    {
+      "calendar_type": "day_of_week",
+      "day_of_week": "Tuesday",
+      "time": "14:20-15:05",
+      "subject": "Pāḷi"
+    },
+    {
+      "calendar_type": "day_of_week",
+      "day_of_week": "Tuesday",
+      "time": "15:10-15:55",
+      "subject": "Samatha"
+    },
+
+    {
+      "calendar_type": "day_of_week",
+      "day_of_week": "Wednesday",
+      "time": "8:00-8:45",
+      "subject": "Khuddaka Nikāya"
+    },
+    {
+      "calendar_type": "day_of_week",
+      "day_of_week": "Wednesday",
+      "time": "8:50-9:35",
+      "subject": "Suttanta"
+    },
+    {
+      "calendar_type": "day_of_week",
+      "day_of_week": "Wednesday",
+      "time": "9:40-10:25",
+      "subject": "Fundamentals"
+    },
+    {
+      "calendar_type": "day_of_week",
+      "day_of_week": "Wednesday",
+      "time": "13:30-14:15",
+      "subject": "Pāḷi"
+    },
+    {
+      "calendar_type": "day_of_week",
+      "day_of_week": "Wednesday",
+      "time": "14:20-15:05",
+      "subject": "Vibhaṅga Vinaya"
+    },
+    {
+      "calendar_type": "day_of_week",
+      "day_of_week": "Wednesday",
+      "time": "15:10-15:55",
+      "subject": "Recitation of memorized texts"
+    },
+
+    {
+      "calendar_type": "day_of_week",
+      "day_of_week": "Thursday",
+      "time": "8:00-8:45",
+      "subject": "Samatha (Practical)"
+    },
+    {
+      "calendar_type": "day_of_week",
+      "day_of_week": "Thursday",
+      "time": "8:50-9:35",
+      "subject": "Suttanta/Khuddaka Nikāya"
+    },
+    {
+      "calendar_type": "day_of_week",
+      "day_of_week": "Thursday",
+      "time": "9:40-10:25",
+      "subject": "Fundamentals"
+    },
+    {
+      "calendar_type": "day_of_week",
+      "day_of_week": "Thursday",
+      "time": "13:30-14:15",
+      "subject": "Pāḷi"
+    },
+    {
+      "calendar_type": "day_of_week",
+      "day_of_week": "Thursday",
+      "time": "14:20-15:05",
+      "subject": "Samatha"
+    },
+    {
+      "calendar_type": "day_of_week",
+      "day_of_week": "Thursday",
+      "time": "15:10-15:55",
+      "subject": "Khandhaka Vinaya"
+    }
+  ]
+}

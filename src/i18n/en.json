@@ -1,0 +1,82 @@
+{
+  "common": {
+    "calendar": "Calendar",
+    "stillness": "Stillness",
+    "chants": "Chants",
+    "study": "Study",
+    "settings": "Settings",
+    "confirm": "Confirm Bliss",
+    "today": "Today",
+    "language": "Language",
+    "appearance": "Appearance",
+    "script": "Script",
+    "timezone": "Timezone"
+  },
+  "calendar": {
+    "yearSuffix": "BE",
+    "yearOf": "Year of the",
+    "monthJourney": "Monthly Journey",
+    "pathOfPresence": "Path of Presence",
+    "nextUposatha": "Next Uposatha",
+    "uposatha": "Uposatha",
+    "startsIn": "Starts in",
+    "daysLeft": "days left",
+    "paliRecitation": "Pali Recitation",
+    "month": "Month",
+    "year": "Year",
+    "season": "Season",
+    "weekDay": "Week Day",
+    "tradition": "Month",
+    "mode": "Mode",
+    "srilanka": "Sri Lanka"
+  },
+  "settings": {
+    "tradition": "Month",
+    "location": "Location",
+    "address": "Search Address",
+    "searching": "Searching...",
+    "searchError": "Location not found",
+    "useCurrent": "Use Current GPS",
+    "dawnCalculation": "Dawn Calculation",
+    "timezone": "Timezone Offset",
+    "dst": "Daylight Saving (DST)",
+    "paliScript": "Pali Script",
+    "language": "UI Language",
+    "themeColor": "Theme Color",
+    "darkMode": "Dark Mode",
+    "dawnMethods": {
+      "astrology": "9 Degree Angle",
+      "pa-auk": "Pa-Auk (-40 min)",
+      "nauyana": "Na-Uyana (-30 min)"
+    },
+    "scripts": {
+      "roman": "Roman",
+      "sinhala": "Sinhala",
+      "burmese": "Burmese",
+      "thai": "Thai"
+    },
+    "languages": {
+      "en": "English"
+    }
+  },
+  "sun": {
+    "solarEvents": "Solar Events",
+    "dawn": "Dawn",
+    "sunrise": "Sunrise",
+    "noon": "Solar Noon",
+    "night": "Night",
+    "twilight": "Twilight",
+    "daylight": "Daylight",
+    "rise": "Rise",
+    "meridian": "Meridian",
+    "set": "Set",
+    "dayNightCycle": "Day & Night Cycle",
+    "timeline": "24 Hour Timeline",
+    "traditionDawn": "Tradition Dawn",
+    "solarNoon": "Solar Noon",
+    "civilTwilight": "Civil Twilight",
+    "astroTwilight": "Astro Twilight",
+    "dayLength": "Day Length",
+    "nadirPoint": "Nadir Point"
+  }
+}
