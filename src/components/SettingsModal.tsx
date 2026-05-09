@@ -6,13 +6,6 @@ import { useI18n } from '../hooks/useI18n';
 import { cn } from '../lib/utils';
 import {COLOR_TOKENS, CSS_VARS} from '../theme/index'
 
-const TIMEZONES = [
-  "UTC-12:00", "UTC-11:00", "UTC-10:00", "UTC-09:00", "UTC-08:00", "UTC-07:00", "UTC-06:00", "UTC-05:00",
-  "UTC-04:00", "UTC-03:00", "UTC-02:00", "UTC-01:00", "UTC+00:00", "UTC+01:00", "UTC+02:00", "UTC+03:00",
-  "UTC+04:00", "UTC+05:00", "UTC+05:30", "UTC+06:00", "UTC+06:30", "UTC+07:00", "UTC+08:00", "UTC+09:00",
-  "UTC+10:00", "UTC+11:00", "UTC+12:00", "UTC+13:00", "UTC+14:00"
-];
-
 
 export function SettingsModal({ 
   show, 
@@ -39,12 +32,6 @@ export function SettingsModal({
       const data = await response.json();
       if (data && data.length > 0) {
         const { lat, lon, display_name } = data[0];
-        let timezone = settings.timezone;
-        try {
-          const tzRes = await fetch(`https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=${lat}&longitude=${lon}&localityLanguage=en`);
-          const tzData = await tzRes.json();
-          if (tzData.location && tzData.location.timezone) {}
-        } catch (e) {}
         onUpdate({ ...settings, lat: parseFloat(lat), lng: parseFloat(lon), address: display_name });
         setAddressSearch('');
       } else {
@@ -102,7 +89,9 @@ export function SettingsModal({
                     value={settings.language}
                     onChange={e => onUpdate({ ...settings, language: e.target.value })}
                   >
-                    <option value="en">English</option>
+                    {(['en', 'vi', 'th', 'si', 'my', 'km', 'lo'] as const).map(lang => (
+                      <option key={lang} value={lang}>{t(`settings.languages.${lang}`)}</option>
+                    ))}
                   </StyledSelect>
                 </FieldGroup>
                 <FieldGroup label={t('settings.paliScript')}>
@@ -118,6 +107,26 @@ export function SettingsModal({
               </div>
             </section>
 
+            {/* 1.5 Font Size */}
+            <section className="space-y-4">
+              <SectionLabel>Font Size</SectionLabel>
+              <div className="grid grid-cols-3 gap-3">
+                {(['normal', 'large', 'xlarge'] as const).map(size => (
+                  <button
+                    key={size}
+                    onClick={() => onUpdate({ ...settings, fontSize: size })}
+                    className="px-4 py-3 rounded-2xl text-xs font-bold capitalize transition-all"
+                    style={settings.fontSize === size
+                      ? { background: 'var(--sm-accent)', color: 'white', border: '1px solid var(--sm-accent)', boxShadow: `0 4px 16px var(--sm-accent-shadow)` }
+                      : { background: 'transparent', border: '1px solid var(--sm-input-border)', color: 'var(--sm-text-secondary)' }
+                    }
+                  >
+                    {size}
+                  </button>
+                ))}
+              </div>
+            </section>
+
             {/* 2. Location & Timezone */}
             <section className="space-y-4">
               <div className="flex items-center justify-between px-1">
@@ -127,7 +136,7 @@ export function SettingsModal({
                 </div>
                 <button
                   onClick={onGetLocation}
-                  className="text-[10px] font-bold hover:underline"
+                  className="text-xs font-bold hover:underline"
                   style={{ color: 'var(--sm-accent)' }}
                 >
                   {t('settings.useCurrent')}
@@ -176,48 +185,12 @@ export function SettingsModal({
                       <p className="text-xs leading-tight font-medium" style={{ color: 'var(--sm-text-secondary)' }}>
                         {settings.address}
                       </p>
-                      <p className="text-[9px] mt-1 font-mono" style={{ color: 'var(--sm-text-muted)' }}>
+                      <p className="text-xs mt-1 font-mono" style={{ color: 'var(--sm-text-muted)' }}>
                         {settings.lat.toFixed(4)}°, {settings.lng.toFixed(4)}°
                       </p>
                     </div>
                   </div>
                 )}
-
-                {/* Timezone */}
-                <FieldGroup label={t('settings.timezone')}>
-                  <StyledSelect
-                    value={settings.timezone}
-                    onChange={e => onUpdate({ ...settings, timezone: e.target.value })}
-                  >
-                    {TIMEZONES.map(tz => (
-                      <option key={tz} value={tz}>{tz}</option>
-                    ))}
-                  </StyledSelect>
-                </FieldGroup>
-
-                {/* DST checkbox */}
-                <div className="flex items-center gap-2 pt-6">
-                  <button
-                    onClick={() => onUpdate({ ...settings, dst: !settings.dst })}
-                    className="flex items-center gap-2"
-                  >
-                    <div
-                      className="w-5 h-5 rounded flex items-center justify-center transition-colors"
-                      style={{
-                        background: settings.dst ? 'var(--sm-accent)' : 'transparent',
-                        border: `1px solid ${settings.dst ? 'var(--sm-accent)' : 'var(--sm-input-border)'}`,
-                      }}
-                    >
-                      {settings.dst && <div className="w-2 h-2 bg-white rounded-full" />}
-                    </div>
-                    <span
-                      className="text-[9px] font-bold uppercase tracking-widest"
-                      style={{ color: 'var(--sm-text-muted)' }}
-                    >
-                      {t('settings.dst')}
-                    </span>
-                  </button>
-                </div>
               </div>
             </section>
 
@@ -252,7 +225,7 @@ export function SettingsModal({
                 {/* Dark/Light toggle */}
                 <button
                   onClick={() => onUpdate({ ...settings, darkMode: !settings.darkMode })}
-                  className="px-6 py-2 rounded-full text-[10px] font-black uppercase tracking-widest transition-all active:scale-95"
+                  className="px-6 py-2 rounded-full text-xs font-black uppercase tracking-widest transition-all active:scale-95"
                   style={settings.darkMode
                     ? { background: 'var(--sm-accent)', color: 'rgb(20 14 6)' }
                     : { background: 'var(--sm-text-primary)', color: 'rgb(255 249 242)' }
@@ -288,7 +261,7 @@ export function SettingsModal({
                   <button
                     key={m}
                     onClick={() => onUpdate({ ...settings, dawnMethod: m })}
-                    className="px-4 py-3 rounded-2xl text-[10px] font-black uppercase tracking-widest flex justify-between items-center transition-all"
+                    className="px-4 py-3 rounded-2xl text-xs font-black uppercase tracking-widest flex justify-between items-center transition-all"
                     style={settings.dawnMethod === m
                       ? { background: 'var(--sm-accent)', color: 'white', border: '1px solid var(--sm-accent)', boxShadow: `0 4px 16px var(--sm-accent-shadow)` }
                       : { background: 'transparent', border: '1px solid var(--sm-input-border)', color: 'var(--sm-text-muted)' }
@@ -322,7 +295,7 @@ function SectionLabel({ children, inline, centered }: { children: React.ReactNod
   return (
     <h3
       className={cn(
-        "text-[10px] font-black uppercase tracking-widest",
+        "text-xs font-black uppercase tracking-widest",
         !inline && "px-1",
         centered && "text-center pt-2",
       )}
@@ -337,7 +310,7 @@ function FieldGroup({ label, children }: { label: string; children: React.ReactN
   return (
     <div className="space-y-2">
       <label
-        className="text-[9px] font-bold uppercase ml-1 block"
+        className="text-xs font-bold uppercase ml-1 block"
         style={{ color: 'var(--sm-text-muted)' }}
       >
         {label}

@@ -1,0 +1,88 @@
+{
+  "common": {
+    "calendar": "දින දර්ශනය",
+    "stillness": "නිශ්ශබ්දතාව",
+    "chants": "පිරිත්",
+    "study": "අධ්‍යයනය",
+    "settings": "සැකසුම්",
+    "confirm": "තහවුරු කරන්න",
+    "today": "අද",
+    "language": "භාෂාව",
+    "appearance": "පෙනුම",
+    "script": "අක්ෂර",
+    "timezone": "වේලා කලාපය"
+  },
+  "calendar": {
+    "yearSuffix": "බු.ව.",
+    "yearOf": "වසර",
+    "monthJourney": "මාසික ගමන",
+    "pathOfPresence": "වර්තමාන මාර්ගය",
+    "nextUposatha": "මීළඟ උපෝසථය",
+    "uposatha": "උපෝසථ",
+    "startsIn": "ආරම්භ වන්නේ",
+    "daysLeft": "දින ඉතිරිව ඇත",
+    "paliRecitation": "පාලි සජ්ඣායනය",
+    "month": "මාසය",
+    "year": "වර්ෂය",
+    "season": "සෘතුව",
+    "weekDay": "සතියේ දිනය",
+    "tradition": "සම්ප්‍රදාය",
+    "mode": "ආකාරය",
+    "srilanka": "ශ්‍රී ලංකා"
+  },
+  "settings": {
+    "tradition": "මාසය",
+    "location": "ස්ථානය",
+    "address": "ලිපිනය සොයන්න",
+    "searching": "සොයමින් පවතී...",
+    "searchError": "ස්ථානය හමු නොවීය",
+    "useCurrent": "වර්තමාන ජීපීඑස් භාවිතා කරන්න",
+    "dawnCalculation": "අරුණ ගණනය කිරීම",
+    "timezone": "වේලා කලාපය",
+    "dst": "දිවා ආලෝකය සුරැකීම",
+    "paliScript": "පාලි අක්ෂර",
+    "language": "භාෂාව",
+    "themeColor": "තේමා වර්ණය",
+    "darkMode": "අඳුරු මාදිලිය",
+    "dawnMethods": {
+      "astrology": "අංශක 9 කෝණය",
+      "pa-auk": "පා-අවුක් (-මිනිත්තු 40)",
+      "nauyana": "නාඋයන (-මිනිත්තු 30)"
+    },
+    "scripts": {
+      "roman": "රෝමන්",
+      "sinhala": "සිංහල",
+      "burmese": "බුරුම",
+      "thai": "තායි"
+    },
+    "languages": {
+      "en": "English",
+      "vi": "Tiếng Việt",
+      "th": "ไทย",
+      "si": "සිංහල",
+      "my": "မြန်မာ",
+      "km": "ខ្មែរ",
+      "lo": "ລາວ"
+    }
+  },
+  "sun": {
+    "solarEvents": "සූර්ය සිදුවීම්",
+    "dawn": "අරුණ",
+    "sunrise": "හිරු නැගීම",
+    "noon": "හිරු මුදුන් වීම",
+    "night": "රාත්‍රිය",
+    "twilight": "සන්ධ්‍යාව",
+    "daylight": "දිවා ආලෝකය",
+    "rise": "නැගීම",
+    "meridian": "මධ්‍යහ්නය",
+    "set": "බැසීම",
+    "dayNightCycle": "දිවා රාත්‍රී චක්‍රය",
+    "timeline": "පැය 24 කාලරේඛාව",
+    "traditionDawn": "සම්ප්‍රදායික අරුණ",
+    "solarNoon": "සූර්ය මධ්‍යහ්නය",
+    "civilTwilight": "සිවිල් සන්ධ්‍යාව",
+    "astroTwilight": "තාරකා විද්‍යාත්මක සන්ධ්‍යාව",
+    "dayLength": "දිවා කාලය",
+    "nadirPoint": "පාදස්ත ලක්ෂ්‍යය"
+  }
+}

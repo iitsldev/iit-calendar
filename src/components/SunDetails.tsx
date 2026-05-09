@@ -31,7 +31,7 @@ function SunTimeItem({ icon, label, time, color, hasBorder, active }: SunTimeIte
       active ? "scale-100" : "scale-110"
     )}>
       <div className={cn("transition-transform duration-500", active && "scale-125 translate-y-[-4px]", color)}>{icon}</div>
-      <span className="text-[9px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-widest">{label}</span>
+      <span className="text-xs font-black text-slate-400 dark:text-slate-500 uppercase tracking-widest">{label}</span>
       <span className="text-sm font-bold text-slate-200 dark:text-slate-800 tracking-tight">{time}</span>
     </div>
   );
@@ -44,8 +44,8 @@ function Marker({ label, time, align }: { label: string, time: string, align: 's
       align === 'center' && "items-center",
       align === 'end' && "items-end text-right"
     )}>
-      <span className="text-[8px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-widest">{label}</span>
-      <span className="text-[11px] font-bold text-slate-800 dark:text-slate-300 font-mono">{time}</span>
+      <span className="text-xs font-black text-slate-400 dark:text-slate-500 uppercase tracking-widest">{label}</span>
+      <span className="text-xs font-bold text-slate-800 dark:text-slate-300 font-mono">{time}</span>
     </div>
   );
 }
@@ -54,7 +54,7 @@ function LegendItem({ color, label }: { color: string, label: string }) {
   return (
     <div className="flex items-center gap-1.5">
       <div className={cn("w-2 h-2 rounded-full", color)} />
-      <span className="text-[8px] font-bold text-slate-500 uppercase tracking-widest">{label}</span>
+      <span className="text-xs font-bold text-slate-500 uppercase tracking-widest">{label}</span>
     </div>
   );
 }
@@ -62,7 +62,7 @@ function LegendItem({ color, label }: { color: string, label: string }) {
 function DetailRow({ label, value }: { label: string, value: string }) {
   return (
     <div className="space-y-1">
-      <span className="text-[9px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-widest block">{label}</span>
+      <span className="text-xs font-black text-slate-400 dark:text-slate-500 uppercase tracking-widest block">{label}</span>
       <span className="text-xs font-bold text-slate-700 dark:text-slate-200">{value}</span>
     </div>
   );
@@ -146,7 +146,7 @@ export function SunDetails({
       <div className="flex justify-between items-center mb-6">
         <div className="flex items-center gap-2">
           <Clock size={16} className="text-saffron dark:text-gold" />
-          <span className="text-[10px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-widest">{t('sun.solarEvents')}</span>
+          <span className="text-xs font-black text-slate-400 dark:text-slate-500 uppercase tracking-widest">{t('sun.solarEvents')}</span>
         </div>
         <button 
           onClick={() => setExpanded(!expanded)}
@@ -215,18 +215,18 @@ export function SunDetails({
           <div className="pt-6 space-y-4">
             <div className="flex justify-between items-center mb-2 px-1">
               <div className="flex flex-col gap-0.5">
-                <h5 className="text-[9px] font-black text-slate-400 uppercase tracking-widest">{t('sun.dayNightCycle')}</h5>
+                <h5 className="text-xs font-black text-slate-400 uppercase tracking-widest">{t('sun.dayNightCycle')}</h5>
                 {selectedPhase !== null && (
                   <motion.span 
                     initial={{ opacity: 0, x: -5 }} animate={{ opacity: 1, x: 0 }}
-                    className="text-[10px] font-bold text-saffron flex items-center gap-1.5"
+                    className="text-xs font-bold text-saffron flex items-center gap-1.5"
                   >
                     <span className="w-1.5 h-1.5 rounded-full bg-saffron" />
                     {phases[selectedPhase].label}: {format(phases[selectedPhase].start, 'HH:mm')} - {format(phases[selectedPhase].end, 'HH:mm')}
                   </motion.span>
                 )}
               </div>
-              <span className="text-[9px] font-bold text-slate-500">{t('sun.timeline')}</span>
+              <span className="text-xs font-bold text-slate-500">{t('sun.timeline')}</span>
             </div>
             <div className="h-8 w-full rounded-xl overflow-hidden flex bg-black shadow-inner border border-white/10 ring-4 ring-black/5 cursor-pointer">
               {phases.map((p, i) => {
@@ -247,7 +247,7 @@ export function SunDetails({
                 );
               })}
             </div>
-            <div className="flex justify-between w-full text-[8px] font-black text-slate-400 px-2 uppercase tracking-tighter">
+            <div className="flex justify-between w-full text-xs font-black text-slate-400 px-2 uppercase tracking-tighter">
               <span>00:00</span><span>06:00</span><span>12:00</span><span>18:00</span><span>24:00</span>
             </div>
           </div>
@@ -267,7 +267,7 @@ export function SunDetails({
                   {isBellEnabled ? <Bell size={18} /> : <BellOff size={18} />}
                 </div>
                 <div className="flex flex-col">
-                  <span className="text-[10px] font-black uppercase tracking-widest text-slate-500">Solar Noon Bell</span>
+                  <span className="text-xs font-black uppercase tracking-widest text-slate-500">Solar Noon Bell</span>
                   <span className="text-xs font-bold text-slate-800 dark:text-slate-200">
                     {isBellEnabled ? 'Active (5 mins before)' : 'Inactive'}
                   </span>
@@ -276,7 +276,7 @@ export function SunDetails({
               <button 
                 onClick={toggleBell}
                 className={cn(
-                  "px-4 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all shadow-sm active:scale-95",
+                  "px-4 py-2 rounded-xl text-xs font-black uppercase tracking-widest transition-all shadow-sm active:scale-95",
                   isBellEnabled 
                     ? "bg-slate-800 text-white hover:bg-slate-700" 
                     : "bg-saffron text-white hover:bg-saffron/90"

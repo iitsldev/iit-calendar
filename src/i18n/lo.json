@@ -1,0 +1,88 @@
+{
+  "common": {
+    "calendar": "ປະຕິທິນ",
+    "stillness": "ຄວາມສະຫງົບ",
+    "chants": "ສວດມົນ",
+    "study": "ສຶກສາ",
+    "settings": "ການຕັ້ງຄ່າ",
+    "confirm": "ຢືນຢັນ",
+    "today": "ມື້ນີ້",
+    "language": "ພາສາ",
+    "appearance": "ລັກສະນະ",
+    "script": "ຕົວອັກສອນ",
+    "timezone": "ເຂດເວລາ"
+  },
+  "calendar": {
+    "yearSuffix": "ພ.ສ.",
+    "yearOf": "ປີແຫ່ງ",
+    "monthJourney": "ການເດີນທາງປະຈຳເດືອນ",
+    "pathOfPresence": "ເສັ້ນທາງແຫ່ງສະຕິ",
+    "nextUposatha": "ວັນອຸໂປສົດຖັດໄປ",
+    "uposatha": "ອຸໂປສົດ",
+    "startsIn": "ເລີ່ມຕົ້ນໃນ",
+    "daysLeft": "ມື້ທີ່ເຫຼືອ",
+    "paliRecitation": "ການສວດປາລີ",
+    "month": "ເດືອນ",
+    "year": "ປີ",
+    "season": "ລະດູ",
+    "weekDay": "ວັນໃນອາທິດ",
+    "tradition": "ເດືອນ",
+    "mode": "ໂໝດ",
+    "srilanka": "ສີລັງກາ"
+  },
+  "settings": {
+    "tradition": "ປະເພນີ",
+    "location": "ສະຖານທີ່",
+    "address": "ຄົ້ນຫາທີ່ຢູ່",
+    "searching": "ກຳລັງຄົ້ນຫາ...",
+    "searchError": "ບໍ່ພົບສະຖານທີ່",
+    "useCurrent": "ໃຊ້ GPS ປັດຈຸບັນ",
+    "dawnCalculation": "ການຄຳນວນຮຸ່ງເຊົ້າ",
+    "timezone": "ເຂດເວລາ",
+    "dst": "ເວລາປະຢັດແສງແດດ",
+    "paliScript": "ຕົວອັກສອນປາລີ",
+    "language": "ພາສາ",
+    "themeColor": "ສີຮູບແບບ",
+    "darkMode": "ໂໝດມືດ",
+    "dawnMethods": {
+      "astrology": "ມຸມ 9 ອົງສາ",
+      "pa-auk": "ປາອ໋ອກ (-40 ນາທີ)",
+      "nauyana": "ນາອຸຍານະ (-30 ນາທີ)"
+    },
+    "scripts": {
+      "roman": "ໂຣມັນ",
+      "sinhala": "ສິງຫລົກ",
+      "burmese": "ພະມ້າ",
+      "thai": "ໄທ"
+    },
+    "languages": {
+      "en": "English",
+      "vi": "Tiếng Việt",
+      "th": "ไทย",
+      "si": "සිංහල",
+      "my": "မြန်မာ",
+      "km": "ខ្មែរ",
+      "lo": "ລາວ"
+    }
+  },
+  "sun": {
+    "solarEvents": "ເຫດການແສງຕາເວັນ",
+    "dawn": "ຮຸ່ງເຊົ້າ",
+    "sunrise": "ຕາເວັນຂຶ້ນ",
+    "noon": "ຕອນທ່ຽງ",
+    "night": "ກາງຄືນ",
+    "twilight": "ມືດຄ່ຳ",
+    "daylight": "ກາງເວັນ",
+    "rise": "ຂຶ້ນ",
+    "meridian": "ຕອນທ່ຽງ",
+    "set": "ຕົກ",
+    "dayNightCycle": "ວົງຈອນກາງເວັນກາງຄືນ",
+    "timeline": "ໄລຍະເວລາ 24 ຊົ່ວໂມງ",
+    "traditionDawn": "ຮຸ່ງເຊົ້າປະເພນີ",
+    "solarNoon": "ຕອນທ່ຽງວັນ",
+    "civilTwilight": "ແສງອະລຸນ",
+    "astroTwilight": "ແສງດາລາສາດ",
+    "dayLength": "ຄວາມຍາວມື້",
+    "nadirPoint": "ຈຸດຕ່ຳສຸດ"
+  }
+}

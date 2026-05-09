@@ -31,8 +31,7 @@ import { SunTimesCalculator } from '../lib/calendar/SunTimesCalculator';
 import { cn } from '../lib/utils';
 import { convertPali } from '../services/conversionService';
 import { uposathaPositionInSeason, uposathasRemainingInSeason, uposathaSeason, getVassaDates, getUposathasForYear as getUposathasFromLib } from '../lib/calendar/uposathalib';
-import eventsData from '../data/events.json';
-import reflectionsData from '../data/reflections.json';
+import { useData } from '../DataContext';
 import {COLOR_TOKENS} from '../theme/index'
 
 // ─── Color tokens (edit here to retheme the entire calendar) ───────────────────
@@ -87,6 +86,7 @@ export function CalendarScreen({
   sunCalc: SunTimesCalculator;
 }) {
   const { t } = useI18n();
+  const { events: firebaseEvents, reflections: firebaseReflections } = useData();
   const [sunTimesExpanded, setSunTimesExpanded] = React.useState(false);
   const [paliExpanded, setPaliExpanded] = React.useState(false);
   const [isEventsExpanded, setIsEventsExpanded] = React.useState(false);
@@ -141,33 +141,35 @@ export function CalendarScreen({
     };
 
     // Regional events (filtered by date)
-    Object.keys(eventsData).forEach(key => {
-      if (key === 'supported_calendar_types' || key === 'version' || key === 'calendar_name') return;
-      
-      const events = (eventsData as any)[key] || [];
-      const matches = events.filter(checkEvent);
-      
-      if (matches.length > 0) {
-        const groupName = key.replace(/_/g, ' ');
-        groups[groupName] = matches;
+    firebaseEvents.forEach(evt => {
+      if (checkEvent(evt)) {
+        const groupName = evt.category.replace(/_/g, ' ');
+        if (!groups[groupName]) groups[groupName] = [];
+        groups[groupName].push(evt);
       }
     });
 
     return groups;
-  }, [selectedDate, settings.calendarType]);
+  }, [selectedDate, settings.calendarType, firebaseEvents]);
 
   // ── Reflections Logic ───────────────────────────────────────────────────
   const reflection = React.useMemo(() => {
+    if (firebaseReflections.length === 0) return { quote: "Loading...", author: "..." };
     // Deterministic "random" based on date
     const seed = selectedDate.getFullYear() * 10000 + (selectedDate.getMonth() + 1) * 100 + selectedDate.getDate();
-    const index = seed % reflectionsData.length;
-    return reflectionsData[index];
-  }, [selectedDate]);
+    const index = seed % firebaseReflections.length;
+    return firebaseReflections[index];
+  }, [selectedDate, firebaseReflections]);
 
   const prevMonth = () => setCurrentDate(subMonths(currentDate, 1));
   const nextMonth = () => setCurrentDate(addMonths(currentDate, 1));
   const prevYear = () => setCurrentDate(subYears(currentDate, 1));
   const nextYear = () => setCurrentDate(addYears(currentDate, 1));
+  const goToToday = () => {
+    const today = new Date();
+    setCurrentDate(today);
+    setSelectedDate(today);
+  };
 
   return (
     <div className="flex flex-col gap-8 pb-10">
@@ -236,6 +238,15 @@ export function CalendarScreen({
           </div>
 
           <div className="flex items-center gap-3">
+            {/* Today nav */}
+            <button
+              onClick={goToToday}
+              className="px-3 py-1.5 h-9 rounded-2xl shadow-sm text-xs font-black uppercase tracking-widest transition-colors active:scale-95 flex flex-row items-center"
+              style={{ background: 'var(--cal-surface)', border: '1px solid var(--cal-border)', color: 'var(--cal-accent)' }}
+            >
+              {t('common.today')}
+            </button>
+
             {/* Year nav */}
             <div
               className="flex items-center p-1.5 rounded-2xl shadow-sm"
@@ -245,7 +256,7 @@ export function CalendarScreen({
               <div className="px-2 flex flex-col items-center">
 
                 <span
-                  className="text-[10px] font-bold font-mono"
+                  className="text-xs font-bold font-mono"
                   style={{ color: 'var(--cal-text-primary)' }}
                 >
                   {format(currentDate, 'yyyy')}
@@ -271,7 +282,7 @@ export function CalendarScreen({
             {DAYS_OF_WEEK.map(day => (
               <span
                 key={day}
-                className="text-[10px] font-black text-center tracking-widest"
+                className="text-xs font-black text-center tracking-widest"
                 style={{ color: 'var(--cal-text-muted)' }}
               >
                 {day}
@@ -306,14 +317,7 @@ export function CalendarScreen({
               };
               
               const hasEvents = (() => {
-                // regional
-                const keys = Object.keys(eventsData).filter(k => k.endsWith('_events'));
-                for (const k of keys) {
-                  if (((eventsData as any)[k] || []).some(check)) return true;
-                }
-                // iit
-                if (((eventsData as any).IIT_2027_schedule || []).some(check)) return true;
-                return false;
+                return firebaseEvents.some(check);
               })();
 
               // Compute text colour imperatively to keep inline styles tidy
@@ -454,7 +458,7 @@ export function CalendarScreen({
                       ) : (
                         <>
                           <p
-                            className="text-[10px] font-black uppercase tracking-[0.2em] mb-0.5 whitespace-nowrap"
+                            className="text-xs font-black uppercase tracking-[0.2em] mb-0.5 whitespace-nowrap"
                             style={{ color: 'var(--cal-text-muted)' }}
                           >
                             {t('calendar.startsIn')}
@@ -464,7 +468,7 @@ export function CalendarScreen({
                             style={{ color: 'var(--cal-accent)' }}
                           >
                             {Math.max(0, Math.round((nextUposatha.date.getTime() - selectedDate.getTime()) / 86400000))}
-                            <span className="text-[10px] font-black uppercase">{t('calendar.daysLeft')}</span>
+                            <span className="text-xs font-black uppercase">{t('calendar.daysLeft')}</span>
                           </p>
                         </>
                       )}
@@ -531,7 +535,7 @@ export function CalendarScreen({
 
         {/* Vassa Information Section */}
         <div className="pt-6 border-t border-slate-200/50 dark:border-slate-700/50">
-          <h4 className="text-[10px] font-black uppercase tracking-[0.2em] mb-4 text-center" style={{ color: 'var(--cal-text-muted)' }}>
+          <h4 className="text-xs font-black uppercase tracking-[0.2em] mb-4 text-center" style={{ color: 'var(--cal-text-muted)' }}>
             Vassa & Pavāraṇā
           </h4>
           <div className="grid grid-cols-2 gap-4">
@@ -561,7 +565,7 @@ export function CalendarScreen({
               <div className="flex items-center gap-3">
                 <span className="w-8 h-[1px] opacity-30" style={{ background: 'var(--cal-accent)' }} />
                 <h3
-                  className="text-[10px] font-black uppercase tracking-[0.3em]"
+                  className="text-xs font-black uppercase tracking-[0.3em]"
                   style={{ color: 'var(--cal-accent)' }}
                 >
                   {t('calendar.paliRecitation')}
@@ -605,7 +609,7 @@ export function CalendarScreen({
               >
                 <div className="flex items-center gap-3">
                   <span className="w-8 h-[1px] opacity-30" style={{ background: 'var(--cal-accent)' }} />
-                  <h3 className="text-[10px] font-black uppercase tracking-[0.2em]" style={{ color: 'var(--cal-accent)' }}>
+                  <h3 className="text-xs font-black uppercase tracking-[0.2em]" style={{ color: 'var(--cal-accent)' }}>
                     Schedule & Events
                   </h3>
                   <span className="w-8 h-[1px] opacity-30" style={{ background: 'var(--cal-accent)' }} />
@@ -630,7 +634,7 @@ export function CalendarScreen({
                       <div key={groupName} className="space-y-3">
                         <div className="flex items-center gap-2">
                           <div className="w-1.5 h-1.5 rounded-full" style={{ background: 'var(--cal-accent)' }} />
-                          <span className="text-[9px] font-black uppercase tracking-widest leading-none opacity-60" style={{ color: 'var(--cal-text-muted)' }}>
+                          <span className="text-xs font-black uppercase tracking-widest leading-none opacity-60" style={{ color: 'var(--cal-text-muted)' }}>
                             {groupName}
                           </span>
                         </div>
@@ -646,7 +650,7 @@ export function CalendarScreen({
                                 </span>
                               </div>
                               {evt.time && (
-                                <span className="text-[10px] font-mono font-bold px-2 py-0.5 rounded-lg bg-white dark:bg-slate-900 shadow-sm" style={{ color: 'var(--cal-accent)' }}>
+                                <span className="text-xs font-mono font-bold px-2 py-0.5 rounded-lg bg-white dark:bg-slate-900 shadow-sm" style={{ color: 'var(--cal-accent)' }}>
                                   {evt.time}
                                 </span>
                               )}
@@ -680,7 +684,7 @@ export function CalendarScreen({
               <span className="text-sm font-bold" style={{ color: 'var(--cal-text-secondary)' }}>
                 {reflection.author === "Buddha" ? "The Buddha" : reflection.author}
               </span>
-              <span className="text-[10px] font-black uppercase tracking-widest opacity-40" style={{ color: 'var(--cal-text-muted)' }}>
+              <span className="text-xs font-black uppercase tracking-widest opacity-40" style={{ color: 'var(--cal-text-muted)' }}>
                 {reflection.source}
               </span>
             </div>
@@ -733,13 +737,13 @@ function MetaCell({
   return (
     <div className={cn("flex flex-col", right && "text-right")}>
       <span
-        className="text-[8px] font-black uppercase tracking-tighter"
+        className="text-xs font-black uppercase tracking-tighter"
         style={{ color: 'var(--cal-text-muted)' }}
       >
         {label}
       </span>
       <span
-        className="text-[11px] font-bold italic"
+        className="text-xs font-bold italic"
         style={{ color: 'var(--cal-text-primary)' }}
       >
         {children}
@@ -751,7 +755,7 @@ function MetaCell({
 function DetailRow({ label, value, script }: { label: string; value: string; script: string }) {
   return (
     <div className="flex flex-col gap-1">
-      <span className="text-[8px] font-black uppercase tracking-widest" style={{ color: 'var(--cal-text-muted)' }}>{label}</span>
+      <span className="text-xs font-black uppercase tracking-widest" style={{ color: 'var(--cal-text-muted)' }}>{label}</span>
       <PaliText text={value} script={script} className="text-sm font-bold" style={{ color: 'var(--cal-text-primary)' } as React.CSSProperties} />
     </div>
   );
@@ -761,15 +765,15 @@ function VassaItem({ label, entry, pavarana }: { label: string; entry: Date | nu
   if (!entry || !pavarana) return null;
   return (
     <div className="flex flex-col gap-2 p-3 rounded-2xl bg-slate-50/50 dark:bg-slate-800/30">
-      <span className="text-[9px] font-black uppercase tracking-tighter" style={{ color: 'var(--cal-accent)' }}>{label}</span>
+      <span className="text-xs font-black uppercase tracking-tighter" style={{ color: 'var(--cal-accent)' }}>{label}</span>
       <div className="space-y-1">
         <div className="flex justify-between items-center">
-          <span className="text-[8px] font-bold uppercase" style={{ color: 'var(--cal-text-muted)' }}>Entry</span>
-          <span className="text-[10px] font-bold" style={{ color: 'var(--cal-text-primary)' }}>{format(entry, 'MMM d')}</span>
+          <span className="text-xs font-bold uppercase" style={{ color: 'var(--cal-text-muted)' }}>Entry</span>
+          <span className="text-xs font-bold" style={{ color: 'var(--cal-text-primary)' }}>{format(entry, 'MMM d')}</span>
         </div>
         <div className="flex justify-between items-center">
-          <span className="text-[8px] font-bold uppercase" style={{ color: 'var(--cal-text-muted)' }}>Pavāraṇā</span>
-          <span className="text-[10px] font-bold" style={{ color: 'var(--cal-text-primary)' }}>{format(pavarana, 'MMM d')}</span>
+          <span className="text-xs font-bold uppercase" style={{ color: 'var(--cal-text-muted)' }}>Pavāraṇā</span>
+          <span className="text-xs font-bold" style={{ color: 'var(--cal-text-primary)' }}>{format(pavarana, 'MMM d')}</span>
         </div>
       </div>
     </div>
@@ -786,7 +790,7 @@ function PaliDetailItem({ label, value, script }: { label: string; value: string
       }}
     >
       <span
-        className="text-[8px] font-black uppercase tracking-widest"
+        className="text-xs font-black uppercase tracking-widest"
         style={{ color: 'var(--cal-text-muted)' }}
       >
         {label}

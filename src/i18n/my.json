@@ -1,0 +1,88 @@
+{
+  "common": {
+    "calendar": "ပြက္ခဒိန်",
+    "stillness": "တိတ်ဆိတ်မှု",
+    "chants": "ရွတ်ဖတ်ခြင်း",
+    "study": "လေ့လာမှု",
+    "settings": "ဆက်တင်များ",
+    "confirm": "အတည်ပြုပါ",
+    "today": "ယနေ့",
+    "language": "ဘာသာစကား",
+    "appearance": "အသွင်အပြင်",
+    "script": "အက္ခရာ",
+    "timezone": "အချိန်ဇုန်"
+  },
+  "calendar": {
+    "yearSuffix": "သာသနာနှစ်",
+    "yearOf": "နှစ်",
+    "monthJourney": "လစဉ် ခရီးစဉ်",
+    "pathOfPresence": "ပစ္စုပ္ပန် လမ်းစဉ်",
+    "nextUposatha": "နောက် ဥပုသ်နေ့",
+    "uposatha": "ဥပုသ်",
+    "startsIn": "စတင်မည့်အချိန်",
+    "daysLeft": "ကျန်ရက်",
+    "paliRecitation": "ပါဠိ ရွတ်ဖတ်ခြင်း",
+    "month": "လ",
+    "year": "နှစ်",
+    "season": "ရာသီ",
+    "weekDay": "ရက်",
+    "tradition": "လ",
+    "mode": "မုဒ်",
+    "srilanka": "သီရိလင်္ကာ"
+  },
+  "settings": {
+    "tradition": "လ",
+    "location": "တည်နေရာ",
+    "address": "လိပ်စာ ရှာဖွေပါ",
+    "searching": "ရှာဖွေနေသည်...",
+    "searchError": "တည်နေရာ မတွေ့ပါ",
+    "useCurrent": "လက်ရှိ GPS ကိုသုံးပါ",
+    "dawnCalculation": "အရုဏ်တွက်ချက်မှု",
+    "timezone": "အချိန်ဇုန်",
+    "dst": "နွေရာသီအချိန်",
+    "paliScript": "ပါဠိ အက္ခရာ",
+    "language": "ဘာသာစကား",
+    "themeColor": "အခင်းအကျင်း အရောင်",
+    "darkMode": "အမည်းရောင် မုဒ်",
+    "dawnMethods": {
+      "astrology": "၉ ဒီဂရီ ထောင့်",
+      "pa-auk": "ဖားအောက် (-၄၀ မိနစ်)",
+      "nauyana": "နာအူယာနာ (-၃၀ မိနစ်)"
+    },
+    "scripts": {
+      "roman": "ရိုမန်",
+      "sinhala": "သီဟိုဠ်",
+      "burmese": "မြန်မာ",
+      "thai": "ထိုင်း"
+    },
+    "languages": {
+      "en": "English",
+      "vi": "Tiếng Việt",
+      "th": "ไทย",
+      "si": "සිංහල",
+      "my": "မြန်မာ",
+      "km": "ខ្មែរ",
+      "lo": "ລາວ"
+    }
+  },
+  "sun": {
+    "solarEvents": "နေရောင်ခြည် အဖြစ်အပျက်များ",
+    "dawn": "အရုဏ်",
+    "sunrise": "နေထွက်",
+    "noon": "နေမွန်းတည့်",
+    "night": "ည",
+    "twilight": "ဆည်းဆာ",
+    "daylight": "နေ့ဘက်",
+    "rise": "ထွက်",
+    "meridian": "မွန်းတည့်မျဉ်း",
+    "set": "ဝင်",
+    "dayNightCycle": "နေ့နှင့်ည စက်ဝန်း",
+    "timeline": "၂၄ နာရီ အချိန်ပြမျဉ်း",
+    "traditionDawn": "ရိုးရာ အရုဏ်",
+    "solarNoon": "နေမွန်းတည့်",
+    "civilTwilight": "အရပ်ဘက် ဆည်းဆာ",
+    "astroTwilight": "နက္ခတ်ဗေဒ ဆည်းဆာ",
+    "dayLength": "နေ့တာ အရှည်",
+    "nadirPoint": "အောက်ခြေအမှတ်"
+  }
+}

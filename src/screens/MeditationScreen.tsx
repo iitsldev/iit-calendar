@@ -305,7 +305,7 @@ export function MeditationScreen() {
           <div className="text-center z-10 flex flex-col items-center">
             {countdown > 0 ? (
               <>
-                <span className="text-[10px] font-bold uppercase tracking-[0.3em] mb-2" style={{ color: 'var(--sm-text-muted)' }}>
+                <span className="text-xs font-bold uppercase tracking-[0.3em] mb-2" style={{ color: 'var(--sm-text-muted)' }}>
                   Starting In
                 </span>
                 <div className="font-serif text-6xl font-medium tracking-tight" style={{ color: 'var(--sm-accent)'}}>
@@ -314,7 +314,7 @@ export function MeditationScreen() {
               </>
             ) : (
               <>
-                <span className="text-[10px] font-bold uppercase tracking-[0.3em] mb-2" style={{ color: 'var(--sm-text-muted)' }}>
+                <span className="text-xs font-bold uppercase tracking-[0.3em] mb-2" style={{ color: 'var(--sm-text-muted)' }}>
                   {isFinished ? 'Complete' : 'Remaining'}
                 </span>
                 <div className="font-serif text-6xl font-medium tracking-tight" style={{ color: 'var(--sm-text-primary)'}}>
@@ -392,25 +392,25 @@ export function MeditationScreen() {
           {/* Prominent Streak */}
           <div className="flex justify-center items-center flex-col mb-8 py-6 rounded-3xl" style={{ border: '1px solid var(--sm-accent-muted)', backgroundColor: 'var(--sm-accent-subtle)' }}>
              <Award size={24} style={{ color: 'var(--sm-accent)' }} className="mb-2" />
-             <p className="text-[10px] font-black uppercase tracking-widest mb-1" style={{ color: 'var(--sm-text-muted)' }}>Current Streak</p>
+             <p className="text-xs font-black uppercase tracking-widest mb-1" style={{ color: 'var(--sm-text-muted)' }}>Current Streak</p>
              <div className="font-serif text-5xl font-medium tracking-tight" style={{ color: 'var(--sm-accent)' }}>{currentStreak} <span className="text-xl">Days</span></div>
           </div>
 
           <div className="grid grid-cols-2 gap-4 mb-8">
             <div className="rounded-2xl p-4" style={{ backgroundColor: 'var(--sm-surface)' }}>
-              <div className="text-[10px] font-black uppercase tracking-widest mb-1" style={{ color: 'var(--sm-text-muted)' }}>Weekly Time</div>
+              <div className="text-xs font-black uppercase tracking-widest mb-1" style={{ color: 'var(--sm-text-muted)' }}>Weekly Time</div>
               <div className="font-serif text-3xl" style={{ color: 'var(--sm-accent)' }}>
                 {Math.floor(weeklyMinutes / 60) > 0 ? `${Math.floor(weeklyMinutes / 60)}h ${weeklyMinutes % 60}m` : `${weeklyMinutes}m`}
               </div>
             </div>
             <div className="rounded-2xl p-4" style={{ backgroundColor: 'var(--sm-surface)' }}>
-              <div className="text-[10px] font-black uppercase tracking-widest mb-1" style={{ color: 'var(--sm-text-muted)' }}>Sessions</div>
+              <div className="text-xs font-black uppercase tracking-widest mb-1" style={{ color: 'var(--sm-text-muted)' }}>Sessions</div>
               <div className="font-serif text-3xl" style={{ color: 'var(--sm-accent)' }}>{stats.sessions.filter(s => differenceInDays(today, new Date(s.date)) < 7).length}</div>
             </div>
           </div>
 
           <div className="space-y-2">
-            <div className="flex justify-between text-[10px] uppercase tracking-widest font-bold" style={{ color: 'var(--sm-text-muted)' }}>
+            <div className="flex justify-between text-xs uppercase tracking-widest font-bold" style={{ color: 'var(--sm-text-muted)' }}>
               <span>Next Milestone</span>
               <span style={{ color: 'var(--sm-accent)' }}>{Math.round(progressPercent)}%</span>
             </div>
@@ -449,7 +449,7 @@ export function MeditationScreen() {
                       }}
                     />
                   </div>
-                  <span className="text-[10px] font-bold uppercase" style={{ color: isToday ? 'var(--sm-accent)' : 'var(--sm-text-muted)' }}>
+                  <span className="text-xs font-bold uppercase" style={{ color: isToday ? 'var(--sm-accent)' : 'var(--sm-text-muted)' }}>
                     {day.label}
                   </span>
                 </div>
@@ -491,7 +491,7 @@ export function MeditationScreen() {
 
               <div className="space-y-6">
                 <div>
-                  <label className="block text-[10px] font-black uppercase tracking-widest mb-2" style={{ color: 'var(--sm-text-muted)' }}>Duration (Hours & Minutes)</label>
+                  <label className="block text-xs font-black uppercase tracking-widest mb-2" style={{ color: 'var(--sm-text-muted)' }}>Duration (Hours & Minutes)</label>
                   <div className="flex gap-2">
                     <div className="flex-1">
                       <input 
@@ -520,7 +520,7 @@ export function MeditationScreen() {
                 </div>
 
                 <div>
-                  <label className="block text-[10px] font-black uppercase tracking-widest mb-2" style={{ color: 'var(--sm-text-muted)' }}>Interval Bell (Minutes & Seconds)</label>
+                  <label className="block text-xs font-black uppercase tracking-widest mb-2" style={{ color: 'var(--sm-text-muted)' }}>Interval Bell (Minutes & Seconds)</label>
                   <div className="flex gap-2">
                     <div className="flex-1">
                       <input 
@@ -549,7 +549,7 @@ export function MeditationScreen() {
                 </div>
 
                 <div>
-                  <label className="block text-[10px] font-black uppercase tracking-widest mb-2" style={{ color: 'var(--sm-text-muted)' }}>Preparation Check (sec)</label>
+                  <label className="block text-xs font-black uppercase tracking-widest mb-2" style={{ color: 'var(--sm-text-muted)' }}>Preparation Check (sec)</label>
                   <select 
                     value={settings.delaySeconds}
                     onChange={(e) => setSettings({...settings, delaySeconds: parseInt(e.target.value)})}
@@ -566,7 +566,7 @@ export function MeditationScreen() {
                 </div>
 
                 <div>
-                  <label className="block text-[10px] font-black uppercase tracking-widest mb-2" style={{ color: 'var(--sm-text-muted)' }}>Bell Type</label>
+                  <label className="block text-xs font-black uppercase tracking-widest mb-2" style={{ color: 'var(--sm-text-muted)' }}>Bell Type</label>
                   <div className="flex gap-2 overflow-x-auto pb-2 snap-x scrollbar-hide" style={{ WebkitOverflowScrolling: 'touch' }}>
                     {['bowl', 'gong', 'chime', 'tibetan', 'woodblock', 'bell'].map(bell => (
                       <button
@@ -590,7 +590,7 @@ export function MeditationScreen() {
 
                 <button 
                   onClick={() => setShowSettings(false)}
-                  className="w-full mt-4 py-4 rounded-2xl font-bold tracking-widest text-[10px] uppercase text-white shadow-lg transition-transform active:scale-95"
+                  className="w-full mt-4 py-4 rounded-2xl font-bold tracking-widest text-xs uppercase text-white shadow-lg transition-transform active:scale-95"
                   style={{ background: 'var(--sm-accent)' }}
                 >
                   Save Settings

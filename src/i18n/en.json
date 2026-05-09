@@ -56,7 +56,13 @@
       "thai": "Thai"
     },
     "languages": {
-      "en": "English"
+      "en": "English",
+      "vi": "Tiếng Việt",
+      "th": "ไทย",
+      "si": "සිංහල",
+      "my": "မြန်မာ",
+      "km": "ខ្មែរ",
+      "lo": "ລາວ"
     }
   },
   "sun": {

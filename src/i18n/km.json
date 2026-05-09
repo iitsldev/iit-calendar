@@ -1,0 +1,88 @@
+{
+  "common": {
+    "calendar": "ប្រតិទិន",
+    "stillness": "ភាពស្ងប់ស្ងាត់",
+    "chants": "ការសូត្រមន្ត",
+    "study": "ការសិក្សា",
+    "settings": "ការកំណត់",
+    "confirm": "បញ្ជាក់",
+    "today": "ថ្ងៃនេះ",
+    "language": "ភាសា",
+    "appearance": "រូបរាង",
+    "script": "អក្សរ",
+    "timezone": "តំបន់ពេលវេលា"
+  },
+  "calendar": {
+    "yearSuffix": "ព.ស.",
+    "yearOf": "ឆ្នាំនៃ",
+    "monthJourney": "ដំណើរប្រចាំខែ",
+    "pathOfPresence": "ផ្លូវនៃសតិ",
+    "nextUposatha": "ថ្ងៃឧបោសថបន្ទាប់",
+    "uposatha": "ថ្ងៃសីល",
+    "startsIn": "ចាប់ផ្តើមនៅ",
+    "daysLeft": "ថ្ងៃនៅសល់",
+    "paliRecitation": "ការសូត្របាលី",
+    "month": "ខែ",
+    "year": "ឆ្នាំ",
+    "season": "រដូវ",
+    "weekDay": "ថ្ងៃនៃសប្តាហ៍",
+    "tradition": "ខែ",
+    "mode": "របៀប",
+    "srilanka": "ស្រីលង្កា"
+  },
+  "settings": {
+    "tradition": "ប្រពៃណី",
+    "location": "ទីតាំង",
+    "address": "ស្វែងរកអាសយដ្ឋាន",
+    "searching": "កំពុងស្វែងរក...",
+    "searchError": "រកមិនឃើញទីតាំង",
+    "useCurrent": "ប្រើ GPS បច្ចុប្បន្ន",
+    "dawnCalculation": "ការគណនាបច្ចុសសម័យ",
+    "timezone": "តំបន់ពេលវេលា",
+    "dst": "ពេលវេលាពន្លឺថ្ងៃ",
+    "paliScript": "អក្សរបាលី",
+    "language": "ភាសា",
+    "themeColor": "ពណ៌ប្រធានបទ",
+    "darkMode": "មុខងារងងឹត",
+    "dawnMethods": {
+      "astrology": "មុំ ៩ ដឺក្រេ",
+      "pa-auk": "ប៉ាអ៊ុក (-៤០ នាទី)",
+      "nauyana": "ណាអ៊ូយ៉ាណា (-៣០ នាទី)"
+    },
+    "scripts": {
+      "roman": "រ៉ូម៉ាំង",
+      "sinhala": "ស្រីលង្កា",
+      "burmese": "ភូមា",
+      "thai": "ថៃ"
+    },
+    "languages": {
+      "en": "English",
+      "vi": "Tiếng Việt",
+      "th": "ไทย",
+      "si": "සිංහල",
+      "my": "မြန်မာ",
+      "km": "ខ្មែរ",
+      "lo": "ລາວ"
+    }
+  },
+  "sun": {
+    "solarEvents": "ព្រឹត្តិការណ៍ព្រះអាទិត្យ",
+    "dawn": "បច្ចុសសម័យ",
+    "sunrise": "ព្រះអាទិត្យរះ",
+    "noon": "ថ្ងៃត្រង់ព្រះអាទិត្យ",
+    "night": "យប់",
+    "twilight": "ព្រលប់",
+    "daylight": "ពេលថ្ងៃ",
+    "rise": "រះ",
+    "meridian": "ថ្ងៃត្រង់",
+    "set": "លិច",
+    "dayNightCycle": "វដ្តថ្ងៃនិងយប់",
+    "timeline": "ខ្សែពេលវេលា ២៤ ម៉ោង",
+    "traditionDawn": "បច្ចុសសម័យប្រពៃណី",
+    "solarNoon": "ពេលថ្ងៃត្រង់ព្រះអាទិត្យ",
+    "civilTwilight": "ព្រលប់ធម្មតា",
+    "astroTwilight": "ព្រលប់តារាសាស្ត្រ",
+    "dayLength": "ប្រវែងថ្ងៃ",
+    "nadirPoint": "ចំណុចទាបបំផុត"
+  }
+}

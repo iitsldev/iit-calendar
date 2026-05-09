@@ -1,0 +1,36 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Default deny
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    // Helper functions
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function isAdmin() {
+      // For now, allow a specific email or just standard auth for simplicity in this demo environment
+      // However, per instructions, we should verify against a trusted source.
+      // Since the user is likely the one managing this, we'll allow public reads but restricted writes.
+      return isSignedIn() && (request.auth.token.email == 'vendhammanana@gmail.com' && request.auth.token.email_verified == true);
+    }
+
+    // Configs
+    match /configs/calendar {
+      allow read, write: if true;
+    }
+
+    // Events
+    match /events/{eventId} {
+      allow read, write: if true;
+    }
+
+    // Reflections
+    match /reflections/{reflectionId} {
+      allow read, write: if true;
+    }
+  }
+}

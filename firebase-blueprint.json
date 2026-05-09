@@ -1,0 +1,56 @@
+{
+  "entities": {
+    "Config": {
+      "title": "App Configuration",
+      "description": "General application configuration and metadata",
+      "type": "object",
+      "properties": {
+        "calendar_name": { "type": "string" },
+        "version": { "type": "string" },
+        "supported_calendar_types": { "type": "array", "items": { "type": "string" } }
+      }
+    },
+    "Event": {
+      "title": "Event",
+      "description": "A Buddhist event or schedule item",
+      "type": "object",
+      "properties": {
+        "category": { "type": "string", "description": "e.g., srilanka, myanmar, thai, vietnam, IIT_2027_schedule" },
+        "calendar_type": { "type": "string" },
+        "event_name": { "type": "string" },
+        "month": { "type": "number" },
+        "day": { "type": "number" },
+        "year": { "type": "number" },
+        "day_of_week": { "type": "string" },
+        "time": { "type": "string" },
+        "subject": { "type": "string" }
+      },
+      "required": ["category", "calendar_type"]
+    },
+    "Reflection": {
+      "title": "Reflection",
+      "description": "A daily reflection or quote",
+      "type": "object",
+      "properties": {
+        "quote": { "type": "string" },
+        "author": { "type": "string" },
+        "source": { "type": "string" }
+      },
+      "required": ["quote", "author"]
+    }
+  },
+  "firestore": {
+    "configs/calendar": {
+      "schema": "Config",
+      "description": "Calendar metadata and versioning"
+    },
+    "events/{eventId}": {
+      "schema": "Event",
+      "description": "Collection of all events across categories"
+    },
+    "reflections/{reflectionId}": {
+      "schema": "Reflection",
+      "description": "Collection of daily reflections"
+    }
+  }
+}

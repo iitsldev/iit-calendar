@@ -1,0 +1,88 @@
+{
+  "common": {
+    "calendar": "Lịch",
+    "stillness": "Tĩnh Lặng",
+    "chants": "Tụng Niệm",
+    "study": "Học Tập",
+    "settings": "Cài đặt",
+    "confirm": "Xác nhận Lạc Thú",
+    "today": "Hôm nay",
+    "language": "Ngôn ngữ",
+    "appearance": "Giao diện",
+    "script": "Ký tự",
+    "timezone": "Múi giờ"
+  },
+  "calendar": {
+    "yearSuffix": "PL",
+    "yearOf": "Năm của",
+    "monthJourney": "Hành trình Hàng tháng",
+    "pathOfPresence": "Con đường Hiện tại",
+    "nextUposatha": "Uposatha Tiếp theo",
+    "uposatha": "Ngày Uposatha",
+    "startsIn": "Bắt đầu sau",
+    "daysLeft": "ngày nữa",
+    "paliRecitation": "Tụng Pali",
+    "month": "Tháng",
+    "year": "Năm",
+    "season": "Mùa",
+    "weekDay": "Thứ",
+    "tradition": "Truyền thống",
+    "mode": "Chế độ",
+    "srilanka": "Sri Lanka"
+  },
+  "settings": {
+    "tradition": "Truyền thống Lịch",
+    "location": "Vị trí",
+    "address": "Tìm kiếm Địa chỉ",
+    "searching": "Đang tìm kiếm...",
+    "searchError": "Không tìm thấy địa điểm",
+    "useCurrent": "Sử dụng GPS hiện tại",
+    "dawnCalculation": "Cách tính Bình minh",
+    "timezone": "Độ lệch Múi giờ",
+    "dst": "Tiết kiệm ánh sáng ban ngày (DST)",
+    "paliScript": "Chữ Pali",
+    "language": "Ngôn ngữ UI",
+    "themeColor": "Màu chủ đề",
+    "darkMode": "Chế độ Tối",
+    "dawnMethods": {
+      "astrology": "Góc 9 Độ",
+      "pa-auk": "Pa-Auk (-40 phút)",
+      "nauyana": "Na-Uyana (-30 phút)"
+    },
+    "scripts": {
+      "roman": "Roman",
+      "sinhala": "Sinhala",
+      "burmese": "Miến Điện",
+      "thai": "Thái"
+    },
+    "languages": {
+      "en": "English",
+      "vi": "Tiếng Việt",
+      "th": "ไทย",
+      "si": "සිංහල",
+      "my": "မြန်မာ",
+      "km": "ខ្មែរ",
+      "lo": "ລາວ"
+    }
+  },
+  "sun": {
+    "solarEvents": "Sự kiện Mặt trời",
+    "dawn": "Bình minh",
+    "sunrise": "Mặt trời mọc",
+    "noon": "Trưa (Mặt trời cao nhất)",
+    "night": "Đêm",
+    "twilight": "Chạng vạng",
+    "daylight": "Ban ngày",
+    "rise": "Mọc",
+    "meridian": "Đỉnh",
+    "set": "Lặn",
+    "dayNightCycle": "Chu kỳ Ngày & Đêm",
+    "timeline": "Dòng thời gian 24 giờ",
+    "traditionDawn": "Bình minh Truyền thống",
+    "solarNoon": "Điểm giữa ngày",
+    "civilTwilight": "Chạng vạng Dân dụng",
+    "astroTwilight": "Chạng vạng Thiên văn",
+    "dayLength": "Độ dài Ngày",
+    "nadirPoint": "Điểm thấp nhất"
+  }
+}

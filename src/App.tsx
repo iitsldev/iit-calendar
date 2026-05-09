@@ -35,13 +35,12 @@ export default function App() {
         calendarType: 'thai',
         lat: 6.9271,
         lng: 79.8612,
-        timezone: 'UTC+5:30',
-        dst: false,
         dawnMethod: 'astrology',
         language: 'en',
         paliScript: 'roman',
         themeColor: 'saffron',
         darkMode: false,
+        fontSize: 'normal',
         ...parsed
       };
     }
@@ -49,13 +48,12 @@ export default function App() {
       calendarType: 'thai',
       lat: 6.9271,
       lng: 79.8612,
-      timezone: 'UTC+5:30',
-      dst: false,
       dawnMethod: 'astrology',
       language: 'en',
       paliScript: 'roman',
       themeColor: 'saffron',
       darkMode: false,
+      fontSize: 'normal',
     };
   });
 
@@ -65,6 +63,15 @@ export default function App() {
     // Apply theme
     const root = document.documentElement;
     root.classList.toggle('dark', settings.darkMode);
+    
+    // Apply font size
+    if (settings.fontSize === 'xlarge') {
+      root.style.fontSize = '20px';
+    } else if (settings.fontSize === 'large') {
+      root.style.fontSize = '18px';
+    } else {
+      root.style.fontSize = '16px';
+    }
     
     // Set theme colors (Tailwind variables)
     const colors: Record<string, string> = {
@@ -101,8 +108,7 @@ export default function App() {
     navigator.geolocation.getCurrentPosition(
       (pos) => {
         const { latitude, longitude } = pos.coords;
-        const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
-        setSettings(s => ({ ...s, lat: latitude, lng: longitude, address: 'Current Location', timezone }));
+        setSettings(s => ({ ...s, lat: latitude, lng: longitude, address: 'Current Location' }));
       },
       (err) => {
         console.error(err);
@@ -126,11 +132,11 @@ export default function App() {
           </motion.div>
           <div>
             <h1 className="font-serif text-2xl font-bold tracking-tight leading-none italic" style={{ color: 'var(--text-primary)' }}>IIT Calendar</h1>
-            <p className="text-[9px] font-black uppercase tracking-widest mt-1" style={{ color: 'var(--text-secondary)' }}>
+            <p className="text-xs font-black uppercase tracking-widest mt-1" style={{ color: 'var(--text-secondary)' }}>
               {settings.calendarType === 'srilanka' ? t('calendar.srilanka') : settings.calendarType} • {t('calendar.mode')}
             </p>
             {settings.address && (
-              <p className="text-[8px] font-medium opacity-60 mt-0.5 max-w-[140px] truncate" style={{ color: 'var(--text-secondary)' }}>
+              <p className="text-xs font-medium opacity-60 mt-0.5 max-w-[140px] truncate" style={{ color: 'var(--text-secondary)' }}>
                 {settings.address}
               </p>
             )}
@@ -192,7 +198,7 @@ function NavButton({ icon, label, active, onClick }: { icon: React.ReactNode, la
         {icon}
       </div>
       <span className={cn(
-        "text-[9px] font-black uppercase tracking-widest transition-all",
+        "text-xs font-black uppercase tracking-widest transition-all",
         active ? "text-slate-700 opacity-100" : "text-slate-400 opacity-0 group-hover:opacity-60"
       )}>{label}</span>
       {active && <motion.div layoutId="nav" className="absolute -bottom-1 w-1 h-1 bg-saffron rounded-full" />}

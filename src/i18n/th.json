@@ -1,0 +1,88 @@
+{
+  "common": {
+    "calendar": "ปฏิทิน",
+    "stillness": "ความสงบ",
+    "chants": "สวดมนต์",
+    "study": "ศึกษา",
+    "settings": "การตั้งค่า",
+    "confirm": "ยืนยันความสุข",
+    "today": "วันนี้",
+    "language": "ภาษา",
+    "appearance": "ลักษณะ",
+    "script": "อักษร",
+    "timezone": "เขตเวลา"
+  },
+  "calendar": {
+    "yearSuffix": "พ.ศ.",
+    "yearOf": "ปีแห่ง",
+    "monthJourney": "การเดินทางประจำเดือน",
+    "pathOfPresence": "เส้นทางแห่งสติ",
+    "nextUposatha": "วันอุโบสถถัดไป",
+    "uposatha": "อุโบสถ",
+    "startsIn": "เริ่มต้นใน",
+    "daysLeft": "วันที่เหลือ",
+    "paliRecitation": "การสวดปาฬิ",
+    "month": "เดือน",
+    "year": "ปี",
+    "season": "ฤดู",
+    "weekDay": "วันในสัปดาห์",
+    "tradition": "เดือน",
+    "mode": "โหมด",
+    "srilanka": "ศรีลังกา"
+  },
+  "settings": {
+    "tradition": "ประเพณี",
+    "location": "สถานที่",
+    "address": "ค้นหาที่อยู่",
+    "searching": "กำลังค้นหา...",
+    "searchError": "ไม่พบสถานที่",
+    "useCurrent": "ใช้ GPS ปัจจุบัน",
+    "dawnCalculation": "การคำนวณรุ่งอรุณ",
+    "timezone": "ค่าชดเชยเขตเวลา",
+    "dst": "เวลาออมแสง (DST)",
+    "paliScript": "อักษรปาฬิ",
+    "language": "ภาษาหลัก",
+    "themeColor": "สีธีม",
+    "darkMode": "โหมดมืด",
+    "dawnMethods": {
+      "astrology": "มุม 9 องศา",
+      "pa-auk": "ผาอ๊อก (-40 นาที)",
+      "nauyana": "นาอุยานะ (-30 นาที)"
+    },
+    "scripts": {
+      "roman": "โรมัน",
+      "sinhala": "สิงหล",
+      "burmese": "พม่า",
+      "thai": "ไทย"
+    },
+    "languages": {
+      "en": "English",
+      "vi": "Tiếng Việt",
+      "th": "ไทย",
+      "si": "සිංහල",
+      "my": "မြန်မာ",
+      "km": "ខ្មែរ",
+      "lo": "ລາວ"
+    }
+  },
+  "sun": {
+    "solarEvents": "เหตุการณ์สุริยะ",
+    "dawn": "รุ่งอรุณ",
+    "sunrise": "พระอาทิตย์ขึ้น",
+    "noon": "เที่ยงสุริยะ",
+    "night": "กลางคืน",
+    "twilight": "พลบค่ำ",
+    "daylight": "กลางวัน",
+    "rise": "ขึ้น",
+    "meridian": "เส้นเมริเดียน",
+    "set": "ตก",
+    "dayNightCycle": "วัฏจักรกลางวันกลางคืน",
+    "timeline": "เส้นเวลา 24 ชั่วโมง",
+    "traditionDawn": "รุ่งอรุณตามประเพณี",
+    "solarNoon": "เที่ยงสุริยะ",
+    "civilTwilight": "สนธยาพลเรือน",
+    "astroTwilight": "สนธยาดาราศาสตร์",
+    "dayLength": "ความยาวของวัน",
+    "nadirPoint": "จุดเนเดียร์"
+  }
+}
