@@ -305,7 +305,7 @@ export function MeditationScreen() {
           <div className="text-center z-10 flex flex-col items-center">
             {countdown > 0 ? (
               <>
-                <span className="text-xs font-bold uppercase tracking-[0.3em] mb-2" style={{ color: 'var(--sm-text-muted)' }}>
+                <span className="text-sm font-bold uppercase tracking-[0.3em] mb-2" style={{ color: 'var(--sm-text-muted)' }}>
                   Starting In
                 </span>
                 <div className="font-serif text-6xl font-medium tracking-tight" style={{ color: 'var(--sm-accent)'}}>
@@ -314,7 +314,7 @@ export function MeditationScreen() {
               </>
             ) : (
               <>
-                <span className="text-xs font-bold uppercase tracking-[0.3em] mb-2" style={{ color: 'var(--sm-text-muted)' }}>
+                <span className="text-sm font-bold uppercase tracking-[0.3em] mb-2" style={{ color: 'var(--sm-text-muted)' }}>
                   {isFinished ? 'Complete' : 'Remaining'}
                 </span>
                 <div className="font-serif text-6xl font-medium tracking-tight" style={{ color: 'var(--sm-text-primary)'}}>
@@ -392,25 +392,25 @@ export function MeditationScreen() {
           {/* Prominent Streak */}
           <div className="flex justify-center items-center flex-col mb-8 py-6 rounded-3xl" style={{ border: '1px solid var(--sm-accent-muted)', backgroundColor: 'var(--sm-accent-subtle)' }}>
              <Award size={24} style={{ color: 'var(--sm-accent)' }} className="mb-2" />
-             <p className="text-xs font-black uppercase tracking-widest mb-1" style={{ color: 'var(--sm-text-muted)' }}>Current Streak</p>
-             <div className="font-serif text-5xl font-medium tracking-tight" style={{ color: 'var(--sm-accent)' }}>{currentStreak} <span className="text-xl">Days</span></div>
+             <p className="text-sm font-black uppercase tracking-widest mb-1" style={{ color: 'var(--sm-text-muted)' }}>Current Streak</p>
+             <div className="font-serif text-5xl font-medium tracking-tight" style={{ color: 'var(--sm-accent)' }}>{currentStreak} <span className="text-2xl">Days</span></div>
           </div>
 
           <div className="grid grid-cols-2 gap-4 mb-8">
             <div className="rounded-2xl p-4" style={{ backgroundColor: 'var(--sm-surface)' }}>
-              <div className="text-xs font-black uppercase tracking-widest mb-1" style={{ color: 'var(--sm-text-muted)' }}>Weekly Time</div>
+              <div className="text-sm font-black uppercase tracking-widest mb-1" style={{ color: 'var(--sm-text-muted)' }}>Weekly Time</div>
               <div className="font-serif text-3xl" style={{ color: 'var(--sm-accent)' }}>
                 {Math.floor(weeklyMinutes / 60) > 0 ? `${Math.floor(weeklyMinutes / 60)}h ${weeklyMinutes % 60}m` : `${weeklyMinutes}m`}
               </div>
             </div>
             <div className="rounded-2xl p-4" style={{ backgroundColor: 'var(--sm-surface)' }}>
-              <div className="text-xs font-black uppercase tracking-widest mb-1" style={{ color: 'var(--sm-text-muted)' }}>Sessions</div>
+              <div className="text-sm font-black uppercase tracking-widest mb-1" style={{ color: 'var(--sm-text-muted)' }}>Sessions</div>
               <div className="font-serif text-3xl" style={{ color: 'var(--sm-accent)' }}>{stats.sessions.filter(s => differenceInDays(today, new Date(s.date)) < 7).length}</div>
             </div>
           </div>
 
           <div className="space-y-2">
-            <div className="flex justify-between text-xs uppercase tracking-widest font-bold" style={{ color: 'var(--sm-text-muted)' }}>
+            <div className="flex justify-between text-sm uppercase tracking-widest font-bold" style={{ color: 'var(--sm-text-muted)' }}>
               <span>Next Milestone</span>
               <span style={{ color: 'var(--sm-accent)' }}>{Math.round(progressPercent)}%</span>
             </div>
@@ -434,7 +434,7 @@ export function MeditationScreen() {
               const h = day.minutes > 0 ? (day.minutes / maxMinutesInChart) * 100 : 0;
               const isToday = i === chartDays.length - 1;
               return (
-                <div key={i} className="flex flex-col items-center gap-3 w-1/7">
+                <div key={`chart-col-${i}`} className="flex flex-col items-center gap-3 w-1/7">
                   <div className="w-full flex justify-center h-20 items-end">
                     <motion.div 
                       initial={{ height: 0 }}
@@ -570,7 +570,7 @@ export function MeditationScreen() {
                   <div className="flex gap-2 overflow-x-auto pb-2 snap-x scrollbar-hide" style={{ WebkitOverflowScrolling: 'touch' }}>
                     {['bowl', 'gong', 'chime', 'tibetan', 'woodblock', 'bell'].map(bell => (
                       <button
-                        key={bell}
+                        key={`bell-option-${bell}`}
                         onClick={() => {
                           setSettings({...settings, bellType: bell});
                           playBell(bell);

@@ -9,8 +9,7 @@
     "today": "ယနေ့",
     "language": "ဘာသာစကား",
     "appearance": "အသွင်အပြင်",
-    "script": "အက္ခရာ",
-    "timezone": "အချိန်ဇုန်"
+    "script": "အက္ခရာ"
   },
   "calendar": {
     "yearSuffix": "သာသနာနှစ်",
@@ -38,7 +37,6 @@
     "searchError": "တည်နေရာ မတွေ့ပါ",
     "useCurrent": "လက်ရှိ GPS ကိုသုံးပါ",
     "dawnCalculation": "အရုဏ်တွက်ချက်မှု",
-    "timezone": "အချိန်ဇုန်",
     "dst": "နွေရာသီအချိန်",
     "paliScript": "ပါဠိ အက္ခရာ",
     "language": "ဘာသာစကား",

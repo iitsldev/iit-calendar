@@ -9,8 +9,7 @@
     "today": "ມື້ນີ້",
     "language": "ພາສາ",
     "appearance": "ລັກສະນະ",
-    "script": "ຕົວອັກສອນ",
-    "timezone": "ເຂດເວລາ"
+    "script": "ຕົວອັກສອນ"
   },
   "calendar": {
     "yearSuffix": "ພ.ສ.",
@@ -38,7 +37,6 @@
     "searchError": "ບໍ່ພົບສະຖານທີ່",
     "useCurrent": "ໃຊ້ GPS ປັດຈຸບັນ",
     "dawnCalculation": "ການຄຳນວນຮຸ່ງເຊົ້າ",
-    "timezone": "ເຂດເວລາ",
     "dst": "ເວລາປະຢັດແສງແດດ",
     "paliScript": "ຕົວອັກສອນປາລີ",
     "language": "ພາສາ",

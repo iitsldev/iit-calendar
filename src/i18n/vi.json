@@ -9,8 +9,7 @@
     "today": "Hôm nay",
     "language": "Ngôn ngữ",
     "appearance": "Giao diện",
-    "script": "Ký tự",
-    "timezone": "Múi giờ"
+    "script": "Ký tự"
   },
   "calendar": {
     "yearSuffix": "PL",
@@ -38,7 +37,6 @@
     "searchError": "Không tìm thấy địa điểm",
     "useCurrent": "Sử dụng GPS hiện tại",
     "dawnCalculation": "Cách tính Bình minh",
-    "timezone": "Độ lệch Múi giờ",
     "dst": "Tiết kiệm ánh sáng ban ngày (DST)",
     "paliScript": "Chữ Pali",
     "language": "Ngôn ngữ UI",

@@ -9,8 +9,7 @@
     "today": "අද",
     "language": "භාෂාව",
     "appearance": "පෙනුම",
-    "script": "අක්ෂර",
-    "timezone": "වේලා කලාපය"
+    "script": "අක්ෂර"
   },
   "calendar": {
     "yearSuffix": "බු.ව.",
@@ -38,7 +37,6 @@
     "searchError": "ස්ථානය හමු නොවීය",
     "useCurrent": "වර්තමාන ජීපීඑස් භාවිතා කරන්න",
     "dawnCalculation": "අරුණ ගණනය කිරීම",
-    "timezone": "වේලා කලාපය",
     "dst": "දිවා ආලෝකය සුරැකීම",
     "paliScript": "පාලි අක්ෂර",
     "language": "භාෂාව",

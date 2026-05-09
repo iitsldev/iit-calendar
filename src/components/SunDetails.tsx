@@ -31,8 +31,8 @@ function SunTimeItem({ icon, label, time, color, hasBorder, active }: SunTimeIte
       active ? "scale-100" : "scale-110"
     )}>
       <div className={cn("transition-transform duration-500", active && "scale-125 translate-y-[-4px]", color)}>{icon}</div>
-      <span className="text-xs font-black text-slate-400 dark:text-slate-500 uppercase tracking-widest">{label}</span>
-      <span className="text-sm font-bold text-slate-200 dark:text-slate-800 tracking-tight">{time}</span>
+      <span className="text-sm font-black text-slate-400 dark:text-slate-500 uppercase tracking-widest">{label}</span>
+      <span className="text-base font-bold text-slate-200 dark:text-slate-800 tracking-tight">{time}</span>
     </div>
   );
 }
@@ -44,8 +44,8 @@ function Marker({ label, time, align }: { label: string, time: string, align: 's
       align === 'center' && "items-center",
       align === 'end' && "items-end text-right"
     )}>
-      <span className="text-xs font-black text-slate-400 dark:text-slate-500 uppercase tracking-widest">{label}</span>
-      <span className="text-xs font-bold text-slate-800 dark:text-slate-300 font-mono">{time}</span>
+      <span className="text-sm font-black text-slate-400 dark:text-slate-500 uppercase tracking-widest">{label}</span>
+      <span className="text-sm font-bold text-slate-800 dark:text-slate-300 font-mono">{time}</span>
     </div>
   );
 }
@@ -54,7 +54,7 @@ function LegendItem({ color, label }: { color: string, label: string }) {
   return (
     <div className="flex items-center gap-1.5">
       <div className={cn("w-2 h-2 rounded-full", color)} />
-      <span className="text-xs font-bold text-slate-500 uppercase tracking-widest">{label}</span>
+      <span className="text-sm font-bold text-slate-500 uppercase tracking-widest">{label}</span>
     </div>
   );
 }
@@ -62,8 +62,8 @@ function LegendItem({ color, label }: { color: string, label: string }) {
 function DetailRow({ label, value }: { label: string, value: string }) {
   return (
     <div className="space-y-1">
-      <span className="text-xs font-black text-slate-400 dark:text-slate-500 uppercase tracking-widest block">{label}</span>
-      <span className="text-xs font-bold text-slate-700 dark:text-slate-200">{value}</span>
+      <span className="text-sm font-black text-slate-400 dark:text-slate-500 uppercase tracking-widest block">{label}</span>
+      <span className="text-sm font-bold text-slate-700 dark:text-slate-200">{value}</span>
     </div>
   );
 }
@@ -145,27 +145,27 @@ export function SunDetails({
     <div className="glass-card rounded-[2rem] p-6 bg-white/50 dark:bg-slate-900/40 border-white/60 dark:border-slate-800 overflow-hidden">
       <div className="flex justify-between items-center mb-6">
         <div className="flex items-center gap-2">
-          <Clock size={16} className="text-saffron dark:text-gold" />
-          <span className="text-xs font-black text-slate-400 dark:text-slate-500 uppercase tracking-widest">{t('sun.solarEvents')}</span>
+          <Clock size="1.2em" className="text-saffron dark:text-gold" />
+          <span className="text-sm font-black text-slate-400 dark:text-slate-500 uppercase tracking-widest">{t('sun.solarEvents')}</span>
         </div>
         <button 
           onClick={() => setExpanded(!expanded)}
           className="p-1.5 rounded-full text-slate-400 hover:text-saffron" style={{ background: 'rgb(212 136 32 / 0.08)' }} 
         >
-          {expanded ? <ChevronUp size={16}/> : <ChevronDown size={16} />}
+          {expanded ? <ChevronUp size="1.2em"/> : <ChevronDown size="1.2em" />}
         </button>
       </div>
 
       <div className="grid grid-cols-3 gap-0 relative">
         <SunTimeItem 
-          icon={<div className="relative"><Sunrise size={20}/><ChevronUp size={10} className="absolute -top-1 -right-1 text-gold"/></div>} 
+          icon={<div className="relative"><Sunrise size="1.4em"/><ChevronUp size="0.75em" className="absolute -top-1 -right-1 text-gold"/></div>} 
           label={t('sun.dawn')} 
           time={safeFormat(activeDawn, 'hh:mm a')} 
           color="text-gold" 
           active={expanded}
         />
         <SunTimeItem 
-          icon={<Sun size={20}/>} 
+          icon={<Sun size="1.4em"/>} 
           label={t('sun.sunrise')} 
           time={safeFormat(times.sunrise, 'hh:mm a')} 
           color="text-saffron" 
@@ -173,7 +173,7 @@ export function SunDetails({
           active={expanded}
         />
         <SunTimeItem 
-          icon={<Sunset size={20}/>} 
+          icon={<Sunset size="1.4em"/>} 
           label={t('sun.noon')} 
           time={safeFormat(times.solarNoon, 'hh:mm a')} 
           color="text-lotus" 

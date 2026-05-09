@@ -9,8 +9,7 @@
     "today": "ថ្ងៃនេះ",
     "language": "ភាសា",
     "appearance": "រូបរាង",
-    "script": "អក្សរ",
-    "timezone": "តំបន់ពេលវេលា"
+    "script": "អក្សរ"
   },
   "calendar": {
     "yearSuffix": "ព.ស.",
@@ -38,7 +37,6 @@
     "searchError": "រកមិនឃើញទីតាំង",
     "useCurrent": "ប្រើ GPS បច្ចុប្បន្ន",
     "dawnCalculation": "ការគណនាបច្ចុសសម័យ",
-    "timezone": "តំបន់ពេលវេលា",
     "dst": "ពេលវេលាពន្លឺថ្ងៃ",
     "paliScript": "អក្សរបាលី",
     "language": "ភាសា",

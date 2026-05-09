@@ -131,12 +131,12 @@ export default function App() {
             <Wind size={28} />
           </motion.div>
           <div>
-            <h1 className="font-serif text-2xl font-bold tracking-tight leading-none italic" style={{ color: 'var(--text-primary)' }}>IIT Calendar</h1>
-            <p className="text-xs font-black uppercase tracking-widest mt-1" style={{ color: 'var(--text-secondary)' }}>
+            <h1 className="font-serif text-3xl font-bold tracking-tight leading-none italic" style={{ color: 'var(--text-primary)' }}>IIT Calendar</h1>
+            <p className="text-sm font-black uppercase tracking-widest mt-1" style={{ color: 'var(--text-secondary)' }}>
               {settings.calendarType === 'srilanka' ? t('calendar.srilanka') : settings.calendarType} • {t('calendar.mode')}
             </p>
             {settings.address && (
-              <p className="text-xs font-medium opacity-60 mt-0.5 max-w-[140px] truncate" style={{ color: 'var(--text-secondary)' }}>
+              <p className="text-sm font-medium opacity-60 mt-0.5 max-w-[200px] truncate" style={{ color: 'var(--text-secondary)' }}>
                 {settings.address}
               </p>
             )}
@@ -144,10 +144,10 @@ export default function App() {
         </div>
         <button 
           onClick={() => setShowSettings(true)}
-          className="p-2 rounded-full shadow-sm border border-white dark:border-slate-700 transition-colors"
+          className="p-2.5 rounded-full shadow-sm border border-white dark:border-slate-700 transition-colors"
           style={{ backgroundColor: 'var(--btn-header-bg)', color: 'var(--btn-header-text)' }}
         >
-          <SettingsIcon size={20} />
+          <SettingsIcon size="1.25em" />
         </button>
       </header>
 
@@ -190,15 +190,15 @@ export default function App() {
 
 function NavButton({ icon, label, active, onClick }: { icon: React.ReactNode, label: string, active: boolean, onClick: () => void }) {
   return (
-    <button onClick={onClick} className="flex flex-col items-center gap-1.5 relative group">
+    <button onClick={onClick} className="flex flex-col items-center gap-1.5 relative group min-w-[64px]">
       <div className={cn(
         "transition-all duration-300",
         active ? "text-saffron scale-110" : "text-slate-400 group-hover:text-slate-600"
       )}>
-        {icon}
+        {React.isValidElement(icon) ? React.cloneElement(icon as React.ReactElement, { size: '1.4em' } as any) : icon}
       </div>
       <span className={cn(
-        "text-xs font-black uppercase tracking-widest transition-all",
+        "text-sm font-black uppercase tracking-widest transition-all",
         active ? "text-slate-700 opacity-100" : "text-slate-400 opacity-0 group-hover:opacity-60"
       )}>{label}</span>
       {active && <motion.div layoutId="nav" className="absolute -bottom-1 w-1 h-1 bg-saffron rounded-full" />}
@@ -212,10 +212,12 @@ function PlaceholderTab({ icon, title, text }: { icon: React.ReactNode, title: s
       initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }}
       className="flex flex-col items-center justify-center py-20 text-center"
     >
-      <div className="w-32 h-32 rounded-full bg-saffron/5 flex items-center justify-center text-saffron/20 mb-8">{icon}</div>
+      <div className="w-32 h-32 rounded-full bg-saffron/5 flex items-center justify-center text-saffron/20 mb-8">
+        {React.isValidElement(icon) ? React.cloneElement(icon as React.ReactElement, { size: '4em' } as any) : icon}
+      </div>
       <h2 className="font-serif text-3xl font-bold text-slate-800 mb-4">{title}</h2>
       <p className="text-slate-400 max-w-sm leading-relaxed">{text}</p>
-      <button className="mt-10 px-8 py-4 bg-white rounded-full text-xs font-black text-saffron uppercase tracking-widest border border-saffron/20 shadow-sm active:scale-95 transition-all">Coming Soon</button>
+      <button className="mt-10 px-8 py-4 bg-white rounded-full text-sm font-black text-saffron uppercase tracking-widest border border-saffron/20 shadow-sm active:scale-95 transition-all">Coming Soon</button>
     </motion.div>
   );
 }

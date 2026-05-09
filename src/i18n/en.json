@@ -9,8 +9,7 @@
     "today": "Today",
     "language": "Language",
     "appearance": "Appearance",
-    "script": "Script",
-    "timezone": "Timezone"
+    "script": "Script"
   },
   "calendar": {
     "yearSuffix": "BE",
@@ -38,7 +37,6 @@
     "searchError": "Location not found",
     "useCurrent": "Use Current GPS",
     "dawnCalculation": "Dawn Calculation",
-    "timezone": "Timezone Offset",
     "dst": "Daylight Saving (DST)",
     "paliScript": "Pali Script",
     "language": "UI Language",

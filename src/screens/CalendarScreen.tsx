@@ -59,7 +59,7 @@ function PaliText({ text, script, className, style }: { text: string; script: st
   return (
     <span className={className} style={{ ...style, whiteSpace: 'pre-wrap' } as React.CSSProperties}>
       {displayText.split('<br/>').map((part, i) => (
-        <React.Fragment key={i}>
+        <React.Fragment key={`pali-part-${i}`}>
           {i > 0 && <br />}
           {part}
         </React.Fragment>
@@ -224,12 +224,12 @@ export function CalendarScreen({
         <header className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-6 mb-10 px-2 relative z-10">
           <div className="flex flex-col">
             <h2
-              className="font-serif text-4xl font-bold leading-none flex items-baseline gap-3"
+              className="font-serif text-4xl sm:text-5xl font-bold leading-none flex items-baseline gap-3"
               style={{ color: 'var(--cal-text-primary)' }}
             >
               {format(currentDate, 'MMMM')}
               <span
-                className="italic text-2xl"
+                className="italic text-2xl sm:text-3xl"
                 style={{ color: 'var(--cal-accent)' }}
               >
                 {format(currentDate, 'yyyy')}
@@ -241,7 +241,7 @@ export function CalendarScreen({
             {/* Today nav */}
             <button
               onClick={goToToday}
-              className="px-3 py-1.5 h-9 rounded-2xl shadow-sm text-xs font-black uppercase tracking-widest transition-colors active:scale-95 flex flex-row items-center"
+              className="px-4 py-2 h-10 rounded-2xl shadow-sm text-sm font-black uppercase tracking-widest transition-colors active:scale-95 flex flex-row items-center"
               style={{ background: 'var(--cal-surface)', border: '1px solid var(--cal-border)', color: 'var(--cal-accent)' }}
             >
               {t('common.today')}
@@ -252,17 +252,17 @@ export function CalendarScreen({
               className="flex items-center p-1.5 rounded-2xl shadow-sm"
               style={{ background: 'var(--cal-surface)', border: '1px solid var(--cal-border)' }}
             >
-              <NavBtn onClick={prevYear} small title="Previous Year"><ChevronLeft size={16} className="stroke-[3px]"/></NavBtn>
+              <NavBtn onClick={prevYear} small title="Previous Year"><ChevronLeft size="1.2em" className="stroke-[3px]"/></NavBtn>
               <div className="px-2 flex flex-col items-center">
 
                 <span
-                  className="text-xs font-bold font-mono"
+                  className="text-sm font-bold font-mono"
                   style={{ color: 'var(--cal-text-primary)' }}
                 >
                   {format(currentDate, 'yyyy')}
                 </span>
               </div>
-              <NavBtn onClick={nextYear} small title="Next Year"><ChevronRight size={16} className="stroke-[3px]"/></NavBtn>
+              <NavBtn onClick={nextYear} small title="Next Year"><ChevronRight size="1.2em" className="stroke-[3px]"/></NavBtn>
             </div>
 
             {/* Month nav */}
@@ -270,8 +270,8 @@ export function CalendarScreen({
               className="flex items-center p-1.5 rounded-2xl shadow-sm"
               style={{ background: 'var(--cal-surface)', border: '1px solid var(--cal-border)' }}
             >
-              <NavBtn onClick={prevMonth} title="Previous Month"><ChevronLeft size={20}/></NavBtn>
-              <NavBtn onClick={nextMonth} title="Next Month"><ChevronRight size={20}/></NavBtn>
+              <NavBtn onClick={prevMonth} title="Previous Month"><ChevronLeft size="1.4em"/></NavBtn>
+              <NavBtn onClick={nextMonth} title="Next Month"><ChevronRight size="1.4em"/></NavBtn>
             </div>
           </div>
         </header>
@@ -281,8 +281,8 @@ export function CalendarScreen({
           <div className="grid grid-cols-7 mb-6">
             {DAYS_OF_WEEK.map(day => (
               <span
-                key={day}
-                className="text-xs font-black text-center tracking-widest"
+                key={`header-${day}`}
+                className="text-sm font-black text-center tracking-widest"
                 style={{ color: 'var(--cal-text-muted)' }}
               >
                 {day}
@@ -293,7 +293,7 @@ export function CalendarScreen({
           {/* Date cells */}
           <div className="grid grid-cols-7 gap-y-3">
             {Array.from({ length: getDay(startOfMonth(currentDate)) }).map((_, i) => (
-              <div key={`pad-${i}`} className="h-12 w-full" />
+              <div key={`month-pad-${i}`} className="h-12 w-full" />
             ))}
 
             {monthDays.map((date) => {
@@ -328,7 +328,7 @@ export function CalendarScreen({
               else dateColor = 'var(--cal-text-primary)';
 
               return (
-                <div key={date.toISOString()} className="flex justify-center relative">
+                <div key={`cell-${date.toISOString()}`} className="flex justify-center relative">
                   <button
                     onClick={() => setSelectedDate(date)}
                     className="h-12 w-12 rounded-2xl flex flex-col items-center justify-center transition-all relative group"
@@ -631,7 +631,7 @@ export function CalendarScreen({
                     className="overflow-hidden space-y-6 pt-2"
                   >
                     {Object.entries(todaysEvents).map(([groupName, events]) => (
-                      <div key={groupName} className="space-y-3">
+                      <div key={`event-group-${groupName}`} className="space-y-3">
                         <div className="flex items-center gap-2">
                           <div className="w-1.5 h-1.5 rounded-full" style={{ background: 'var(--cal-accent)' }} />
                           <span className="text-xs font-black uppercase tracking-widest leading-none opacity-60" style={{ color: 'var(--cal-text-muted)' }}>
@@ -641,7 +641,7 @@ export function CalendarScreen({
                         <div className="space-y-2">
                           {(events as any[]).map((evt, idx) => (
                             <div 
-                              key={`${groupName}-${idx}`} 
+                              key={`event-item-${groupName}-${evt.id || idx}`} 
                               className="flex justify-between items-center p-3 rounded-2xl bg-slate-50/50 dark:bg-slate-800/30 border border-slate-100 dark:border-slate-700/50"
                             >
                               <div className="flex flex-col gap-1">
@@ -737,13 +737,13 @@ function MetaCell({
   return (
     <div className={cn("flex flex-col", right && "text-right")}>
       <span
-        className="text-xs font-black uppercase tracking-tighter"
+        className="text-sm font-black uppercase tracking-tighter"
         style={{ color: 'var(--cal-text-muted)' }}
       >
         {label}
       </span>
       <span
-        className="text-xs font-bold italic"
+        className="text-sm font-bold italic"
         style={{ color: 'var(--cal-text-primary)' }}
       >
         {children}
@@ -755,8 +755,8 @@ function MetaCell({
 function DetailRow({ label, value, script }: { label: string; value: string; script: string }) {
   return (
     <div className="flex flex-col gap-1">
-      <span className="text-xs font-black uppercase tracking-widest" style={{ color: 'var(--cal-text-muted)' }}>{label}</span>
-      <PaliText text={value} script={script} className="text-sm font-bold" style={{ color: 'var(--cal-text-primary)' } as React.CSSProperties} />
+      <span className="text-sm font-black uppercase tracking-widest" style={{ color: 'var(--cal-text-muted)' }}>{label}</span>
+      <PaliText text={value} script={script} className="text-base font-bold" style={{ color: 'var(--cal-text-primary)' } as React.CSSProperties} />
     </div>
   );
 }
@@ -765,15 +765,15 @@ function VassaItem({ label, entry, pavarana }: { label: string; entry: Date | nu
   if (!entry || !pavarana) return null;
   return (
     <div className="flex flex-col gap-2 p-3 rounded-2xl bg-slate-50/50 dark:bg-slate-800/30">
-      <span className="text-xs font-black uppercase tracking-tighter" style={{ color: 'var(--cal-accent)' }}>{label}</span>
+      <span className="text-sm font-black uppercase tracking-tighter" style={{ color: 'var(--cal-accent)' }}>{label}</span>
       <div className="space-y-1">
         <div className="flex justify-between items-center">
-          <span className="text-xs font-bold uppercase" style={{ color: 'var(--cal-text-muted)' }}>Entry</span>
-          <span className="text-xs font-bold" style={{ color: 'var(--cal-text-primary)' }}>{format(entry, 'MMM d')}</span>
+          <span className="text-sm font-bold uppercase" style={{ color: 'var(--cal-text-muted)' }}>Entry</span>
+          <span className="text-sm font-bold" style={{ color: 'var(--cal-text-primary)' }}>{format(entry, 'MMM d')}</span>
         </div>
         <div className="flex justify-between items-center">
-          <span className="text-xs font-bold uppercase" style={{ color: 'var(--cal-text-muted)' }}>Pavāraṇā</span>
-          <span className="text-xs font-bold" style={{ color: 'var(--cal-text-primary)' }}>{format(pavarana, 'MMM d')}</span>
+          <span className="text-sm font-bold uppercase" style={{ color: 'var(--cal-text-muted)' }}>Pavāraṇā</span>
+          <span className="text-sm font-bold" style={{ color: 'var(--cal-text-primary)' }}>{format(pavarana, 'MMM d')}</span>
         </div>
       </div>
     </div>
@@ -790,7 +790,7 @@ function PaliDetailItem({ label, value, script }: { label: string; value: string
       }}
     >
       <span
-        className="text-xs font-black uppercase tracking-widest"
+        className="text-sm font-black uppercase tracking-widest"
         style={{ color: 'var(--cal-text-muted)' }}
       >
         {label}
@@ -798,7 +798,7 @@ function PaliDetailItem({ label, value, script }: { label: string; value: string
       <PaliText
         text={value}
         script={script}
-        className="text-sm font-bold"
+        className="text-base font-bold"
         style={{ color: 'var(--cal-text-primary)' } as React.CSSProperties}
       />
     </div>

@@ -60,7 +60,7 @@ export function SettingsModal({
           className="glass-card w-full max-w-lg rounded-[2.5rem] p-8 shadow-2xl relative"
           style={{ background: 'var(--sm-surface)', border: '1px solid var(--sm-border)' }}
         >
-          {/* Close button */}
+            {/* Close button */}
           <button
             onClick={onClose}
             className="absolute top-6 right-6 p-2 rounded-full transition-colors"
@@ -68,11 +68,11 @@ export function SettingsModal({
             onMouseEnter={e => (e.currentTarget.style.color = 'var(--sm-accent)')}
             onMouseLeave={e => (e.currentTarget.style.color = 'var(--sm-text-muted)')}
           >
-            <X size={24}/>
+            <X size="1.5em"/>
           </button>
 
           <h2
-            className="font-serif text-2xl font-bold mb-8"
+            className="font-serif text-3xl font-bold mb-8"
             style={{ color: 'var(--sm-accent)' }}
           >
             {t('common.settings')}
@@ -90,7 +90,7 @@ export function SettingsModal({
                     onChange={e => onUpdate({ ...settings, language: e.target.value })}
                   >
                     {(['en', 'vi', 'th', 'si', 'my', 'km', 'lo'] as const).map(lang => (
-                      <option key={lang} value={lang}>{t(`settings.languages.${lang}`)}</option>
+                      <option key={`lang-opt-${lang}`} value={lang}>{t(`settings.languages.${lang}`)}</option>
                     ))}
                   </StyledSelect>
                 </FieldGroup>
@@ -100,7 +100,7 @@ export function SettingsModal({
                     onChange={e => onUpdate({ ...settings, paliScript: e.target.value as any })}
                   >
                     {(['roman', 'sinhala', 'burmese', 'thai'] as const).map(s => (
-                      <option key={s} value={s}>{t(`settings.scripts.${s}`)}</option>
+                      <option key={`script-opt-${s}`} value={s}>{t(`settings.scripts.${s}`)}</option>
                     ))}
                   </StyledSelect>
                 </FieldGroup>
@@ -113,9 +113,9 @@ export function SettingsModal({
               <div className="grid grid-cols-3 gap-3">
                 {(['normal', 'large', 'xlarge'] as const).map(size => (
                   <button
-                    key={size}
+                    key={`size-opt-${size}`}
                     onClick={() => onUpdate({ ...settings, fontSize: size })}
-                    className="px-4 py-3 rounded-2xl text-xs font-bold capitalize transition-all"
+                    className="px-4 py-3 rounded-2xl text-sm font-bold capitalize transition-all"
                     style={settings.fontSize === size
                       ? { background: 'var(--sm-accent)', color: 'white', border: '1px solid var(--sm-accent)', boxShadow: `0 4px 16px var(--sm-accent-shadow)` }
                       : { background: 'transparent', border: '1px solid var(--sm-input-border)', color: 'var(--sm-text-secondary)' }
@@ -131,12 +131,12 @@ export function SettingsModal({
             <section className="space-y-4">
               <div className="flex items-center justify-between px-1">
                 <div className="flex items-center gap-2">
-                  <MapPin size={12} style={{ color: 'var(--sm-text-muted)' }} />
+                  <MapPin size="1em" style={{ color: 'var(--sm-text-muted)' }} />
                   <SectionLabel inline>{t('settings.location')}</SectionLabel>
                 </div>
                 <button
                   onClick={onGetLocation}
-                  className="text-xs font-bold hover:underline"
+                  className="text-sm font-bold hover:underline"
                   style={{ color: 'var(--sm-accent)' }}
                 >
                   {t('settings.useCurrent')}
@@ -152,7 +152,7 @@ export function SettingsModal({
                     value={addressSearch}
                     onChange={e => setAddressSearch(e.target.value)}
                     onKeyDown={e => e.key === 'Enter' && handleSearch()}
-                    className="w-full pl-4 pr-12 py-4 rounded-2xl text-sm focus:outline-none transition-all"
+                    className="w-full pl-4 pr-12 py-4 rounded-2xl text-base focus:outline-none transition-all"
                     style={{
                       background: 'transparent',
                       border: '1px solid var(--sm-input-border)',
@@ -167,7 +167,7 @@ export function SettingsModal({
                     className="absolute right-2 top-2 bottom-2 px-3 rounded-xl text-white active:scale-95 transition-all"
                     style={{ background: 'var(--sm-accent)', boxShadow: 'var(--sm-accent-shadow)' }}
                   >
-                    {isSearching ? <Loader2 size={18} className="animate-spin" /> : <Search size={18} />}
+                    {isSearching ? <Loader2 size="1.2em" className="animate-spin" /> : <Search size="1.2em" />}
                   </button>
                 </div>
 
@@ -180,12 +180,12 @@ export function SettingsModal({
                       border: '1px solid var(--sm-accent-muted)',
                     }}
                   >
-                    <MapPin size={14} className="mt-1 shrink-0" style={{ color: 'var(--sm-accent)' }} />
+                    <MapPin size="1.1em" className="mt-1 shrink-0" style={{ color: 'var(--sm-accent)' }} />
                     <div>
-                      <p className="text-xs leading-tight font-medium" style={{ color: 'var(--sm-text-secondary)' }}>
+                      <p className="text-sm leading-tight font-medium" style={{ color: 'var(--sm-text-secondary)' }}>
                         {settings.address}
                       </p>
-                      <p className="text-xs mt-1 font-mono" style={{ color: 'var(--sm-text-muted)' }}>
+                      <p className="text-sm mt-1 font-mono" style={{ color: 'var(--sm-text-muted)' }}>
                         {settings.lat.toFixed(4)}°, {settings.lng.toFixed(4)}°
                       </p>
                     </div>
@@ -202,7 +202,7 @@ export function SettingsModal({
                 <div className="flex gap-2">
                   {(['saffron', 'indigo', 'emerald', 'rose', 'slate'] as const).map(color => (
                     <button
-                      key={color}
+                      key={`theme-opt-${color}`}
                       onClick={() => onUpdate({ ...settings, themeColor: color })}
                       className={cn(
                         "w-8 h-8 rounded-full transition-all",
@@ -242,7 +242,7 @@ export function SettingsModal({
               <div className="grid grid-cols-2 gap-3">
                 {(['myanmar', 'thai', 'srilanka', 'lunar'] as const).map(type => (
                   <button
-                    key={type}
+                    key={`cal-type-opt-${type}`}
                     onClick={() => onUpdate({ ...settings, calendarType: type })}
                     className="px-4 py-3 rounded-2xl text-xs font-bold capitalize transition-all"
                     style={settings.calendarType === type
@@ -259,7 +259,7 @@ export function SettingsModal({
               <div className="flex flex-col gap-2">
                 {['astrology', 'pa-auk', 'nauyana'].map(m => (
                   <button
-                    key={m}
+                    key={`dawn-opt-${m}`}
                     onClick={() => onUpdate({ ...settings, dawnMethod: m })}
                     className="px-4 py-3 rounded-2xl text-xs font-black uppercase tracking-widest flex justify-between items-center transition-all"
                     style={settings.dawnMethod === m
@@ -295,7 +295,7 @@ function SectionLabel({ children, inline, centered }: { children: React.ReactNod
   return (
     <h3
       className={cn(
-        "text-xs font-black uppercase tracking-widest",
+        "text-sm font-black uppercase tracking-widest",
         !inline && "px-1",
         centered && "text-center pt-2",
       )}
@@ -310,7 +310,7 @@ function FieldGroup({ label, children }: { label: string; children: React.ReactN
   return (
     <div className="space-y-2">
       <label
-        className="text-xs font-bold uppercase ml-1 block"
+        className="text-sm font-bold uppercase ml-1 block"
         style={{ color: 'var(--sm-text-muted)' }}
       >
         {label}

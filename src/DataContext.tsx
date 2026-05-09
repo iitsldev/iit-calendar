@@ -29,34 +29,17 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
     // Subscriptions
     const unsubEvents = FirebaseDataService.subscribeToEvents((data) => {
-      if (data.length > 0) setEvents(data);
+      setEvents(data);
+      setLoading(false);
     });
 
     const unsubReflections = FirebaseDataService.subscribeToReflections((data) => {
-      if (data.length > 0) setReflections(data);
+      setReflections(data);
     });
 
     const unsubConfig = FirebaseDataService.subscribeToConfig((data) => {
       if (data) setConfig(data);
     });
-
-    // Set initial from local so UI isn't blank while loading
-    const localEvents: AppEvent[] = [];
-    const categories = [
-      { key: 'srilanka_events', name: 'srilanka' },
-      { key: 'myanmar_events', name: 'myanmar' },
-      { key: 'thai_events', name: 'thai' },
-      { key: 'vietnam_events', name: 'vietnam' },
-      { key: 'IIT_2027_schedule', name: 'IIT_2027_schedule' }
-    ];
-    categories.forEach(cat => {
-      const items = (eventsData as any)[cat.key] || [];
-      items.forEach((item: any) => localEvents.push({ ...item, category: cat.name }));
-    });
-    setEvents(localEvents);
-    setReflections(reflectionsData as any);
-
-    setLoading(false);
 
     return () => {
       unsubscribeAuth();

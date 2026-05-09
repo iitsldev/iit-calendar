@@ -15,7 +15,7 @@ const reflectionsPath = path.resolve(process.cwd(), 'src/data/reflections.json')
 const reflectionsData = JSON.parse(fs.readFileSync(reflectionsPath, 'utf8'));
 
 const app = initializeApp(firebaseConfig);
-const db = getFirestore(app);
+const db = getFirestore(app, firebaseConfig.firestoreDatabaseId);
 
 async function seed() {
   console.log('Starting seed...');

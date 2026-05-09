@@ -9,8 +9,7 @@
     "today": "วันนี้",
     "language": "ภาษา",
     "appearance": "ลักษณะ",
-    "script": "อักษร",
-    "timezone": "เขตเวลา"
+    "script": "อักษร"
   },
   "calendar": {
     "yearSuffix": "พ.ศ.",
@@ -38,7 +37,6 @@
     "searchError": "ไม่พบสถานที่",
     "useCurrent": "ใช้ GPS ปัจจุบัน",
     "dawnCalculation": "การคำนวณรุ่งอรุณ",
-    "timezone": "ค่าชดเชยเขตเวลา",
     "dst": "เวลาออมแสง (DST)",
     "paliScript": "อักษรปาฬิ",
     "language": "ภาษาหลัก",
