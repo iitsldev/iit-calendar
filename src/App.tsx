@@ -164,7 +164,10 @@ export default function App() {
           />
         )}
         
-        {activeTab === 'meditation' && <MeditationScreen />}
+        <div className={cn(activeTab !== 'meditation' && "hidden")}>
+          <MeditationScreen />
+        </div>
+
         {activeTab === 'chants' && <PlaceholderTab icon={<Wind size={64} />} title={t('common.chants')} text="Digital library of sacred vibrations and Pali recitations." />}
         {activeTab === 'study' && <PlaceholderTab icon={<BookOpen size={64} />} title={t('common.study')} text="Deepen your understanding with digital manuscripts and teachings." />}
       </main>

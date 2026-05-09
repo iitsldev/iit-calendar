@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Play, Square, RotateCcw, Volume2, Activity, Award, Clock, Settings2, X } from 'lucide-react';
 import { cn } from '../lib/utils';
 import { format, differenceInDays, startOfDay, subDays, isSameDay } from 'date-fns';
+import { LocalNotifications } from '@capacitor/local-notifications';
 
 interface MeditationSession {
   id: string;
@@ -46,8 +47,24 @@ export function MeditationScreen() {
   const timerRef = useRef<number | null>(null);
   const lastTickRef = useRef<number>(Date.now());
   const lastIntervalBellRef = useRef<number>(0);
+  const notificationIdRef = useRef<number | null>(null);
 
   const audioCtxRef = useRef<AudioContext | null>(null);
+
+  useEffect(() => {
+    // Request notification permissions
+    const reqPerms = async () => {
+      try {
+        const status = await LocalNotifications.checkPermissions();
+        if (status.display !== 'granted') {
+          await LocalNotifications.requestPermissions();
+        }
+      } catch (e) {
+        console.error("Local notifications permission error", e);
+      }
+    };
+    reqPerms();
+  }, []);
 
   const initAudio = () => {
     if (!audioCtxRef.current) {
@@ -127,6 +144,7 @@ export function MeditationScreen() {
             if (next <= 0) {
               playBell(); // Start session bell
               lastIntervalBellRef.current = 0;
+              scheduleNotification(remainingMs);
               return 0;
             }
             return next;
@@ -160,11 +178,17 @@ export function MeditationScreen() {
     };
   }, [isRunning, totalDurationMs, intervalMs, countdown, settings.soundEnabled, settings.bellType]);
 
-  const handleComplete = () => {
+  const handleComplete = async () => {
     setIsRunning(false);
     setIsFinished(true);
     playBell(); // End bell
     
+    // Clear any pending notifications
+    if (notificationIdRef.current) {
+      await LocalNotifications.cancel({ notifications: [{ id: notificationIdRef.current }] });
+      notificationIdRef.current = null;
+    }
+
     // Save session
     const newSession: MeditationSession = {
       id: Date.now().toString(),
@@ -177,9 +201,19 @@ export function MeditationScreen() {
     localStorage.setItem('zen_meditation_stats', JSON.stringify(newStats));
   };
 
-  const handleStop = () => {
+  const handleStop = async () => {
     setIsRunning(false);
     
+    // Clear notification
+    if (notificationIdRef.current) {
+      try {
+        await LocalNotifications.cancel({ notifications: [{ id: notificationIdRef.current }] });
+      } catch (e) {
+        console.error("Cancel notification error", e);
+      }
+      notificationIdRef.current = null;
+    }
+
     const elapsedMs = totalDurationMs - remainingMs;
     const elapsedMin = Math.floor(elapsedMs / 60000);
     
@@ -198,7 +232,7 @@ export function MeditationScreen() {
     resetTimer();
   };
 
-  const toggleTimer = () => {
+  const toggleTimer = async () => {
     if (!isRunning && remainingMs === totalDurationMs) {
       // Starting fresh
       if (settings.delaySeconds > 0) {
@@ -206,6 +240,7 @@ export function MeditationScreen() {
       } else {
         playBell();
         lastIntervalBellRef.current = 0;
+        scheduleNotification(remainingMs);
       }
       setIsRunning(true);
     } else if (isRunning) {
@@ -216,19 +251,52 @@ export function MeditationScreen() {
         resetTimer();
         setIsRunning(true);
         if (settings.delaySeconds > 0) setCountdown(settings.delaySeconds);
-        else playBell();
+        else {
+          playBell();
+          scheduleNotification(totalDurationMs);
+        }
       } else {
         setIsRunning(true);
+        scheduleNotification(remainingMs);
       }
     }
   };
 
-  const resetTimer = () => {
+  const scheduleNotification = async (ms: number) => {
+    if (!settings.soundEnabled) return;
+    
+    try {
+      // Use a consistent ID or random
+      const id = Math.floor(Math.random() * 1000000);
+      notificationIdRef.current = id;
+      
+      await LocalNotifications.schedule({
+        notifications: [
+          {
+            title: "Meditation Complete",
+            body: "Your session has ended. May you be peaceful.",
+            id: id,
+            schedule: { at: new Date(Date.now() + ms) },
+            sound: 'bell.wav', // Platform will try to find this or use default
+          }
+        ]
+      });
+    } catch (e) {
+      console.error("Schedule notification error", e);
+    }
+  };
+
+  const resetTimer = async () => {
     setIsRunning(false);
     setIsFinished(false);
     setRemainingMs(totalDurationMs);
     setCountdown(0);
     lastIntervalBellRef.current = 0;
+    
+    if (notificationIdRef.current) {
+      await LocalNotifications.cancel({ notifications: [{ id: notificationIdRef.current }] });
+      notificationIdRef.current = null;
+    }
   };
 
   const today = startOfDay(new Date());
