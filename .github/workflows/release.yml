@@ -10,9 +10,22 @@ on:
         description: 'Release Version (e.g. v1.0.0)'
         required: true
         default: 'v1.0.0'
+      build_web:
+        description: 'Build Web Zip'
+        type: boolean
+        default: true
+      build_android:
+        description: 'Build Android APK'
+        type: boolean
+        default: false
+      build_desktop:
+        description: 'Build Desktop Apps'
+        type: boolean
+        default: false
 
 jobs:
   build-web:
+    if: github.event_name == 'push' || github.event.inputs.build_web == 'true'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -33,6 +46,7 @@ jobs:
           path: web-build.zip
 
   build-android:
+    if: github.event_name == 'push' || github.event.inputs.build_android == 'true'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -53,7 +67,10 @@ jobs:
         run: npx cap sync android
       - name: Build APK
         working-directory: android
-        run: chmod +x gradlew && ./gradlew assembleDebug
+        run: |
+          rm -f gradle/wrapper/gradle-wrapper.jar
+          gradle wrapper
+          ./gradlew assembleDebug
       - name: Upload Android Artifact
         uses: actions/upload-artifact@v4
         with:
@@ -61,6 +78,7 @@ jobs:
           path: android/app/build/outputs/apk/debug/app-debug.apk
 
   build-desktop:
+    if: github.event_name == 'push' || github.event.inputs.build_desktop == 'true'
     strategy:
       matrix:
         os: [macos-latest, windows-latest]
@@ -73,6 +91,8 @@ jobs:
           node-version: 22
       - name: Install Rust
         uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: x86_64-apple-darwin,aarch64-apple-darwin
       - name: Install Dependencies
         run: npm ci
       - name: Build Frontend
@@ -83,7 +103,13 @@ jobs:
           node -e "require('fs').writeFileSync('public/app-icon.png', Buffer.from('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII=', 'base64'))"
           npx @tauri-apps/cli icon public/app-icon.png || true
       - name: Build Tauri
-        run: npx @tauri-apps/cli build
+        run: |
+          if [ "${{ matrix.os }}" == "macos-latest" ]; then
+            npx @tauri-apps/cli build --target universal-apple-darwin
+          else
+            npx @tauri-apps/cli build
+          fi
+        shell: bash
       - name: Upload Mac Artifact
         if: matrix.os == 'macos-latest'
         uses: actions/upload-artifact@v4
@@ -99,27 +125,32 @@ jobs:
 
   create-release:
     needs: [build-web, build-android, build-desktop]
+    if: always() && !contains(needs.*.result, 'failure') && !contains(needs.*.result, 'cancelled')
     runs-on: ubuntu-latest
     permissions:
       contents: write
     steps:
       - name: Download Web Artifact
         uses: actions/download-artifact@v4
+        continue-on-error: true
         with:
           name: web-build
           path: dist-release
       - name: Download Android Artifact
         uses: actions/download-artifact@v4
+        continue-on-error: true
         with:
           name: android-apk
           path: dist-release
       - name: Download Mac Artifact
         uses: actions/download-artifact@v4
+        continue-on-error: true
         with:
           name: mac-app
           path: dist-release
       - name: Download Windows Artifact
         uses: actions/download-artifact@v4
+        continue-on-error: true
         with:
           name: win-app
           path: dist-release
