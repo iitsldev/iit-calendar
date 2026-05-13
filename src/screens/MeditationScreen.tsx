@@ -51,38 +51,47 @@ export function MeditationScreen() {
   const audioCtxRef = useRef<AudioContext | null>(null);
 
   useEffect(() => {
-    notificationService.requestPermissions();
-    
-    // Check for existing session
-    const savedActive = localStorage.getItem('active_meditation');
-    const justFinished = localStorage.getItem('meditation_just_finished');
+    const init = async () => {
+      await notificationService.requestPermissions();
+      
+      // Before checking our local state, let the service reconcile any sessions 
+      // that might have finished while the app was in the background or killed.
+      await notificationService.recheckMeditationSession();
+      
+      // Check for existing session
+      const savedActive = localStorage.getItem('active_meditation');
+      const justFinished = localStorage.getItem('meditation_just_finished');
 
-    if (justFinished) {
-      const data = JSON.parse(justFinished);
-      // If it was finished recently (last 1 hour), show stats
-      if (Date.now() - data.at < 3600000) {
-        const savedStats = localStorage.getItem('zen_meditation_stats');
-        if (savedStats) setStats(JSON.parse(savedStats));
-        // Reset to initial state but don't auto-run
-        setRemainingMs(totalDurationMs);
-        setIsRunning(false);
+      if (justFinished) {
+        const data = JSON.parse(justFinished);
+        // If it was finished recently (last 1 hour), show stats
+        if (Date.now() - data.at < 3600000) {
+          const savedStats = localStorage.getItem('zen_meditation_stats');
+          if (savedStats) setStats(JSON.parse(savedStats));
+          // Reset to initial state but don't auto-run
+          setRemainingMs(totalDurationMs);
+          setIsRunning(false);
+          setIsFinished(true); // Show finished state briefly
+        }
+        localStorage.removeItem('meditation_just_finished');
+      } else if (savedActive) {
+        const active: ActiveMeditation = JSON.parse(savedActive);
+        const elapsed = Date.now() - active.startTime;
+        if (elapsed < active.durationMs) {
+          setRemainingMs(active.durationMs - elapsed);
+          setIsRunning(true);
+          lastIntervalBellRef.current = Math.floor(elapsed / intervalMs);
+        } else {
+          // Handled by recheckMeditationSession above, but fallback:
+          const savedStats = localStorage.getItem('zen_meditation_stats');
+          if (savedStats) setStats(JSON.parse(savedStats));
+          setRemainingMs(totalDurationMs);
+          setIsRunning(false);
+        }
       }
-      localStorage.removeItem('meditation_just_finished');
-    } else if (savedActive) {
-      const active: ActiveMeditation = JSON.parse(savedActive);
-      const elapsed = Date.now() - active.startTime;
-      if (elapsed < active.durationMs) {
-        setRemainingMs(active.durationMs - elapsed);
-        setIsRunning(true);
-        lastIntervalBellRef.current = Math.floor(elapsed / intervalMs);
-      } else {
-        // notificationService.recheckMeditationSession() in App.tsx handles logging
-        const savedStats = localStorage.getItem('zen_meditation_stats');
-        if (savedStats) setStats(JSON.parse(savedStats));
-        setRemainingMs(totalDurationMs);
-        setIsRunning(false);
-      }
-    }
+    };
+
+    init();
   }, []);
 
   const initAudio = () => {
