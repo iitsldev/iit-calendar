@@ -90,6 +90,7 @@ export function CalendarScreen({
   const [sunTimesExpanded, setSunTimesExpanded] = React.useState(false);
   const [paliExpanded, setPaliExpanded] = React.useState(false);
   const [isEventsExpanded, setIsEventsExpanded] = React.useState(false);
+  const [reflectionOffset, setReflectionOffset] = React.useState(0);
 
   const monthDays = React.useMemo(() => {
     const start = startOfMonth(currentDate);
@@ -157,9 +158,14 @@ export function CalendarScreen({
     if (firebaseReflections.length === 0) return { quote: "Loading...", author: "..." };
     // Deterministic "random" based on date
     const seed = selectedDate.getFullYear() * 10000 + (selectedDate.getMonth() + 1) * 100 + selectedDate.getDate();
-    const index = seed % firebaseReflections.length;
+    const baseIndex = seed % firebaseReflections.length;
+    const index = (baseIndex + reflectionOffset) % firebaseReflections.length;
     return firebaseReflections[index];
-  }, [selectedDate, firebaseReflections]);
+  }, [selectedDate, firebaseReflections, reflectionOffset]);
+
+  React.useEffect(() => {
+    setReflectionOffset(0);
+  }, [selectedDate]);
 
   const prevMonth = () => setCurrentDate(subMonths(currentDate, 1));
   const nextMonth = () => setCurrentDate(addMonths(currentDate, 1));
@@ -172,10 +178,10 @@ export function CalendarScreen({
   };
 
   return (
-    <div className="flex flex-col gap-8 pb-10">
+    <div className="flex flex-col gap-4 pb-10">
       {/* ── Calendar Grid Section ─────────────────────────────────────────── */}
       <section
-        className="glass-card rounded-[2.5rem] p-8 pt-10 relative overflow-hidden shadow-sm"
+        className="glass-card rounded-[2.5rem] p-4 pt-6 relative overflow-hidden shadow-sm"
         style={{
           // Light: white-ish frosted glass  |  Dark: dark frosted glass
           background: 'color-mix(in srgb, var(--cal-surface) 100%, transparent)',
@@ -221,57 +227,52 @@ export function CalendarScreen({
           }
         `}</style>
 
-        <header className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-6 mb-10 px-2 relative z-10">
-          <div className="flex flex-col">
+        <header className="flex flex-col gap-4 mt-4 mb-8 px-2 relative z-10">
+          <div className="flex justify-between items-center w-full">
             <h2
-              className="font-serif text-4xl sm:text-5xl font-bold leading-none flex items-baseline gap-3"
+              className="font-serif text-3xl sm:text-4xl font-bold leading-none flex items-baseline gap-3"
               style={{ color: 'var(--cal-text-primary)' }}
             >
               {format(currentDate, 'MMMM')}
               <span
-                className="italic text-2xl sm:text-3xl"
+                className="italic text-xl sm:text-2xl"
                 style={{ color: 'var(--cal-accent)' }}
               >
                 {format(currentDate, 'yyyy')}
               </span>
             </h2>
-          </div>
-
-          <div className="flex items-center gap-3">
-            {/* Today nav */}
             <button
               onClick={goToToday}
-              className="px-4 py-2 h-10 rounded-2xl shadow-sm text-sm font-black uppercase tracking-widest transition-colors active:scale-95 flex flex-row items-center"
+              className="px-3 py-1.5 h-9 rounded-2xl shadow-sm text-xs font-black uppercase tracking-widest transition-colors active:scale-95 flex items-center"
               style={{ background: 'var(--cal-surface)', border: '1px solid var(--cal-border)', color: 'var(--cal-accent)' }}
             >
               {t('common.today')}
             </button>
+          </div>
 
+          <div className="flex items-center gap-3">
             {/* Year nav */}
             <div
-              className="flex items-center p-1.5 rounded-2xl shadow-sm"
+              className="flex items-center p-1 rounded-2xl shadow-sm"
               style={{ background: 'var(--cal-surface)', border: '1px solid var(--cal-border)' }}
             >
               <NavBtn onClick={prevYear} small title="Previous Year"><ChevronLeft size="1.2em" className="stroke-[3px]"/></NavBtn>
-              <div className="px-2 flex flex-col items-center">
-
-                <span
-                  className="text-sm font-bold font-mono"
-                  style={{ color: 'var(--cal-text-primary)' }}
-                >
-                  {format(currentDate, 'yyyy')}
-                </span>
-              </div>
+              <span className="px-1 text-xs font-bold font-mono" style={{ color: 'var(--cal-text-primary)' }}>
+                {format(currentDate, 'yyyy')}
+              </span>
               <NavBtn onClick={nextYear} small title="Next Year"><ChevronRight size="1.2em" className="stroke-[3px]"/></NavBtn>
             </div>
 
             {/* Month nav */}
             <div
-              className="flex items-center p-1.5 rounded-2xl shadow-sm"
+              className="flex items-center p-1 rounded-xl shadow-sm"
               style={{ background: 'var(--cal-surface)', border: '1px solid var(--cal-border)' }}
             >
-              <NavBtn onClick={prevMonth} title="Previous Month"><ChevronLeft size="1.4em"/></NavBtn>
-              <NavBtn onClick={nextMonth} title="Next Month"><ChevronRight size="1.4em"/></NavBtn>
+              <NavBtn onClick={prevMonth} title="Previous Month"><ChevronLeft size="1.3em"/></NavBtn>
+              <span className="px-1 text-xs font-black uppercase tracking-widest" style={{ color: 'var(--cal-text-primary)' }}>
+                {format(currentDate, 'MMM')}
+              </span>
+              <NavBtn onClick={nextMonth} title="Next Month"><ChevronRight size="1.3em"/></NavBtn>
             </div>
           </div>
         </header>
@@ -406,13 +407,20 @@ export function CalendarScreen({
           {/* Uposatha Alert */}
           {nextUposatha && (
             <div
-              className="glass-card rounded-[2rem] p-6 relative overflow-hidden"
+              className="glass-card rounded-[2rem] p-4 relative overflow-hidden"
               style={{
                 background: 'color-mix(in srgb, var(--cal-surface) 90%, var(--cal-lotus-muted))',
                 borderColor: 'var(--cal-lotus-muted)',
                 boxShadow: `0 10px 30px var(--cal-lotus-shadow)`,
               }}
             >
+              <div className="flex items-center gap-2 mb-4 px-1 opacity-60">
+                <CalendarIcon size={14} className="text-saffron" />
+                <span className="text-[10px] font-black uppercase tracking-[0.2em]" style={{ color: 'var(--cal-text-primary)' }}>
+                  Upcoming Uposatha
+                </span>
+              </div>
+
               <div className="flex items-center gap-5 relative z-10">
                 <div
                   className="w-16 h-16 rounded-3xl flex items-center justify-center shadow-inner relative overflow-hidden"
@@ -519,7 +527,7 @@ export function CalendarScreen({
 
       {/* ── Pali & Vassa Details ─────────────────────────────────────────────── */}
       <section 
-        className="glass-card rounded-[2.5rem] p-6 space-y-6 shadow-sm border border-white/80 dark:border-slate-800"
+        className="glass-card rounded-[2.5rem] p-4 space-y-6 shadow-sm border border-white/80 dark:border-slate-800"
         style={{
           background: 'var(--cal-surface)',
           borderColor: 'var(--cal-border)',
@@ -555,7 +563,7 @@ export function CalendarScreen({
 
           {/* Pali Recitation */}
           <div
-            className="glass-card rounded-[2.5rem] p-8 space-y-10 relative overflow-hidden shadow-sm"
+            className="glass-card rounded-[2.5rem] p-4 space-y-10 relative overflow-hidden shadow-sm"
             style={{
               background: 'var(--cal-surface)',
               border: '1px solid var(--cal-border)',
@@ -600,7 +608,7 @@ export function CalendarScreen({
           {/* Schedule & Events Section */}
           {Object.keys(todaysEvents).length > 0 && (
             <div 
-              className="glass-card rounded-[2.5rem] p-6 space-y-4 shadow-sm border border-white/80 dark:border-slate-800"
+              className="glass-card rounded-[2.5rem] p-4 space-y-4 shadow-sm border border-white/80 dark:border-slate-800"
               style={{ background: 'var(--cal-surface)', borderColor: 'var(--cal-border)' }}
             >
               <button 
@@ -667,7 +675,7 @@ export function CalendarScreen({
 
           {/* Daily Reflection Card */}
           <div 
-            className="glass-card rounded-[2.5rem] p-8 space-y-6 relative overflow-hidden shadow-sm text-center"
+            className="glass-card rounded-[2.5rem] p-4 space-y-6 relative overflow-hidden shadow-sm text-center"
             style={{ 
               background: 'var(--cal-surface)', 
               borderColor: 'var(--cal-border)',
@@ -687,6 +695,16 @@ export function CalendarScreen({
               <span className="text-xs font-black uppercase tracking-widest opacity-40" style={{ color: 'var(--cal-text-muted)' }}>
                 {reflection.source}
               </span>
+            </div>
+
+            <div className="flex justify-center pt-2">
+              <button
+                onClick={() => setReflectionOffset(prev => prev + 1)}
+                className="px-4 py-2 rounded-2xl text-[10px] font-black uppercase tracking-widest transition-all active:scale-95"
+                style={{ background: 'var(--cal-surface)', border: '1px solid var(--cal-border)', color: 'var(--cal-accent)' }}
+              >
+                Next Quote
+              </button>
             </div>
             
             <div 
@@ -768,11 +786,11 @@ function VassaItem({ label, entry, pavarana }: { label: string; entry: Date | nu
       <span className="text-sm font-black uppercase tracking-tighter" style={{ color: 'var(--cal-accent)' }}>{label}</span>
       <div className="space-y-1">
         <div className="flex justify-between items-center">
-          <span className="text-sm font-bold uppercase" style={{ color: 'var(--cal-text-muted)' }}>Entry</span>
+          <span className="text-sm" style={{ color: 'var(--cal-text-muted)' }}>Entry</span>
           <span className="text-sm font-bold" style={{ color: 'var(--cal-text-primary)' }}>{format(entry, 'MMM d')}</span>
         </div>
         <div className="flex justify-between items-center">
-          <span className="text-sm font-bold uppercase" style={{ color: 'var(--cal-text-muted)' }}>Pavāraṇā</span>
+          <span className="text-sm" style={{ color: 'var(--cal-text-muted)' }}>Pavāraṇā</span>
           <span className="text-sm font-bold" style={{ color: 'var(--cal-text-primary)' }}>{format(pavarana, 'MMM d')}</span>
         </div>
       </div>

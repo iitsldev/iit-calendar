@@ -1,7 +1,7 @@
 export type CalendarType = 'myanmar' | 'thai' | 'srilanka' | 'lunar';
 export type PaliScript = 'roman' | 'sinhala' | 'burmese' | 'thai';
 export type ThemeColor = 'saffron' | 'indigo' | 'emerald' | 'rose' | 'slate';
-export type FontSize = 'normal' | 'large' | 'xlarge';
+export type FontSize = number;
 
 export interface Settings {
   calendarType: CalendarType;
@@ -14,4 +14,5 @@ export interface Settings {
   themeColor: ThemeColor;
   darkMode: boolean;
   fontSize: FontSize;
+  solarNoonBell: boolean;
 }

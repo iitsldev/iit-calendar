@@ -21,6 +21,8 @@ import { SettingsModal } from './components/SettingsModal';
 import { CalendarScreen } from './screens/CalendarScreen';
 import { MeditationScreen } from './screens/MeditationScreen';
 import { CSS_VARS } from './theme/index';
+import { notificationService } from './services/NotificationService';
+import { App as CapApp } from '@capacitor/app';
 
 export default function App() {
   const { t } = useI18n();
@@ -40,7 +42,8 @@ export default function App() {
         paliScript: 'roman',
         themeColor: 'saffron',
         darkMode: false,
-        fontSize: 'normal',
+        fontSize: 16,
+        solarNoonBell: false,
         ...parsed
       };
     }
@@ -53,7 +56,8 @@ export default function App() {
       paliScript: 'roman',
       themeColor: 'saffron',
       darkMode: false,
-      fontSize: 'normal',
+      fontSize: 16,
+      solarNoonBell: false,
     };
   });
 
@@ -65,13 +69,7 @@ export default function App() {
     root.classList.toggle('dark', settings.darkMode);
     
     // Apply font size
-    if (settings.fontSize === 'xlarge') {
-      root.style.fontSize = '20px';
-    } else if (settings.fontSize === 'large') {
-      root.style.fontSize = '18px';
-    } else {
-      root.style.fontSize = '16px';
-    }
+    root.style.fontSize = `${settings.fontSize}px`;
     
     // Set theme colors (Tailwind variables)
     const colors: Record<string, string> = {
@@ -83,7 +81,26 @@ export default function App() {
     };
     
     root.style.setProperty('--saffron', colors[settings.themeColor]);
+
+    // Refresh notifications when settings change
+    notificationService.refreshAll(settings);
   }, [settings]);
+
+  useEffect(() => {
+    // Initial refresh
+    notificationService.refreshAll(settings);
+
+    // Listen for app state changes (resume)
+    const listener = CapApp.addListener('appStateChange', ({ isActive }) => {
+      if (isActive) {
+        notificationService.refreshAll(settings);
+      }
+    });
+
+    return () => {
+      listener.then(l => l.remove());
+    };
+  }, []);
 
   const [currentDate, setCurrentDate] = React.useState(new Date());
   const [selectedDate, setSelectedDate] = React.useState(new Date());
@@ -126,9 +143,9 @@ export default function App() {
         <div className="flex items-center gap-4">
           <motion.div 
             initial={{ scale: 0.9, rotate: -5 }} animate={{ scale: 1, rotate: 0 }}
-            className="w-12 h-12 rounded-2xl bg-white dark:bg-slate-800 flex items-center justify-center text-saffron shadow-lg shadow-saffron/5 border border-white dark:border-slate-700"
+            className="w-18 h-18 flex items-center justify-center overflow-hidden"
           >
-            <Wind size={28} />
+            <img src="/logo.png" alt="IIT Logo" className="w-15 h-15 object-contain" />
           </motion.div>
           <div>
             <h1 className="font-serif text-3xl font-bold tracking-tight leading-none italic" style={{ color: 'var(--text-primary)' }}>IIT Calendar</h1>
@@ -151,7 +168,7 @@ export default function App() {
         </button>
       </header>
 
-      <main className="flex-1 px-6 pb-32">
+      <main className="flex-1 px-3 pb-32">
         {activeTab === 'calendar' && (
           <CalendarScreen 
             settings={settings}
@@ -215,8 +232,8 @@ function PlaceholderTab({ icon, title, text }: { icon: React.ReactNode, title: s
       initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }}
       className="flex flex-col items-center justify-center py-20 text-center"
     >
-      <div className="w-32 h-32 rounded-full bg-saffron/5 flex items-center justify-center text-saffron/20 mb-8">
-        {React.isValidElement(icon) ? React.cloneElement(icon as React.ReactElement, { size: '4em' } as any) : icon}
+      <div className="w-48 h-48 flex items-center justify-center mb-8 overflow-hidden">
+        <img src="/logo.png" alt="IIT Logo" className="w-36 h-36 object-contain opacity-20" />
       </div>
       <h2 className="font-serif text-3xl font-bold text-slate-800 mb-4">{title}</h2>
       <p className="text-slate-400 max-w-sm leading-relaxed">{text}</p>

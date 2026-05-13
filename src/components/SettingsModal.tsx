@@ -109,21 +109,31 @@ export function SettingsModal({
 
             {/* 1.5 Font Size */}
             <section className="space-y-4">
-              <SectionLabel>Font Size</SectionLabel>
-              <div className="grid grid-cols-3 gap-3">
-                {(['normal', 'large', 'xlarge'] as const).map(size => (
-                  <button
-                    key={`size-opt-${size}`}
-                    onClick={() => onUpdate({ ...settings, fontSize: size })}
-                    className="px-4 py-3 rounded-2xl text-sm font-bold capitalize transition-all"
-                    style={settings.fontSize === size
-                      ? { background: 'var(--sm-accent)', color: 'white', border: '1px solid var(--sm-accent)', boxShadow: `0 4px 16px var(--sm-accent-shadow)` }
-                      : { background: 'transparent', border: '1px solid var(--sm-input-border)', color: 'var(--sm-text-secondary)' }
-                    }
-                  >
-                    {size}
-                  </button>
-                ))}
+              <div className="flex justify-between items-center px-1">
+                <SectionLabel>Font Size</SectionLabel>
+                <span className="text-sm font-bold opacity-60" style={{ color: 'var(--sm-text-primary)' }}>
+                   {settings.fontSize}px
+                </span>
+              </div>
+              <div className="px-1">
+                <input
+                  type="range"
+                  min="14"
+                  max="24"
+                  step="1"
+                  value={settings.fontSize}
+                  onChange={(e) => onUpdate({ ...settings, fontSize: parseInt(e.target.value) })}
+                  className="w-full h-1.5 rounded-lg appearance-none cursor-pointer"
+                  style={{ 
+                    background: 'var(--sm-input-border)',
+                    accentColor: 'var(--sm-accent)'
+                  }}
+                />
+                <div className="flex justify-between mt-2 text-[10px] font-black uppercase tracking-widest text-slate-400">
+                  <span>Small</span>
+                  <span>Normal</span>
+                  <span>Large</span>
+                </div>
               </div>
             </section>
 
@@ -197,7 +207,22 @@ export function SettingsModal({
             {/* 3. Appearance */}
             <section className="space-y-4">
               <SectionLabel>{t('common.appearance')}</SectionLabel>
-              <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-6 px-1">
+              <div className="flex flex-col gap-4 px-1">
+                <div className="flex justify-between items-center w-full">
+                  <span className="text-sm font-bold" style={{ color: 'var(--sm-text-secondary)' }}>Solar Noon Bell</span>
+                  <button
+                    onClick={() => onUpdate({ ...settings, solarNoonBell: !settings.solarNoonBell })}
+                    className="w-12 h-6 rounded-full relative transition-colors"
+                    style={{ backgroundColor: settings.solarNoonBell ? 'var(--sm-accent)' : 'var(--sm-input-border)' }}
+                  >
+                    <motion.div 
+                      animate={{ x: settings.solarNoonBell ? 24 : 4 }}
+                      className="absolute top-1 w-4 h-4 rounded-full bg-white shadow-sm"
+                    />
+                  </button>
+                </div>
+
+                <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-6">
                 {/* Theme color swatches */}
                 <div className="flex gap-2">
                   {(['saffron', 'indigo', 'emerald', 'rose', 'slate'] as const).map(color => (
@@ -234,7 +259,8 @@ export function SettingsModal({
                   {settings.darkMode ? "Light Mode" : "Dark Mode"}
                 </button>
               </div>
-            </section>
+            </div>
+          </section>
 
             {/* 4. Tradition & Calculation */}
             <section className="space-y-4 pb-4">

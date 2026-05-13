@@ -142,7 +142,7 @@ export function SunDetails({
   ];
 
   return (
-    <div className="glass-card rounded-[2rem] p-6 bg-white/50 dark:bg-slate-900/40 border-white/60 dark:border-slate-800 overflow-hidden">
+    <div className="glass-card rounded-[2rem] p-2 bg-white/50 dark:bg-slate-900/40 border-white/60 dark:border-slate-800 overflow-hidden shadow-sm">
       <div className="flex justify-between items-center mb-6">
         <div className="flex items-center gap-2">
           <Clock size="1.2em" className="text-saffron dark:text-gold" />
