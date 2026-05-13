@@ -64,7 +64,7 @@ jobs:
       - name: Build Web
         run: npm run build
       - name: Generate Icons
-        run: node generate-icons.js
+        run: node generate-icons.cjs
       - name: Sync Capacitor
         run: npx cap sync android
       - name: Build APK
@@ -100,7 +100,7 @@ jobs:
       - name: Build Frontend
         run: npm run build
       - name: Fix Tauri Icons
-        run: node generate-icons.js
+        run: node generate-icons.cjs
         shell: bash
       - name: Build Tauri
         run: |
