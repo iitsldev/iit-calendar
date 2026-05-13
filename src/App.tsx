@@ -143,9 +143,9 @@ export default function App() {
         <div className="flex items-center gap-4">
           <motion.div 
             initial={{ scale: 0.9, rotate: -5 }} animate={{ scale: 1, rotate: 0 }}
-            className="w-18 h-18 flex items-center justify-center overflow-hidden"
+            className="w-[72px] h-[72px] flex items-center justify-center overflow-hidden"
           >
-            <img src="/logo.png" alt="IIT Logo" className="w-15 h-15 object-contain" />
+            <img src="/logo.png" alt="IIT Logo" className="w-[64px] h-[64px] object-contain" />
           </motion.div>
           <div>
             <h1 className="font-serif text-3xl font-bold tracking-tight leading-none italic" style={{ color: 'var(--text-primary)' }}>IIT Calendar</h1>
@@ -232,8 +232,8 @@ function PlaceholderTab({ icon, title, text }: { icon: React.ReactNode, title: s
       initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }}
       className="flex flex-col items-center justify-center py-20 text-center"
     >
-      <div className="w-48 h-48 flex items-center justify-center mb-8 overflow-hidden">
-        <img src="/logo.png" alt="IIT Logo" className="w-36 h-36 object-contain opacity-20" />
+      <div className="w-[192px] h-[192px] flex items-center justify-center mb-8 overflow-hidden">
+        <img src="/logo.png" alt="IIT Logo" className="w-[144px] h-[144px] object-contain opacity-20" />
       </div>
       <h2 className="font-serif text-3xl font-bold text-slate-800 mb-4">{title}</h2>
       <p className="text-slate-400 max-w-sm leading-relaxed">{text}</p>

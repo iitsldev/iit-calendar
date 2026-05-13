@@ -63,6 +63,8 @@ jobs:
         run: npm ci
       - name: Build Web
         run: npm run build
+      - name: Generate Icons
+        run: node generate-icons.js
       - name: Sync Capacitor
         run: npx cap sync android
       - name: Build APK
@@ -98,10 +100,8 @@ jobs:
       - name: Build Frontend
         run: npm run build
       - name: Fix Tauri Icons
-        run: |
-          mkdir -p public
-          node -e "require('fs').writeFileSync('public/app-icon.png', Buffer.from('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII=', 'base64'))"
-          npx @tauri-apps/cli icon public/app-icon.png || true
+        run: node generate-icons.js
+        shell: bash
       - name: Build Tauri
         run: |
           if [ "${{ matrix.os }}" == "macos-latest" ]; then

@@ -1,6 +1,29 @@
 const fs = require('fs');
-const buffer = Buffer.from('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsQAAA7EAZUrDhsAAAANSURBVBhXYzh8+PB/AAffA0nNPuPnAAAAAElFTkSuQmCC', 'base64');
-fs.writeFileSync('src-tauri/icons/32x32.png', buffer);
-fs.writeFileSync('src-tauri/icons/128x128.png', buffer);
-fs.writeFileSync('src-tauri/icons/128x128@2x.png', buffer);
-fs.writeFileSync('src-tauri/icons/icon.png', buffer);
+const path = require('path');
+const { execSync } = require('child_process');
+
+async function main() {
+    const sourceLogo = path.join(__dirname, 'public', 'logo.png');
+    
+    if (fs.existsSync(sourceLogo)) {
+        console.log('Generating icons from public/logo.png...');
+        
+        // Tauri icons
+        try {
+            execSync('npx @tauri-apps/cli icon public/logo.png', { stdio: 'inherit' });
+        } catch (e) {
+            console.error('Failed to generate Tauri icons:', e.message);
+        }
+
+        // Capacitor icons (if platforms exist)
+        try {
+            execSync('npx @capacitor/assets generate --icon public/logo.png', { stdio: 'inherit' });
+        } catch (e) {
+            console.error('Failed to generate Capacitor icons (this is normal if platforms are not initialized):', e.message);
+        }
+    } else {
+        console.log('public/logo.png not found, skipping icon generation.');
+    }
+}
+
+main();
