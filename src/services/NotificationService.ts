@@ -40,6 +40,30 @@ class NotificationService {
   public async refreshAll(settings: Settings) {
     await this.requestPermissions();
     
+    // Create channels for Android
+    try {
+      if (typeof LocalNotifications.createChannel === 'function') {
+        await LocalNotifications.createChannel({
+          id: 'meditation',
+          name: 'Meditation',
+          description: 'Meditation completion alerts',
+          sound: 'bell.wav',
+          importance: 5,
+          visibility: 1
+        });
+        await LocalNotifications.createChannel({
+          id: 'solar_noon',
+          name: 'Solar Noon',
+          description: 'Solar noon alerts',
+          sound: 'bell.wav',
+          importance: 4,
+          visibility: 1
+        });
+      }
+    } catch (e) {
+      console.warn("Channel creation error (this is normal on web/iOS)", e);
+    }
+    
     // 1. Handle Solar Noon
     await this.scheduleSolarNoonBells(settings);
     
@@ -75,9 +99,8 @@ class NotificationService {
           id: NotificationId.SOLAR_NOON_START + i,
           title: "Solar Noon",
           body: "The sun has reached its peak.",
-          schedule: { at: noon },
+          schedule: { at: noon, allowWhileIdle: true },
           sound: 'bell.wav',
-          smallIcon: 'ic_stat_name',
           channelId: 'solar_noon'
         });
       }
@@ -114,7 +137,8 @@ class NotificationService {
           body: "Your session has ended. May you be peaceful.",
           schedule: { at: new Date(Date.now() + ms) },
           sound: 'bell.wav',
-          channelId: 'meditation'
+          channelId: 'meditation',
+          extra: { type: 'meditation_complete' }
         }
       ]
     });
@@ -135,8 +159,14 @@ class NotificationService {
     
     if (elapsed >= active.durationMs) {
       // Session finished while app was dead
-      this.logFinishedSession(active.durationMs);
+      this.logFinishedSession(active.durationMs, active.startTime);
       localStorage.removeItem('active_meditation');
+      
+      // Store a temporary "just_finished" flag for the UI
+      localStorage.setItem('meditation_just_finished', JSON.stringify({
+        durationMs: active.durationMs,
+        at: now
+      }));
     } else {
       // Session still ongoing, refresh notification just in case
       const remaining = active.durationMs - elapsed;
@@ -149,23 +179,28 @@ class NotificationService {
             body: "Your session has ended. May you be peaceful.",
             schedule: { at: new Date(Date.now() + remaining) },
             sound: 'bell.wav',
-            channelId: 'meditation'
+            channelId: 'meditation',
+            extra: { type: 'meditation_complete' }
           }
         ]
       });
     }
   }
 
-  private logFinishedSession(durationMs: number) {
+  private logFinishedSession(durationMs: number, startTime?: number) {
     const durationMin = Math.floor(durationMs / 60000);
     if (durationMin < 1) return;
 
     const savedStats = localStorage.getItem('zen_meditation_stats');
     const stats = savedStats ? JSON.parse(savedStats) : { sessions: [] };
     
+    const sessionId = startTime ? startTime.toString() : Date.now().toString();
+    const exists = stats.sessions.some((s: any) => s.id === sessionId);
+    if (exists) return;
+
     const newSession = {
-      id: Date.now().toString(),
-      date: new Date().toISOString(),
+      id: sessionId,
+      date: new Date(startTime || Date.now()).toISOString(),
       durationMin: durationMin,
     };
     

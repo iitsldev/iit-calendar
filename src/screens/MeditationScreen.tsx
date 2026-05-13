@@ -55,7 +55,20 @@ export function MeditationScreen() {
     
     // Check for existing session
     const savedActive = localStorage.getItem('active_meditation');
-    if (savedActive) {
+    const justFinished = localStorage.getItem('meditation_just_finished');
+
+    if (justFinished) {
+      const data = JSON.parse(justFinished);
+      // If it was finished recently (last 1 hour), show stats
+      if (Date.now() - data.at < 3600000) {
+        const savedStats = localStorage.getItem('zen_meditation_stats');
+        if (savedStats) setStats(JSON.parse(savedStats));
+        // Reset to initial state but don't auto-run
+        setRemainingMs(totalDurationMs);
+        setIsRunning(false);
+      }
+      localStorage.removeItem('meditation_just_finished');
+    } else if (savedActive) {
       const active: ActiveMeditation = JSON.parse(savedActive);
       const elapsed = Date.now() - active.startTime;
       if (elapsed < active.durationMs) {
@@ -64,9 +77,10 @@ export function MeditationScreen() {
         lastIntervalBellRef.current = Math.floor(elapsed / intervalMs);
       } else {
         // notificationService.recheckMeditationSession() in App.tsx handles logging
-        // We just reload stats
         const savedStats = localStorage.getItem('zen_meditation_stats');
         if (savedStats) setStats(JSON.parse(savedStats));
+        setRemainingMs(totalDurationMs);
+        setIsRunning(false);
       }
     }
   }, []);
