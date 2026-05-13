@@ -6,13 +6,16 @@ import {
   Wind, 
   Timer, 
   BookOpen, 
-  Info
+  Info,
+  User as UserIcon
 } from 'lucide-react';
 import { ThaiCalendar } from './lib/calendar/ThaiCalendar';
 import { MyanmarCalendar } from './lib/calendar/MyanmarCalendar';
 import { AstroLunarCalendar } from './lib/calendar/AstroLunarCalendar';
 import { SunTimesCalculator } from './lib/calendar/SunTimesCalculator';
 import { cn } from './lib/utils';
+import { auth } from './lib/firebase';
+import { onAuthStateChanged, User } from 'firebase/auth';
 
 // New specialized components and hooks
 import { Settings, CalendarType } from './types';
@@ -20,8 +23,10 @@ import { useI18n } from './hooks/useI18n';
 import { SettingsModal } from './components/SettingsModal';
 import { CalendarScreen } from './screens/CalendarScreen';
 import { MeditationScreen } from './screens/MeditationScreen';
+import { ChantsScreen } from './screens/ChantsScreen';
 import { CSS_VARS } from './theme/index';
 import { notificationService } from './services/NotificationService';
+import { useUI } from './UIContext';
 import { App as CapApp } from '@capacitor/app';
 
 export default function App() {
@@ -105,7 +110,13 @@ export default function App() {
   const [currentDate, setCurrentDate] = React.useState(new Date());
   const [selectedDate, setSelectedDate] = React.useState(new Date());
   const [activeTab, setActiveTab] = React.useState('calendar');
-  const [showSettings, setShowSettings] = React.useState(false);
+  const { showSettings, setShowSettings } = useUI();
+  const [user, setUser] = useState<User | null>(auth.currentUser);
+
+  useEffect(() => {
+    const unsub = onAuthStateChanged(auth, u => setUser(u));
+    return () => unsub();
+  }, []);
   
   // Choose engine based on settings
   const calendarEngine = useMemo(() => {
@@ -159,13 +170,36 @@ export default function App() {
             )}
           </div>
         </div>
-        <button 
-          onClick={() => setShowSettings(true)}
-          className="p-2.5 rounded-full shadow-sm border border-white dark:border-slate-700 transition-colors"
-          style={{ backgroundColor: 'var(--btn-header-bg)', color: 'var(--btn-header-text)' }}
-        >
-          <SettingsIcon size="1.25em" />
-        </button>
+        <div className="flex items-center gap-3">
+          {user ? (
+            <button 
+              onClick={() => setShowSettings(true)}
+              className="w-10 h-10 rounded-full border-2 border-white dark:border-slate-700 overflow-hidden shadow-sm active:scale-95 transition-all"
+            >
+              {user.photoURL ? (
+                <img src={user.photoURL} alt="Profile" className="w-full h-full object-cover" />
+              ) : (
+                <div className="w-full h-full bg-slate-100 dark:bg-slate-800 flex items-center justify-center text-slate-400">
+                  <UserIcon size={20} />
+                </div>
+              )}
+            </button>
+          ) : (
+            <button 
+              onClick={() => setShowSettings(true)}
+              className="px-4 py-2 rounded-full border border-white dark:border-slate-700 bg-white/50 dark:bg-slate-800/50 text-[10px] font-black uppercase tracking-widest text-[#7f5700] active:scale-95 transition-all"
+            >
+              Sign In
+            </button>
+          )}
+          <button 
+            onClick={() => setShowSettings(true)}
+            className="p-2.5 rounded-full shadow-sm border border-white dark:border-slate-700 transition-colors"
+            style={{ backgroundColor: 'var(--btn-header-bg)', color: 'var(--btn-header-text)' }}
+          >
+            <SettingsIcon size="1.25em" />
+          </button>
+        </div>
       </header>
 
       <main className="flex-1 px-3 pb-32">
@@ -185,7 +219,7 @@ export default function App() {
           <MeditationScreen />
         </div>
 
-        {activeTab === 'chants' && <PlaceholderTab icon={<Wind size={64} />} title={t('common.chants')} text="Digital library of sacred vibrations and Pali recitations." />}
+        {activeTab === 'chants' && <ChantsScreen />}
         {activeTab === 'study' && <PlaceholderTab icon={<BookOpen size={64} />} title={t('common.study')} text="Deepen your understanding with digital manuscripts and teachings." />}
       </main>
 

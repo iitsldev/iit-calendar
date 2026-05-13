@@ -37,6 +37,44 @@
         "source": { "type": "string" }
       },
       "required": ["quote", "author"]
+    },
+    "GlobalChant": {
+      "title": "Global Chant",
+      "description": "A standard chant available to all users",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "title": { "type": "string" },
+        "content": { "type": "string" },
+        "category": { "type": "string" }
+      },
+      "required": ["title"]
+    },
+    "UserChant": {
+      "title": "User Chant",
+      "description": "A user's personal or modified chant",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "title": { "type": "string" },
+        "content": { "type": "string" },
+        "totalCount": { "type": "number" },
+        "lastUsed": { "type": "string", "format": "date-time" },
+        "isPublic": { "type": "boolean" },
+        "milestone": { "type": "number" }
+      },
+      "required": ["title", "totalCount"]
+    },
+    "ChantSession": {
+      "title": "Chant Session",
+      "description": "A log of a chanting session",
+      "type": "object",
+      "properties": {
+        "chantId": { "type": "string" },
+        "count": { "type": "number" },
+        "timestamp": { "type": "string", "format": "date-time" }
+      },
+      "required": ["chantId", "count", "timestamp"]
     }
   },
   "firestore": {
@@ -51,6 +89,18 @@
     "reflections/{reflectionId}": {
       "schema": "Reflection",
       "description": "Collection of daily reflections"
+    },
+    "chants/{chantId}": {
+      "schema": "GlobalChant",
+      "description": "Master list of Buddhist chants"
+    },
+    "users/{userId}/chants/{userChantId}": {
+      "schema": "UserChant",
+      "description": "User's collection of chants and progress"
+    },
+    "users/{userId}/chant_sessions/{sessionId}": {
+      "schema": "ChantSession",
+      "description": "Chronological log of chanting activity"
     }
   }
 }

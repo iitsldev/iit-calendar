@@ -12,25 +12,90 @@ service cloud.firestore {
     }
 
     function isAdmin() {
-      // For now, allow a specific email or just standard auth for simplicity in this demo environment
-      // However, per instructions, we should verify against a trusted source.
-      // Since the user is likely the one managing this, we'll allow public reads but restricted writes.
       return isSignedIn() && (request.auth.token.email == 'vendhammanana@gmail.com' && request.auth.token.email_verified == true);
     }
 
+    function isOwner(userId) {
+      return isSignedIn() && request.auth.uid == userId;
+    }
+
+    function isValidId(id) {
+      return id is string && id.size() > 0 && id.size() <= 128;
+    }
+
+    function incoming() {
+      return request.resource.data;
+    }
+
+    function existing() {
+      return resource.data;
+    }
+
+    // --- Validations ---
+
+    function isValidGlobalChant(data) {
+      return data.keys().hasAll(['title']) &&
+             data.title is string && data.title.size() <= 200 &&
+             (!('content' in data) || (data.content is string && data.content.size() <= 10000)) &&
+             (!('category' in data) || (data.category is string && data.category.size() <= 50));
+    }
+
+    function isValidUserChant(data, userId) {
+      return data.keys().hasAll(['title', 'totalCount']) &&
+             data.title is string && data.title.size() <= 200 &&
+             data.totalCount is number && data.totalCount >= 0 &&
+             (!('milestone' in data) || (data.milestone is number && data.milestone >= 0));
+    }
+
+    function isValidChantSession(data) {
+      return data.keys().hasAll(['chantId', 'count', 'timestamp']) &&
+             data.chantId is string && data.chantId.size() <= 128 &&
+             data.count is number && data.count > 0 &&
+             data.timestamp == request.time;
+    }
+
+    // --- Rules ---
+
     // Configs
     match /configs/calendar {
-      allow read, write: if true;
+      allow read: if true;
+      allow write: if isAdmin();
     }
 
     // Events
     match /events/{eventId} {
-      allow read, write: if true;
+      allow read: if true;
+      allow write: if isAdmin();
     }
 
     // Reflections
     match /reflections/{reflectionId} {
-      allow read, write: if true;
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+
+    // Global Chants
+    match /chants/{chantId} {
+      allow read: if true;
+      allow write: if isAdmin() && isValidId(chantId) && isValidGlobalChant(incoming());
+    }
+
+    // User Chants
+    match /users/{userId}/chants/{userChantId} {
+      allow get, list: if isOwner(userId);
+      allow create: if isOwner(userId) && isValidId(userChantId) && isValidUserChant(incoming(), userId);
+      allow update: if isOwner(userId) && isValidUserChant(incoming(), userId) && (
+        incoming().diff(existing()).affectedKeys().hasOnly(['totalCount', 'lastUsed', 'milestone', 'title', 'content', 'isCustom'])
+      );
+      allow delete: if isOwner(userId);
+    }
+
+    // Chant Sessions
+    match /users/{userId}/chant_sessions/{sessionId} {
+      allow get, list: if isOwner(userId);
+      allow create: if isOwner(userId) && isValidId(sessionId) && isValidChantSession(incoming());
+      // Sessions are immutable
+      allow update, delete: if false;
     }
   }
 }

@@ -1,11 +1,12 @@
 import React from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { X, MapPin, Search, Loader2 } from 'lucide-react';
+import { X, MapPin, Search, Loader2, LogOut, User as UserIcon, LogIn } from 'lucide-react';
 import { Settings, CalendarType } from '../types';
 import { useI18n } from '../hooks/useI18n';
 import { cn } from '../lib/utils';
 import {COLOR_TOKENS, CSS_VARS} from '../theme/index'
-
+import { auth, signInWithGoogle } from '../lib/firebase';
+import { signOut, onAuthStateChanged, User } from 'firebase/auth';
 
 export function SettingsModal({ 
   show, 
@@ -23,6 +24,31 @@ export function SettingsModal({
   const { t } = useI18n();
   const [addressSearch, setAddressSearch] = React.useState('');
   const [isSearching, setIsSearching] = React.useState(false);
+  const [user, setUser] = React.useState<User | null>(auth.currentUser);
+  const [loginError, setLoginError] = React.useState<string | null>(null);
+
+  React.useEffect(() => {
+    const unsub = onAuthStateChanged(auth, u => setUser(u));
+    return () => unsub();
+  }, []);
+
+  const handleSignIn = async () => {
+    setLoginError(null);
+    try {
+      await signInWithGoogle();
+    } catch (error: any) {
+      console.error("Sign in failed:", error);
+      setLoginError(error.message || "Authentication failed. Check if your domain is authorized in Firebase Console.");
+    }
+  };
+
+  const handleSignOut = async () => {
+    try {
+      await signOut(auth);
+    } catch (error) {
+      console.error("Sign out failed:", error);
+    }
+  };
 
   const handleSearch = async () => {
     if (!addressSearch.trim()) return;
@@ -79,6 +105,55 @@ export function SettingsModal({
           </h2>
 
           <div className="space-y-8 max-h-[70vh] overflow-y-auto pr-2 scrollbar-hide">
+
+            {/* 0. Account Section */}
+            <section className="space-y-4">
+              <SectionLabel>Account</SectionLabel>
+              <div className="glass-card rounded-[1.5rem] p-5 bg-white/40 dark:bg-slate-800/40 border border-slate-100 dark:border-slate-700">
+                {user ? (
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-4">
+                      {user.photoURL ? (
+                        <img src={user.photoURL} alt={user.displayName || 'User'} className="w-12 h-12 rounded-full border border-slate-200" />
+                      ) : (
+                        <div className="w-12 h-12 rounded-full bg-slate-100 dark:bg-slate-800 flex items-center justify-center">
+                          <UserIcon size={24} className="text-slate-400" />
+                        </div>
+                      )}
+                      <div>
+                        <p className="text-sm font-bold text-slate-800 dark:text-slate-200">{user.displayName || 'Practitioner'}</p>
+                        <p className="text-[10px] text-slate-400 uppercase tracking-widest">{user.email}</p>
+                      </div>
+                    </div>
+                    <button 
+                      onClick={handleSignOut}
+                      className="p-3 rounded-2xl bg-rose-50 dark:bg-rose-900/20 text-rose-500 hover:bg-rose-100 dark:hover:bg-rose-900/40 transition-colors"
+                    >
+                      <LogOut size={20} />
+                    </button>
+                  </div>
+                ) : (
+                  <div className="text-center space-y-4 py-2">
+                    <p className="text-xs text-slate-400 px-4">Sign in to sync your chanting progress and meditation stats across devices.</p>
+                    {loginError && (
+                      <div className="mx-4 p-3 rounded-xl bg-rose-50 dark:bg-rose-900/20 text-[10px] text-rose-600 dark:text-rose-400 font-medium leading-relaxed border border-rose-100 dark:border-rose-900/40">
+                        {loginError}
+                        <p className="mt-2 text-[9px] opacity-70">
+                          Tip: In AI Studio, you must add the App URL to "Authorized Domains" in Firebase Authentication settings.
+                        </p>
+                      </div>
+                    )}
+                    <button
+                      onClick={handleSignIn}
+                      className="w-full py-4 rounded-2xl bg-[#7f5700] text-white font-bold uppercase tracking-widest text-[10px] flex items-center justify-center gap-3 shadow-lg shadow-[#7f5700]/20 active:scale-95 transition-all"
+                    >
+                      <LogIn size={16} />
+                      Sign in with Google
+                    </button>
+                  </div>
+                )}
+              </div>
+            </section>
 
             {/* 1. Language & Script */}
             <section className="space-y-4">

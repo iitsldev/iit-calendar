@@ -155,7 +155,7 @@ export function CalendarScreen({
 
   // ── Reflections Logic ───────────────────────────────────────────────────
   const reflection = React.useMemo(() => {
-    if (firebaseReflections.length === 0) return { quote: "Loading...", author: "..." };
+    if (firebaseReflections.length === 0) return { quote: "Loading...", author: "...", source: "" };
     // Deterministic "random" based on date
     const seed = selectedDate.getFullYear() * 10000 + (selectedDate.getMonth() + 1) * 100 + selectedDate.getDate();
     const baseIndex = seed % firebaseReflections.length;

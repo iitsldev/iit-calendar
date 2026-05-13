@@ -1,0 +1,65 @@
+import React, { useState } from 'react';
+import { Search, Plus } from 'lucide-react';
+import { ChantCard } from './ChantCard';
+import { UserChant } from '../../types';
+import { cn } from '../../lib/utils';
+
+interface ChantListProps {
+  chants: UserChant[];
+  selectedChantId: string | null;
+  onSelect: (id: string) => void;
+  onAddChant: () => void;
+}
+
+export function ChantList({ chants, selectedChantId, onSelect, onAddChant }: ChantListProps) {
+  const [searchTerm, setSearchTerm] = useState('');
+
+  const filteredChants = chants
+    .filter(c => c.title.toLowerCase().includes(searchTerm.toLowerCase()))
+    .filter((chant, index, self) => index === self.findIndex((t) => t.id === chant.id)) // Deduplicate by ID
+    .sort((a, b) => {
+      // Sort by recent use, then count
+      if (a.id === selectedChantId) return -1;
+      if (b.id === selectedChantId) return 1;
+      const lastA = a.lastUsed || 0;
+      const lastB = b.lastUsed || 0;
+      if (lastA !== lastB) return lastB - lastA;
+      return b.totalCount - a.totalCount;
+    });
+
+  return (
+    <div className="space-y-6">
+      <div className="relative group">
+        <div className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-[#7f5700] transition-colors">
+          <Search size={18} />
+        </div>
+        <input
+          type="text"
+          placeholder="Search chants..."
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+          className="w-full pl-12 pr-4 py-4 rounded-2xl bg-slate-50 dark:bg-slate-800 focus:outline-none focus:ring-1 focus:ring-[#7f5700]/20 transition-all text-slate-800 dark:text-slate-200 border border-slate-100 dark:border-slate-700"
+        />
+      </div>
+
+      <div className="space-y-3 max-h-[40vh] overflow-y-auto pr-2 scrollbar-hide">
+        {filteredChants.map(chant => (
+          <ChantCard
+            key={chant.id}
+            chant={chant}
+            selected={chant.id === selectedChantId}
+            onClick={() => onSelect(chant.id)}
+          />
+        ))}
+        
+        <button
+          onClick={onAddChant}
+          className="w-full p-5 rounded-[1.5rem] border-2 border-dashed border-slate-200 dark:border-slate-700 hover:border-[#7f5700]/30 transition-all flex items-center justify-center gap-3 text-slate-400 font-bold uppercase tracking-widest text-xs"
+        >
+          <Plus size={16} />
+          Create Custom Chant
+        </button>
+      </div>
+    </div>
+  );
+}
