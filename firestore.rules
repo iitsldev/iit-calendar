@@ -51,7 +51,13 @@ service cloud.firestore {
       return data.keys().hasAll(['chantId', 'count', 'timestamp']) &&
              data.chantId is string && data.chantId.size() <= 128 &&
              data.count is number && data.count > 0 &&
-             data.timestamp == request.time;
+             (data.timestamp is timestamp || data.timestamp is number);
+    }
+
+    function isValidMeditationSession(data) {
+      return data.keys().hasAll(['date', 'durationMin']) &&
+             data.date is string &&
+             data.durationMin is number;
     }
 
     // --- Rules ---
@@ -84,9 +90,7 @@ service cloud.firestore {
     match /users/{userId}/chants/{userChantId} {
       allow get, list: if isOwner(userId);
       allow create: if isOwner(userId) && isValidId(userChantId) && isValidUserChant(incoming(), userId);
-      allow update: if isOwner(userId) && isValidUserChant(incoming(), userId) && (
-        incoming().diff(existing()).affectedKeys().hasOnly(['totalCount', 'lastUsed', 'milestone', 'title', 'content', 'isCustom'])
-      );
+      allow update: if isOwner(userId) && isValidUserChant(incoming(), userId);
       allow delete: if isOwner(userId);
     }
 
@@ -96,6 +100,13 @@ service cloud.firestore {
       allow create: if isOwner(userId) && isValidId(sessionId) && isValidChantSession(incoming());
       // Sessions are immutable
       allow update, delete: if false;
+    }
+
+    // Meditation Sessions
+    match /users/{userId}/meditation_sessions/{sessionId} {
+      allow get, list: if isOwner(userId);
+      allow create, update: if isOwner(userId) && isValidId(sessionId) && isValidMeditationSession(incoming());
+      allow delete: if false;
     }
   }
 }

@@ -18,3 +18,17 @@ export const signInWithGoogle = async () => {
     throw error;
   }
 };
+
+// Handle sign-in redirect result for mobile/web deep linking
+export const handleRedirectResult = async () => {
+  try {
+    const result = await getRedirectResult(auth);
+    if (result?.user) {
+      return result.user;
+    }
+    return null;
+  } catch (e) {
+    console.warn('Redirect result error', e);
+    return null;
+  }
+};

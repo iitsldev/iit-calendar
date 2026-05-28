@@ -184,59 +184,22 @@ export function CalendarScreen({
         className="glass-card rounded-[2.5rem] p-4 pt-6 relative overflow-hidden shadow-sm"
         style={{
           // Light: white-ish frosted glass  |  Dark: dark frosted glass
-          background: 'color-mix(in srgb, var(--cal-surface) 100%, transparent)',
-          borderColor: 'var(--cal-border)',
+          background: 'color-mix(in srgb, var(--surface) 100%, transparent)',
+          borderColor: 'var(--border)',
         }}
       >
-        {/* Inline CSS custom-property bridge — maps our tokens onto the DOM */}
-        <style>{`
-          :root {
-            --cal-accent:          ${COLOR_TOKENS.accentBase};
-            --cal-accent-muted:    ${COLOR_TOKENS.accentMuted};
-            --cal-accent-subtle:   ${COLOR_TOKENS.accentSubtle};
-            --cal-accent-shadow:   ${COLOR_TOKENS.accentShadow};
-            --cal-lotus:           ${COLOR_TOKENS.lotusBase};
-            --cal-lotus-muted:     ${COLOR_TOKENS.lotusMuted};
-            --cal-lotus-shadow:    ${COLOR_TOKENS.lotusShadow};
-
-            /* Light mode defaults */
-            --cal-bg:              ${COLOR_TOKENS.lightBg};
-            --cal-surface:         ${COLOR_TOKENS.lightSurface};
-            --cal-surface-hover:   ${COLOR_TOKENS.lightSurfaceHover};
-            --cal-border:          ${COLOR_TOKENS.lightBorder};
-            --cal-text-primary:    ${COLOR_TOKENS.lightTextPrimary};
-            --cal-text-secondary:  ${COLOR_TOKENS.lightTextSecondary};
-            --cal-text-muted:      ${COLOR_TOKENS.lightTextMuted};
-            --cal-text-disabled:   ${COLOR_TOKENS.lightTextDisabled};
-            --cal-today-dot:       ${COLOR_TOKENS.lightTodayDot};
-          }
-
-          .dark {
-            --cal-bg:              ${COLOR_TOKENS.darkBg};
-            --cal-surface:         ${COLOR_TOKENS.darkSurface};
-            --cal-surface-hover:   ${COLOR_TOKENS.darkSurfaceHover};
-            --cal-border:          ${COLOR_TOKENS.darkBorder};
-            --cal-text-primary:    ${COLOR_TOKENS.darkTextPrimary};
-            --cal-text-secondary:  ${COLOR_TOKENS.darkTextSecondary};
-            --cal-text-muted:      ${COLOR_TOKENS.darkTextMuted};
-            --cal-text-disabled:   ${COLOR_TOKENS.darkTextDisabled};
-            --cal-today-dot:       ${COLOR_TOKENS.darkTodayDot};
-            --cal-lotus:           ${COLOR_TOKENS.darkLotusBase};
-            --cal-lotus-muted:     ${COLOR_TOKENS.darkLotusMuted};
-            --cal-lotus-shadow:    ${COLOR_TOKENS.darkLotusShadow};
-          }
-        `}</style>
+        
 
         <header className="flex flex-col gap-4 mt-4 mb-8 px-2 relative z-10">
           <div className="flex justify-between items-center w-full">
             <h2
               className="font-serif text-3xl sm:text-4xl font-bold leading-none flex items-baseline gap-3"
-              style={{ color: 'var(--cal-text-primary)' }}
+              style={{ color: 'var(--accent)' }}
             >
               {format(currentDate, 'MMMM')}
               <span
                 className="italic text-xl sm:text-2xl"
-                style={{ color: 'var(--cal-accent)' }}
+                style={{ color: 'var(--accent)' }}
               >
                 {format(currentDate, 'yyyy')}
               </span>
@@ -244,7 +207,7 @@ export function CalendarScreen({
             <button
               onClick={goToToday}
               className="px-3 py-1.5 h-9 rounded-2xl shadow-sm text-xs font-black uppercase tracking-widest transition-colors active:scale-95 flex items-center"
-              style={{ background: 'var(--cal-surface)', border: '1px solid var(--cal-border)', color: 'var(--cal-accent)' }}
+              style={{ background: 'var(--surface)', border: '1px solid var(--border)', color: 'var(--accent)' }}
             >
               {t('common.today')}
             </button>
@@ -254,10 +217,10 @@ export function CalendarScreen({
             {/* Year nav */}
             <div
               className="flex items-center p-1 rounded-2xl shadow-sm"
-              style={{ background: 'var(--cal-surface)', border: '1px solid var(--cal-border)' }}
+              style={{ background: 'var(--surface)', border: '1px solid var(--border)' }}
             >
               <NavBtn onClick={prevYear} small title="Previous Year"><ChevronLeft size="1.2em" className="stroke-[3px]"/></NavBtn>
-              <span className="px-1 text-xs font-bold font-mono" style={{ color: 'var(--cal-text-primary)' }}>
+              <span className="px-1 text-xs font-bold font-mono" style={{ color: 'var(--accent)' }}>
                 {format(currentDate, 'yyyy')}
               </span>
               <NavBtn onClick={nextYear} small title="Next Year"><ChevronRight size="1.2em" className="stroke-[3px]"/></NavBtn>
@@ -266,10 +229,10 @@ export function CalendarScreen({
             {/* Month nav */}
             <div
               className="flex items-center p-1 rounded-xl shadow-sm"
-              style={{ background: 'var(--cal-surface)', border: '1px solid var(--cal-border)' }}
+              style={{ background: 'var(--surface)', border: '1px solid var(--border)' }}
             >
               <NavBtn onClick={prevMonth} title="Previous Month"><ChevronLeft size="1.3em"/></NavBtn>
-              <span className="px-1 text-xs font-black uppercase tracking-widest" style={{ color: 'var(--cal-text-primary)' }}>
+              <span className="px-1 text-xs font-black uppercase tracking-widest" style={{ color: 'var(--accent)' }}>
                 {format(currentDate, 'MMM')}
               </span>
               <NavBtn onClick={nextMonth} title="Next Month"><ChevronRight size="1.3em"/></NavBtn>
@@ -284,7 +247,7 @@ export function CalendarScreen({
               <span
                 key={`header-${day}`}
                 className="text-sm font-black text-center tracking-widest"
-                style={{ color: 'var(--cal-text-muted)' }}
+                style={{ color: 'var(--text-muted)' }}
               >
                 {day}
               </span>
@@ -324,9 +287,9 @@ export function CalendarScreen({
               // Compute text colour imperatively to keep inline styles tidy
               let dateColor: string;
               if (isSelected) dateColor = 'rgb(255 255 255)';
-              else if (isTodayDate) dateColor = 'var(--cal-accent)';
-              else if (!isCurrentMonth) dateColor = 'var(--cal-text-disabled)';
-              else dateColor = 'var(--cal-text-primary)';
+              else if (isTodayDate) dateColor = 'var(--accent)';
+              else if (!isCurrentMonth) dateColor = 'var(--text-disabled)';
+              else dateColor = 'var(--accent)';
 
               return (
                 <div key={`cell-${date.toISOString()}`} className="flex justify-center relative">
@@ -334,10 +297,10 @@ export function CalendarScreen({
                     onClick={() => setSelectedDate(date)}
                     className="h-12 w-12 rounded-2xl flex flex-col items-center justify-center transition-all relative group"
                     style={isSelected
-                      ? { background: 'var(--cal-accent)', boxShadow: `0 8px 24px var(--cal-accent-shadow)`, transform: 'scale(1.1)' }
+                      ? { background: 'var(--accent)', boxShadow: `0 8px 24px var(--accent-shadow)`, transform: 'scale(1.1)' }
                       : { background: 'transparent' }
                     }
-                    onMouseEnter={e => { if (!isSelected) (e.currentTarget as HTMLButtonElement).style.background = 'var(--cal-surface-hover)'; }}
+                    onMouseEnter={e => { if (!isSelected) (e.currentTarget as HTMLButtonElement).style.background = 'var(--surface-hover)'; }}
                     onMouseLeave={e => { if (!isSelected) (e.currentTarget as HTMLButtonElement).style.background = 'transparent'; }}
                   >
                     <span
@@ -351,7 +314,7 @@ export function CalendarScreen({
                     {dateInfo.isUposatha && (
                       <div
                         className="absolute -top-1 -right-1 z-20 transition-transform"
-                        style={{ color: isSelected ? 'rgb(255 255 255)' : 'var(--cal-lotus)' }}
+                        style={{ color: isSelected ? 'rgb(255 255 255)' : 'var(--lotus)' }}
                       >
                         {dateInfo.moonPhase === 'full' ? (
                           <Circle size={10} fill="currentColor" />
@@ -360,7 +323,7 @@ export function CalendarScreen({
                         ) : (
                           <div
                             className="w-2.5 h-2.5 rounded-full"
-                            style={{ background: 'var(--cal-lotus-muted)' }}
+                            style={{ background: 'var(--lotus-muted)' }}
                           />
                         )}
                       </div>
@@ -370,7 +333,7 @@ export function CalendarScreen({
                     {isTodayDate && (
                       <div
                         className="absolute bottom-1 left-1/2 -translate-x-1/2 w-1.5 h-1.5 rounded-full"
-                        style={{ background: 'var(--cal-today-dot)' }}
+                        style={{ background: 'var(--today-dot)' }}
                       />
                     )}
 
@@ -378,7 +341,7 @@ export function CalendarScreen({
                     {hasEvents && !isTodayDate && (
                       <div
                         className="absolute bottom-1 left-1/2 -translate-x-1/2 w-3 h-0.5 rounded-full opacity-40"
-                        style={{ background: isSelected ? 'white' : 'var(--cal-accent)' }}
+                        style={{ background: isSelected ? 'white' : 'var(--accent)' }}
                       />
                     )}
 
@@ -386,7 +349,7 @@ export function CalendarScreen({
                       <motion.div
                         layoutId="sel"
                         className="absolute inset-0 rounded-2xl -z-0"
-                        style={{ background: 'var(--cal-accent)', boxShadow: `0 8px 20px var(--cal-accent-shadow)` }}
+                        style={{ background: 'var(--accent)', boxShadow: `0 8px 20px var(--accent-shadow)` }}
                       />
                     )}
                   </button>
@@ -409,14 +372,18 @@ export function CalendarScreen({
             <div
               className="glass-card rounded-[2rem] p-4 relative overflow-hidden"
               style={{
-                background: 'color-mix(in srgb, var(--cal-surface) 90%, var(--cal-lotus-muted))',
-                borderColor: 'var(--cal-lotus-muted)',
-                boxShadow: `0 10px 30px var(--cal-lotus-shadow)`,
+                background: 'color-mix(in srgb, var(--surface) 90%, var(--lotus-muted))',
+                borderColor: 'var(--lotus-muted)',
+                boxShadow: `0 10px 30px var(--lotus-shadow)`,
               }}
             >
-              <div className="flex items-center gap-2 mb-4 px-1 opacity-60">
+              <div className="flex items-center gap-2 mb-4 px-1 opacity-60"
+              style={{
+                background: 'var(--surface)',
+                borderColor: 'var(--border)',
+              }}>
                 <CalendarIcon size={14} className="text-saffron" />
-                <span className="text-[10px] font-black uppercase tracking-[0.2em]" style={{ color: 'var(--cal-text-primary)' }}>
+                <span className="text-[10px] font-black uppercase tracking-[0.2em]" style={{ color: 'var(--accent)' }}>
                   Upcoming Uposatha
                 </span>
               </div>
@@ -425,9 +392,9 @@ export function CalendarScreen({
                 <div
                   className="w-16 h-16 rounded-3xl flex items-center justify-center shadow-inner relative overflow-hidden"
                   style={{
-                    background: 'var(--cal-lotus-muted)',
-                    color: 'var(--cal-lotus)',
-                    border: '1px solid var(--cal-lotus-muted)',
+                    background: 'var(--lotus-muted)',
+                    color: 'var(--lotus)',
+                    border: '1px solid var(--lotus-muted)',
                   }}
                 >
                   <CalendarIcon size={28} className="relative z-10" />
@@ -436,14 +403,14 @@ export function CalendarScreen({
                     animate={{ height: `${(1 - (Math.max(0, Math.round((nextUposatha.date.getTime() - selectedDate.getTime()) / 86400000)) / (nextUposatha.uDays || 15))) * 100}%` }}
                     transition={{ duration: 1.5, ease: "easeOut" }}
                     className="absolute bottom-0 left-0 right-0"
-                    style={{ background: 'var(--cal-lotus-muted)' }}
+                    style={{ background: 'var(--lotus-muted)' }}
                   />
                 </div>
 
                 <div className="flex-1">
                   <div className="flex justify-between items-start mb-3">
                     <div>
-                      <p className="text-xl font-bold leading-tight" style={{ color: 'var(--cal-text-primary)' }}>
+                      <p className="text-xl font-bold leading-tight" style={{ color: 'var(--accent)' }}>
                         {format(nextUposatha.date, 'MMMM d')}
                       </p>
                     </div>
@@ -452,7 +419,7 @@ export function CalendarScreen({
                         <div className="flex flex-col items-end">
                            <div 
                             className="p-1 rounded-full mb-1"
-                            style={{ color: 'var(--cal-accent)', background: 'var(--cal-accent-subtle)' }}
+                            style={{ color: 'var(--accent)', background: 'var(--accent-subtle)' }}
                            >
                               {nextUposatha.phase === 'full' ? <Circle size={18} fill="currentColor" /> : <Moon size={18} fill="currentColor" />}
                            </div>
@@ -460,22 +427,22 @@ export function CalendarScreen({
                             text={nextUposatha.uDays === 14 ? 'Cātuddasī' : 'Paṇṇarasī'}
                             script={settings.paliScript}
                             className="text-sm font-black uppercase tracking-widest"
-                            style={{ color: 'var(--cal-accent)' } as React.CSSProperties}
+                            style={{ color: 'var(--accent)' } as React.CSSProperties}
                            />
                         </div>
                       ) : (
                         <>
                           <p
                             className="text-xs font-black uppercase tracking-[0.2em] mb-0.5 whitespace-nowrap"
-                            style={{ color: 'var(--cal-text-muted)' }}
+                            style={{ color: 'var(--text-muted)' }}
                           >
                             {t('calendar.startsIn')}
                           </p>
                           <p
                             className="text-2xl font-black flex items-baseline gap-1 justify-end leading-none"
-                            style={{ color: 'var(--cal-accent)' }}
+                            style={{ color: 'var(--accent)' }}
                           >
-                            {Math.max(0, Math.round((nextUposatha.date.getTime() - selectedDate.getTime()) / 86400000))}
+                            {Math.max(0, Math.round((nextUposatha.date.getTime() - selectedDate.setHours(0, 0, 0, 0)) / 86400000))}
                             <span className="text-xs font-black uppercase">{t('calendar.daysLeft')}</span>
                           </p>
                         </>
@@ -484,7 +451,7 @@ export function CalendarScreen({
                   </div>
 
                   <div className="pt-3 flex justify-between w-full items-center text-center"
-                    style={{ borderTop: '1px solid var(--cal-lotus-muted)' }}>
+                    style={{ borderTop: '1px solid var(--lotus-muted)' }}>
                     <MetaCell label="Season">
                       <PaliText
                         text={uposathaInfo?.seas.season || ''}
@@ -511,7 +478,7 @@ export function CalendarScreen({
 
               <div
                 className="absolute -bottom-10 -right-10 w-40 h-40 rounded-full blur-3xl -z-0"
-                style={{ background: 'var(--cal-lotus-muted)' }}
+                style={{ background: 'var(--lotus-muted)' }}
               />
             </div>
           )}
@@ -529,8 +496,8 @@ export function CalendarScreen({
       <section 
         className="glass-card rounded-[2.5rem] p-4 space-y-6 shadow-sm border border-white/80 dark:border-slate-800"
         style={{
-          background: 'var(--cal-surface)',
-          borderColor: 'var(--cal-border)',
+          background: 'var(--surface)',
+          borderColor: 'var(--border)',
         }}
       >
         {/* Basic Pali Details Grid */}
@@ -543,7 +510,7 @@ export function CalendarScreen({
 
         {/* Vassa Information Section */}
         <div className="pt-6 border-t border-slate-200/50 dark:border-slate-700/50">
-          <h4 className="text-xs font-black uppercase tracking-[0.2em] mb-4 text-center" style={{ color: 'var(--cal-text-muted)' }}>
+          <h4 className="text-xs font-black uppercase tracking-[0.2em] mb-4 text-center" style={{ color: 'var(--text-muted)' }}>
             Vassa & Pavāraṇā
           </h4>
           <div className="grid grid-cols-2 gap-4">
@@ -563,26 +530,26 @@ export function CalendarScreen({
 
           {/* Pali Recitation */}
           <div
-            className="glass-card rounded-[2.5rem] p-4 space-y-10 relative overflow-hidden shadow-sm"
+            className="glass-card rounded-[2.5rem] p-4 space-y-10 relative overflow-hidden shadow-sm border border-white/80 dark:border-slate-800"
             style={{
-              background: 'var(--cal-surface)',
-              border: '1px solid var(--cal-border)',
+              background: 'var(--surface)',
+              borderColor: 'var(--border)',
             }}
           >
             <button onClick={() => setPaliExpanded(!paliExpanded)} className="w-full flex items-center justify-between group">
               <div className="flex items-center gap-3">
-                <span className="w-8 h-[1px] opacity-30" style={{ background: 'var(--cal-accent)' }} />
+                <span className="w-8 h-[1px] opacity-30" style={{ background: 'var(--accent)' }} />
                 <h3
                   className="text-xs font-black uppercase tracking-[0.3em]"
-                  style={{ color: 'var(--cal-accent)' }}
+                  style={{ color: 'var(--accent)' }}
                 >
                   {t('calendar.paliRecitation')}
                 </h3>
-                <span className="w-8 h-[1px] opacity-30" style={{ background: 'var(--cal-accent)' }} />
+                <span className="w-8 h-[1px] opacity-30" style={{ background: 'var(--accent)' }} />
               </div>
               <div
                 className={cn("p-1.5 rounded-full transition-transform duration-300", paliExpanded && "rotate-180")}
-                style={{ background: 'var(--cal-accent-subtle)', color: 'var(--cal-accent)' }}
+                style={{ background: 'var(--accent-subtle)', color: 'var(--accent)' }}
               >
                 <ChevronDown size={14} />
               </div>
@@ -596,7 +563,7 @@ export function CalendarScreen({
                 >
                   <pre
                     className="font-serif text-xl leading-[1.8] whitespace-pre-wrap italic text-center mt-6"
-                    style={{ color: 'var(--cal-text-secondary)' }}
+                    style={{ color: 'var(--text-secondary)' }}
                   >
                     <PaliText text={dateDetails.paliChant} script={settings.paliScript} />
                   </pre>
@@ -609,22 +576,22 @@ export function CalendarScreen({
           {Object.keys(todaysEvents).length > 0 && (
             <div 
               className="glass-card rounded-[2.5rem] p-4 space-y-4 shadow-sm border border-white/80 dark:border-slate-800"
-              style={{ background: 'var(--cal-surface)', borderColor: 'var(--cal-border)' }}
+              style={{ background: 'var(--surface)', borderColor: 'var(--border)' }}
             >
               <button 
                 onClick={() => setIsEventsExpanded(!isEventsExpanded)}
                 className="w-full flex items-center justify-between group"
               >
                 <div className="flex items-center gap-3">
-                  <span className="w-8 h-[1px] opacity-30" style={{ background: 'var(--cal-accent)' }} />
-                  <h3 className="text-xs font-black uppercase tracking-[0.2em]" style={{ color: 'var(--cal-accent)' }}>
+                  <span className="w-8 h-[1px] opacity-30" style={{ background: 'var(--accent)' }} />
+                  <h3 className="text-xs font-black uppercase tracking-[0.2em]" style={{ color: 'var(--accent)' }}>
                     Schedule & Events
                   </h3>
-                  <span className="w-8 h-[1px] opacity-30" style={{ background: 'var(--cal-accent)' }} />
+                  <span className="w-8 h-[1px] opacity-30" style={{ background: 'var(--accent)' }} />
                 </div>
                 <div
                   className={cn("p-1.5 rounded-full transition-transform duration-300", isEventsExpanded && "rotate-180")}
-                  style={{ background: 'var(--cal-accent-subtle)', color: 'var(--cal-accent)' }}
+                  style={{ background: 'var(--accent-subtle)', color: 'var(--accent)' }}
                 >
                   <ChevronDown size={14} />
                 </div>
@@ -641,8 +608,8 @@ export function CalendarScreen({
                     {Object.entries(todaysEvents).map(([groupName, events]) => (
                       <div key={`event-group-${groupName}`} className="space-y-3">
                         <div className="flex items-center gap-2">
-                          <div className="w-1.5 h-1.5 rounded-full" style={{ background: 'var(--cal-accent)' }} />
-                          <span className="text-xs font-black uppercase tracking-widest leading-none opacity-60" style={{ color: 'var(--cal-text-muted)' }}>
+                          <div className="w-1.5 h-1.5 rounded-full" style={{ background: 'var(--accent)' }} />
+                          <span className="text-xs font-black uppercase tracking-widest leading-none opacity-60" style={{ color: 'var(--text-muted)' }}>
                             {groupName}
                           </span>
                         </div>
@@ -653,12 +620,12 @@ export function CalendarScreen({
                               className="flex justify-between items-center p-3 rounded-2xl bg-slate-50/50 dark:bg-slate-800/30 border border-slate-100 dark:border-slate-700/50"
                             >
                               <div className="flex flex-col gap-1">
-                                <span className="text-sm font-bold" style={{ color: 'var(--cal-text-primary)' }}>
+                                <span className="text-sm font-bold" style={{ color: 'var(--accent)' }}>
                                   {evt.event_name || evt.subject}
                                 </span>
                               </div>
                               {evt.time && (
-                                <span className="text-xs font-mono font-bold px-2 py-0.5 rounded-lg bg-white dark:bg-slate-900 shadow-sm" style={{ color: 'var(--cal-accent)' }}>
+                                <span className="text-xs font-mono font-bold px-2 py-0.5 rounded-lg bg-white dark:bg-slate-900 shadow-sm" style={{ color: 'var(--accent)' }}>
                                   {evt.time}
                                 </span>
                               )}
@@ -677,22 +644,22 @@ export function CalendarScreen({
           <div 
             className="glass-card rounded-[2.5rem] p-4 space-y-6 relative overflow-hidden shadow-sm text-center"
             style={{ 
-              background: 'var(--cal-surface)', 
-              borderColor: 'var(--cal-border)',
+              background: 'var(--surface)', 
+              borderColor: 'var(--border)',
               borderWidth: '1px'
             }}
           >
             <div className="flex justify-center mb-2">
-              <BookOpen size={24} style={{ color: 'var(--cal-accent)' }} />
+              <BookOpen size={24} style={{ color: 'var(--accent)' }} />
             </div>
-            <p className="font-serif text-xl italic leading-relaxed" style={{ color: 'var(--cal-text-primary)' }}>
+            <p className="font-serif text-xl italic leading-relaxed" style={{ color: 'var(--accent)' }}>
               "{reflection.quote}"
             </p>
             <div className="flex flex-col items-center gap-1">
-              <span className="text-sm font-bold" style={{ color: 'var(--cal-text-secondary)' }}>
+              <span className="text-sm font-bold" style={{ color: 'var(--text-secondary)' }}>
                 {reflection.author === "Buddha" ? "The Buddha" : reflection.author}
               </span>
-              <span className="text-xs font-black uppercase tracking-widest opacity-40" style={{ color: 'var(--cal-text-muted)' }}>
+              <span className="text-xs font-black uppercase tracking-widest opacity-40" style={{ color: 'var(--text-muted)' }}>
                 {reflection.source}
               </span>
             </div>
@@ -701,7 +668,7 @@ export function CalendarScreen({
               <button
                 onClick={() => setReflectionOffset(prev => prev + 1)}
                 className="px-4 py-2 rounded-2xl text-[10px] font-black uppercase tracking-widest transition-all active:scale-95"
-                style={{ background: 'var(--cal-surface)', border: '1px solid var(--cal-border)', color: 'var(--cal-accent)' }}
+                style={{ background: 'var(--surface)', border: '1px solid var(--border)', color: 'var(--accent)' }}
               >
                 Next Quote
               </button>
@@ -709,7 +676,7 @@ export function CalendarScreen({
             
             <div 
               className="absolute -top-10 -left-10 w-32 h-32 rounded-full blur-3xl"
-              style={{ background: 'var(--cal-accent-muted)' }}
+              style={{ background: 'var(--accent-muted)' }}
             />
           </div>
         </motion.div>
@@ -736,8 +703,8 @@ function NavBtn({
         "rounded-xl transition-all active:scale-90",
         small ? "p-2" : "p-2"
       )}
-      style={{ color: 'var(--cal-accent)' }}
-      onMouseEnter={e => { (e.currentTarget as HTMLButtonElement).style.background = 'var(--cal-surface-hover)'; }}
+      style={{ color: 'var(--accent)' }}
+      onMouseEnter={e => { (e.currentTarget as HTMLButtonElement).style.background = 'var(--surface-hover)'; }}
       onMouseLeave={e => { (e.currentTarget as HTMLButtonElement).style.background = 'transparent'; }}
     >
       {children}
@@ -756,13 +723,13 @@ function MetaCell({
     <div className={cn("flex flex-col", right && "text-right")}>
       <span
         className="text-sm font-black uppercase tracking-tighter"
-        style={{ color: 'var(--cal-text-muted)' }}
+        style={{ color: 'var(--text-muted)' }}
       >
         {label}
       </span>
       <span
         className="text-sm font-bold italic"
-        style={{ color: 'var(--cal-text-primary)' }}
+        style={{ color: 'var(--accent)' }}
       >
         {children}
       </span>
@@ -773,8 +740,8 @@ function MetaCell({
 function DetailRow({ label, value, script }: { label: string; value: string; script: string }) {
   return (
     <div className="flex flex-col gap-1">
-      <span className="text-sm font-black uppercase tracking-widest" style={{ color: 'var(--cal-text-muted)' }}>{label}</span>
-      <PaliText text={value} script={script} className="text-base font-bold" style={{ color: 'var(--cal-text-primary)' } as React.CSSProperties} />
+      <span className="text-sm font-black uppercase tracking-widest" style={{ color: 'var(--text-muted)' }}>{label}</span>
+      <PaliText text={value} script={script} className="text-base font-bold" style={{ color: 'var(--accent)' } as React.CSSProperties} />
     </div>
   );
 }
@@ -783,15 +750,15 @@ function VassaItem({ label, entry, pavarana }: { label: string; entry: Date | nu
   if (!entry || !pavarana) return null;
   return (
     <div className="flex flex-col gap-2 p-3 rounded-2xl bg-slate-50/50 dark:bg-slate-800/30">
-      <span className="text-sm font-black uppercase tracking-tighter" style={{ color: 'var(--cal-accent)' }}>{label}</span>
+      <span className="text-sm font-black uppercase tracking-tighter" style={{ color: 'var(--accent)' }}>{label}</span>
       <div className="space-y-1">
         <div className="flex justify-between items-center">
-          <span className="text-sm" style={{ color: 'var(--cal-text-muted)' }}>Entry</span>
-          <span className="text-sm font-bold" style={{ color: 'var(--cal-text-primary)' }}>{format(entry, 'MMM d')}</span>
+          <span className="text-sm" style={{ color: 'var(--text-muted)' }}>Entry</span>
+          <span className="text-sm font-bold" style={{ color: 'var(--accent)' }}>{format(entry, 'MMM d')}</span>
         </div>
         <div className="flex justify-between items-center">
-          <span className="text-sm" style={{ color: 'var(--cal-text-muted)' }}>Pavāraṇā</span>
-          <span className="text-sm font-bold" style={{ color: 'var(--cal-text-primary)' }}>{format(pavarana, 'MMM d')}</span>
+          <span className="text-sm" style={{ color: 'var(--text-muted)' }}>Pavāraṇā</span>
+          <span className="text-sm font-bold" style={{ color: 'var(--accent)' }}>{format(pavarana, 'MMM d')}</span>
         </div>
       </div>
     </div>
@@ -803,13 +770,13 @@ function PaliDetailItem({ label, value, script }: { label: string; value: string
     <div
       className="glass-card rounded-2xl p-4 flex flex-col items-center gap-1 shadow-sm"
       style={{
-        background: 'var(--cal-surface)',
-        border: '1px solid var(--cal-border)',
+        background: 'var(--surface)',
+        border: '1px solid var(--border)',
       }}
     >
       <span
         className="text-sm font-black uppercase tracking-widest"
-        style={{ color: 'var(--cal-text-muted)' }}
+        style={{ color: 'var(--text-muted)' }}
       >
         {label}
       </span>
@@ -817,7 +784,7 @@ function PaliDetailItem({ label, value, script }: { label: string; value: string
         text={value}
         script={script}
         className="text-base font-bold"
-        style={{ color: 'var(--cal-text-primary)' } as React.CSSProperties}
+        style={{ color: 'var(--accent)' } as React.CSSProperties}
       />
     </div>
   );

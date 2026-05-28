@@ -40,9 +40,9 @@ export function ChantCounter({ currentCount, onCountChange, onCommit, targetCoun
       <div className="flex items-center justify-center gap-8 mb-12 w-full max-w-xs">
         <button
           onClick={() => onCountChange(Math.max(0, currentCount - 1))}
-          className="w-14 h-14 rounded-full flex items-center justify-center bg-white dark:bg-slate-800 shadow-sm border border-slate-100 dark:border-slate-700 active:scale-90 transition-transform"
+          className="w-14 h-14 rounded-full flex items-center justify-center shadow-sm border border-[var(--border-subtle)] active:scale-90 transition-transform bg-[var(--bg-card)]"
         >
-          <Minus size={24} className="text-slate-400" />
+          <Minus size={24} className="text-[var(--text-muted)]" />
         </button>
 
         <div className="text-center flex flex-col items-center">
@@ -50,31 +50,31 @@ export function ChantCounter({ currentCount, onCountChange, onCommit, targetCoun
             type="number"
             value={manualValue}
             onChange={(e) => handleManualChange(e.target.value)}
-            className="font-serif text-7xl font-medium tracking-tight bg-transparent text-center focus:outline-none w-48 text-[#7f5700]"
+            className="font-serif text-7xl font-medium tracking-tight bg-transparent text-center focus:outline-none w-48 text-[var(--accent)]"
           />
-          <p className="text-xs font-black uppercase tracking-[0.2em] text-slate-400 mt-2">
+          <p className="text-xs font-black uppercase tracking-[0.2em] text-[var(--text-muted)] mt-2">
             of {targetCount} chants
           </p>
         </div>
 
         <button
           onClick={() => onCountChange(currentCount + 1)}
-          className="w-14 h-14 rounded-full flex items-center justify-center bg-white dark:bg-slate-800 shadow-sm border border-slate-100 dark:border-slate-700 active:scale-90 transition-transform"
+          className="w-14 h-14 rounded-full flex items-center justify-center shadow-sm border border-[var(--border-subtle)] active:scale-90 transition-transform bg-[var(--bg-card)]"
         >
-          <Plus size={24} className="text-slate-400" />
+          <Plus size={24} className="text-[var(--text-muted)]" />
         </button>
       </div>
 
       {/* Big Tap Button */}
       <div className="flex flex-col items-center gap-6">
         <div className="flex gap-4">
-          {[10, 108].map(num => (
+          {[-10, 10, 108].map(num => (
             <button
               key={num}
-              onClick={() => onCountChange(currentCount + num)}
-              className="px-4 py-2 rounded-xl bg-slate-50 dark:bg-slate-800 text-[10px] font-black tracking-widest text-slate-400 border border-slate-100 dark:border-slate-700 hover:text-[#7f5700] hover:border-[#7f5700]/30 transition-all active:scale-95"
+              onClick={() => onCountChange(Math.max(0, currentCount + num))}
+              className="px-4 py-2 rounded-xl bg-[var(--bg-muted)] text-[10px] font-black tracking-widest text-[var(--text-muted)] border border-[var(--border-subtle)] hover:text-[var(--accent)] hover:border-[var(--accent)]/30 transition-all active:scale-95"
             >
-              +{num}
+              {num > 0 ? '+' : ''}{num}
             </button>
           ))}
         </div>
@@ -109,7 +109,7 @@ export function ChantCounter({ currentCount, onCountChange, onCommit, targetCoun
           "mt-12 px-12 py-4 rounded-full font-bold tracking-widest uppercase text-xs transition-all shadow-lg active:scale-95",
           currentCount > 0 
             ? "bg-slate-900 text-white hover:bg-slate-800" 
-            : "bg-slate-100 text-slate-300 pointer-events-none"
+            : "bg-slate-100 text-primary-300 pointer-events-none"
         )}
       >
         Log Session

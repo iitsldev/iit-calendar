@@ -2,158 +2,188 @@ import {
   collection, 
   doc, 
   getDocs, 
-  getDoc, 
   setDoc, 
-  updateDoc, 
-  addDoc, 
   query, 
-  where, 
   orderBy, 
   serverTimestamp,
-  increment,
-  onSnapshot,
   writeBatch
 } from 'firebase/firestore';
-import { db, auth } from '../lib/firebase';
-import { Chant, UserChant, ChantSession, UserChantStats } from '../types';
+import { db } from '../lib/firebase';
+import { Chant, UserChant, ChantSession } from '../types';
+import defaultChants from '../data/chants.json';
 
-enum OperationType {
-  CREATE = 'create',
-  UPDATE = 'update',
-  DELETE = 'delete',
-  LIST = 'list',
-  GET = 'get',
-  WRITE = 'write',
+function getLocal<T>(key: string, defaultValue: T): T {
+  const data = localStorage.getItem(key);
+  return data ? JSON.parse(data) : defaultValue;
 }
 
-interface FirestoreErrorInfo {
-  error: string;
-  operationType: OperationType;
-  path: string | null;
-  authInfo: any;
-}
-
-function handleFirestoreError(error: unknown, operationType: OperationType, path: string | null) {
-  const errInfo: FirestoreErrorInfo = {
-    error: error instanceof Error ? error.message : String(error),
-    authInfo: {
-      userId: auth.currentUser?.uid,
-      email: auth.currentUser?.email,
-      emailVerified: auth.currentUser?.emailVerified,
-    },
-    operationType,
-    path
-  };
-  console.error('Firestore Error: ', JSON.stringify(errInfo));
-  throw new Error(JSON.stringify(errInfo));
+function setLocal<T>(key: string, value: T) {
+  localStorage.setItem(key, JSON.stringify(value));
 }
 
 class ChantService {
-  private globalChantsCol = collection(db, 'chants');
+  private listeners: ((chants: UserChant[]) => void)[] = [];
 
-  async getGlobalChants(): Promise<Chant[]> {
-    try {
-      const snapshot = await getDocs(this.globalChantsCol);
-      return snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as Chant));
-    } catch (error) {
-      handleFirestoreError(error, OperationType.LIST, 'chants');
-      return [];
-    }
+  private notifyListeners() {
+    const chants = this.getLocalChants();
+    this.listeners.forEach(l => l(chants));
   }
 
-  async getUserChants(userId: string): Promise<UserChant[]> {
-    const path = `users/${userId}/chants`;
-    try {
-      const col = collection(db, path);
-      const snapshot = await getDocs(query(col, orderBy('lastUsed', 'desc')));
-      return snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as UserChant));
-    } catch (error) {
-      handleFirestoreError(error, OperationType.LIST, path);
-      return [];
-    }
-  }
-
-  async addChant(userId: string, chant: Omit<UserChant, 'id' | 'totalCount'>): Promise<string> {
-    const path = `users/${userId}/chants`;
-    try {
-      const col = collection(db, path);
-      const docRef = await addDoc(col, {
-        ...chant,
+  getLocalChants(): UserChant[] {
+    const chants = getLocal<UserChant[]>('app_user_chants', []);
+    if (chants.length === 0) {
+      const mapped = defaultChants.map(c => ({
+        id: c.id.toString(),
+        title: c.name,
+        chant: c.chant,
         totalCount: 0,
-        lastUsed: Date.now(),
-        isCustom: true
-      });
-      return docRef.id;
-    } catch (error) {
-      handleFirestoreError(error, OperationType.CREATE, path);
-      return '';
+        lastUsed: 0,
+        isCustom: false
+      }));
+      setLocal('app_user_chants', mapped);
+      return mapped.sort((a, b) => (b.lastUsed || 0) - (a.lastUsed || 0));
     }
+    return chants.sort((a, b) => (b.lastUsed || 0) - (a.lastUsed || 0));
   }
 
-  async logSession(userId: string, chantId: string, count: number): Promise<void> {
-    const sessionPath = `users/${userId}/chant_sessions`;
-    const chantPath = `users/${userId}/chants/${chantId}`;
+  async getUserChants(userId?: string): Promise<UserChant[]> {
+    return this.getLocalChants();
+  }
+
+  async addChant(userId: string | undefined, chant: Omit<UserChant, 'id' | 'totalCount'>): Promise<string> {
+    const chants = this.getLocalChants();
+    const newChant: UserChant = {
+      ...chant,
+      id: Date.now().toString() + Math.random().toString(36).substr(2, 9),
+      totalCount: 0,
+      lastUsed: Date.now(),
+      isCustom: true
+    };
+    chants.push(newChant);
+    setLocal('app_user_chants', chants);
+    this.notifyListeners();
+    return newChant.id;
+  }
+
+  async deleteChant(userId: string | undefined, chantId: string): Promise<void> {
+    const chants = this.getLocalChants();
+    const updated = chants.filter(c => c.id !== chantId);
+    setLocal('app_user_chants', updated);
+    this.notifyListeners();
+  }
+
+  async logSession(userId: string | undefined, chantId: string, count: number): Promise<void> {
+    const sessions = getLocal<ChantSession[]>('app_chant_sessions', []);
+    const session: ChantSession = {
+      id: Date.now().toString() + Math.random().toString(36).substr(2, 9),
+      chantId,
+      count,
+      timestamp: Date.now()
+    };
+    sessions.push(session);
+    setLocal('app_chant_sessions', sessions);
+
+    const chants = this.getLocalChants();
+    const chantIndex = chants.findIndex(c => c.id === chantId);
+    if (chantIndex >= 0) {
+      chants[chantIndex].totalCount += count;
+      chants[chantIndex].lastUsed = Date.now();
+      setLocal('app_user_chants', chants);
+    }
     
-    try {
-      const batch = writeBatch(db);
-      
-      // Create session
-      const sessionRef = doc(collection(db, sessionPath));
-      batch.set(sessionRef, {
-        chantId,
-        count,
-        timestamp: serverTimestamp()
-      });
-      
-      // Update user chant total
-      const chantRef = doc(db, chantPath);
-      batch.update(chantRef, {
-        totalCount: increment(count),
-        lastUsed: Date.now()
-      });
-      
-      await batch.commit();
-    } catch (error) {
-      handleFirestoreError(error, OperationType.WRITE, `${sessionPath} & ${chantPath}`);
+    this.notifyListeners();
+  }
+
+  subscribeToUserChants(userId: string | undefined, callback: (chants: UserChant[]) => void) {
+    this.listeners.push(callback);
+    callback(this.getLocalChants());
+    return () => {
+      this.listeners = this.listeners.filter(l => l !== callback);
+    };
+  }
+
+  async updateMilestone(userId: string | undefined, chantId: string, milestone: number): Promise<void> {
+    const chants = this.getLocalChants();
+    const chantIndex = chants.findIndex(c => c.id === chantId);
+    if (chantIndex >= 0) {
+      chants[chantIndex].milestone = milestone;
+      setLocal('app_user_chants', chants);
+      this.notifyListeners();
     }
   }
 
-  subscribeToUserChants(userId: string, callback: (chants: UserChant[]) => void) {
-    const path = `users/${userId}/chants`;
-    const q = query(collection(db, path), orderBy('lastUsed', 'desc'));
-    
-    return onSnapshot(q, (snapshot) => {
-      const chants = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as UserChant));
-      callback(chants);
-    }, (error) => {
-      handleFirestoreError(error, OperationType.GET, path);
-    });
+  async getSessionHistory(userId?: string): Promise<ChantSession[]> {
+    const sessions = getLocal<ChantSession[]>('app_chant_sessions', []);
+    return sessions.sort((a, b) => b.timestamp - a.timestamp);
   }
 
-  async updateMilestone(userId: string, chantId: string, milestone: number): Promise<void> {
-    const path = `users/${userId}/chants/${chantId}`;
-    try {
-      await updateDoc(doc(db, path), { milestone });
-    } catch (error) {
-      handleFirestoreError(error, OperationType.UPDATE, path);
-    }
-  }
+  async syncWithFirebase(userId: string) {
+    if (!userId) return;
 
-  async getSessionHistory(userId: string): Promise<ChantSession[]> {
-    const path = `users/${userId}/chant_sessions`;
     try {
-      const q = query(collection(db, path), orderBy('timestamp', 'desc'));
-      const snapshot = await getDocs(q);
-      return snapshot.docs.map(doc => ({ 
-        id: doc.id, 
-        ...doc.data(),
-        timestamp: doc.data().timestamp?.toMillis() || Date.now()
+      // 1. Fetch remote chants
+      const chantsPath = `users/${userId}/chants`;
+      const remoteChantsSnapshot = await getDocs(collection(db, chantsPath));
+      const remoteChants = remoteChantsSnapshot.docs.map(d => ({ id: d.id, ...d.data() } as UserChant));
+
+      // 2. Fetch remote sessions
+      const sessionsPath = `users/${userId}/chant_sessions`;
+      const remoteSessionsSnapshot = await getDocs(collection(db, sessionsPath));
+      const remoteSessions = remoteSessionsSnapshot.docs.map(d => ({ 
+        id: d.id, 
+        ...d.data(),
+        timestamp: d.data().timestamp?.toMillis() || Date.now()
       } as ChantSession));
-    } catch (error) {
-      handleFirestoreError(error, OperationType.LIST, path);
-      return [];
+
+      const localChants = this.getLocalChants();
+      const localSessions = await this.getSessionHistory();
+
+      // Merge Chants (prefer local if newer)
+      const mergedChantsMap = new Map<string, UserChant>();
+      remoteChants.forEach(c => mergedChantsMap.set(c.id, c));
+      localChants.forEach(c => {
+        const existing = mergedChantsMap.get(c.id);
+        if (!existing || (c.lastUsed || 0) >= (existing.lastUsed || 0)) {
+          mergedChantsMap.set(c.id, c);
+        }
+      });
+      const mergedChants = Array.from(mergedChantsMap.values());
+
+      // Merge Sessions (union)
+      const mergedSessionsMap = new Map<string, ChantSession>();
+      remoteSessions.forEach(s => mergedSessionsMap.set(s.id, s));
+      localSessions.forEach(s => mergedSessionsMap.set(s.id, s));
+      const mergedSessions = Array.from(mergedSessionsMap.values());
+
+      // Save merged locally
+      setLocal('app_user_chants', mergedChants);
+      setLocal('app_chant_sessions', mergedSessions);
+      this.notifyListeners();
+
+      // Upload missing/newer to Firebase (batch)
+      const batch = writeBatch(db);
+      mergedChants.forEach(c => {
+        const ref = doc(db, chantsPath, c.id);
+        batch.set(ref, c, { merge: true });
+      });
+
+      // To avoid massive batches, only upload sessions not found in remote or diff
+      const localSessionIdsToUpload = mergedSessions.filter(s => !remoteSessions.find(rs => rs.id === s.id));
+      localSessionIdsToUpload.forEach(s => {
+        const ref = doc(db, sessionsPath, s.id);
+        batch.set(ref, {
+          chantId: s.chantId,
+          count: s.count,
+          timestamp: s.timestamp
+        });
+      });
+
+      await batch.commit();
+    } catch (e) {
+      console.warn('Sync failed:', e);
     }
   }
 }
 
 export const chantService = new ChantService();
+

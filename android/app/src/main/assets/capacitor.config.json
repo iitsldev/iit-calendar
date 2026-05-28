@@ -1,6 +1,5 @@
 {
-	"appId": "com.iitcalendar.app",
+	"appId": "com.iitcalendar.applet",
 	"appName": "IIT Calendar",
-	"webDir": "dist",
-	"bundledWebRuntime": false
+	"webDir": "dist"
 }

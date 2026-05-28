@@ -3,15 +3,17 @@ import { Search, Plus } from 'lucide-react';
 import { ChantCard } from './ChantCard';
 import { UserChant } from '../../types';
 import { cn } from '../../lib/utils';
+import { chantService } from '../../services/ChantService';
 
 interface ChantListProps {
   chants: UserChant[];
   selectedChantId: string | null;
   onSelect: (id: string) => void;
   onAddChant: () => void;
+  onViewChant: (id: string) => void;
 }
 
-export function ChantList({ chants, selectedChantId, onSelect, onAddChant }: ChantListProps) {
+export function ChantList({ chants, selectedChantId, onSelect, onAddChant, onViewChant }: ChantListProps) {
   const [searchTerm, setSearchTerm] = useState('');
 
   const filteredChants = chants
@@ -30,7 +32,7 @@ export function ChantList({ chants, selectedChantId, onSelect, onAddChant }: Cha
   return (
     <div className="space-y-6">
       <div className="relative group">
-        <div className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-[#7f5700] transition-colors">
+        <div className="absolute left-4 top-1/2 -translate-y-1/2 group-focus-within:text-[#7f5700] transition-colors">
           <Search size={18} />
         </div>
         <input
@@ -38,7 +40,7 @@ export function ChantList({ chants, selectedChantId, onSelect, onAddChant }: Cha
           placeholder="Search chants..."
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
-          className="w-full pl-12 pr-4 py-4 rounded-2xl bg-slate-50 dark:bg-slate-800 focus:outline-none focus:ring-1 focus:ring-[#7f5700]/20 transition-all text-slate-800 dark:text-slate-200 border border-slate-100 dark:border-slate-700"
+          className="w-full pl-12 pr-4 py-4 rounded-2xl focus:outline-none focus:ring-1 focus:ring-[#7f5700]/20 transition-all border border-slate-100 dark:border-slate-700"
         />
       </div>
 
@@ -49,12 +51,18 @@ export function ChantList({ chants, selectedChantId, onSelect, onAddChant }: Cha
             chant={chant}
             selected={chant.id === selectedChantId}
             onClick={() => onSelect(chant.id)}
+            onView={() => onViewChant(chant.id)}
+            onDelete={() => {
+              if (confirm('Are you sure you want to delete this chant?')) {
+                chantService.deleteChant(undefined, chant.id);
+              }
+            }}
           />
         ))}
         
         <button
           onClick={onAddChant}
-          className="w-full p-5 rounded-[1.5rem] border-2 border-dashed border-slate-200 dark:border-slate-700 hover:border-[#7f5700]/30 transition-all flex items-center justify-center gap-3 text-slate-400 font-bold uppercase tracking-widest text-xs"
+          className="w-full p-5 rounded-[1.5rem] border-2 border-dashed border-slate-200 dark:border-slate-700 hover:border-[#7f5700]/30 transition-all flex items-center justify-center gap-3 font-bold uppercase tracking-widest text-xs"
         >
           <Plus size={16} />
           Create Custom Chant

@@ -70,38 +70,85 @@ export interface AppReflection {
 
 export class FirebaseDataService {
   static subscribeToEvents(callback: (events: AppEvent[]) => void) {
+    // 1. Initial load from local storage or bundled data
+    const local = localStorage.getItem('app_events');
+    if (local) {
+      try {
+        const parsed = JSON.parse(local);
+        if (Array.isArray(parsed)) {
+          callback(parsed);
+        } else {
+          callback([]);
+        }
+      } catch (e) {
+        callback([]);
+      }
+    } else {
+      callback([]);
+    }
+
+    // 2. Fetch from Firebase to update
     const q = collection(db, 'events');
     return onSnapshot(q, (snapshot) => {
       const events = snapshot.docs.map(doc => ({
         id: doc.id,
         ...doc.data()
       })) as AppEvent[];
+      localStorage.setItem('app_events', JSON.stringify(events));
       callback(events);
     }, (error) => {
-      handleFirestoreError(error, OperationType.LIST, 'events');
+      console.warn('Could not fetch events from Firebase. Working offline.');
     });
   }
 
   static subscribeToReflections(callback: (reflections: AppReflection[]) => void) {
+    const local = localStorage.getItem('app_reflections');
+    if (local) {
+      try {
+        const parsed = JSON.parse(local);
+        if (Array.isArray(parsed)) {
+          callback(parsed);
+        } else {
+          callback(reflectionsData as AppReflection[]);
+        }
+      } catch (e) {
+        callback(reflectionsData as AppReflection[]);
+      }
+    } else {
+      callback(reflectionsData as AppReflection[]);
+    }
+
     const q = collection(db, 'reflections');
     return onSnapshot(q, (snapshot) => {
       const reflections = snapshot.docs.map(doc => ({
         id: doc.id,
         ...doc.data()
       })) as AppReflection[];
+      localStorage.setItem('app_reflections', JSON.stringify(reflections));
       callback(reflections);
     }, (error) => {
-      handleFirestoreError(error, OperationType.LIST, 'reflections');
+      console.warn('Could not fetch reflections from Firebase. Working offline.');
     });
   }
 
   static subscribeToConfig(callback: (config: any) => void) {
+    const local = localStorage.getItem('app_config');
+    if (local) {
+      try {
+        callback(JSON.parse(local));
+      } catch (e) {
+        // no fallback
+      }
+    }
+
     return onSnapshot(doc(db, 'configs', 'calendar'), (doc) => {
       if (doc.exists()) {
-        callback(doc.data());
+        const data = doc.data();
+        localStorage.setItem('app_config', JSON.stringify(data));
+        callback(data);
       }
     }, (error) => {
-      handleFirestoreError(error, OperationType.GET, 'configs/calendar');
+      console.warn('Could not fetch config from Firebase. Working offline.');
     });
   }
 }

@@ -2,6 +2,8 @@ import { LocalNotifications } from '@capacitor/local-notifications';
 import { Device } from '@capacitor/device';
 import { SunTimesCalculator } from '../lib/calendar/SunTimesCalculator';
 import { Settings } from '../types';
+import { subMinutes } from 'date-fns';
+
 
 export enum NotificationId {
   MEDITATION = 1000,
@@ -85,8 +87,8 @@ class NotificationService {
     const sunCalc = new SunTimesCalculator(settings.lat, settings.lng);
     const notifications = [];
     
-    // Schedule for 14 days if not iOS, or 7 days if iOS (to be safe and leave room)
-    const daysToSchedule = isIos ? 7 : 14;
+    // Schedule for 30 days if not iOS, or 14 days if iOS (to be safe and leave room)
+    const daysToSchedule = isIos ? 14 : 30;
 
     for (let i = 0; i < daysToSchedule; i++) {
       const date = new Date();
@@ -95,14 +97,18 @@ class NotificationService {
       const noon = times.solarNoon;
       
       if (noon && noon > new Date()) {
-        notifications.push({
-          id: NotificationId.SOLAR_NOON_START + i,
-          title: "Solar Noon",
-          body: "The sun has reached its peak.",
-          schedule: { at: noon, allowWhileIdle: true },
-          sound: 'bell.wav',
-          channelId: 'solar_noon'
-        });
+        const bellTime = subMinutes(noon, 5);
+        if (bellTime > new Date()) {
+          notifications.push({
+            id: NotificationId.SOLAR_NOON_START + i,
+            title: "Solar Noon Approach",
+            body: "5 minutes until Solar Noon.",
+            schedule: { at: bellTime, allowWhileIdle: true },
+            vibrationPattern: [0, 500],
+            sound: 'bell.wav',
+            channelId: 'solar_noon'
+          });
+        }
       }
     }
 
@@ -136,6 +142,7 @@ class NotificationService {
           title: "Meditation Complete",
           body: "Your session has ended. May you be peaceful.",
           schedule: { at: new Date(Date.now() + ms) },
+          vibrationPattern: [0, 500],
           sound: 'bell.wav',
           channelId: 'meditation',
           extra: { type: 'meditation_complete' }

@@ -15,6 +15,7 @@ export interface Settings {
   darkMode: boolean;
   fontSize: FontSize;
   solarNoonBell: boolean;
+  syncToFirebase: boolean;
 }
 
 export interface Chant {
@@ -43,4 +44,10 @@ export interface UserChantStats {
   streakDays: number;
   lastSessionDate?: string;
   distribution: Record<string, number>; // chantId -> total count
+}
+
+export interface MeditationSession {
+  id: string;
+  date: string;
+  durationMin: number;
 }

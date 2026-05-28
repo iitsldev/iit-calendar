@@ -21,6 +21,7 @@ export function ChantsScreen() {
   const [activeSessionCount, setActiveSessionCount] = useState(0);
   const [view, setView] = useState<'counter' | 'list' | 'insights'>('counter');
   const [showAddModal, setShowAddModal] = useState(false);
+  const [viewChant, setViewChant] = useState<UserChant | null>(null);
   const [loading, setLoading] = useState(true);
 
   // New chant form
@@ -35,17 +36,29 @@ export function ChantsScreen() {
   }, []);
 
   useEffect(() => {
-    if (!user) return;
+    // Sync logic if user is logged in
+    if (user) {
+      const savedSettings = localStorage.getItem('iit_settings');
+      if (savedSettings) {
+        const settings = JSON.parse(savedSettings);
+        if (settings.syncToFirebase) {
+          chantService.syncWithFirebase(user.uid).then(() => {
+             // force update history
+             chantService.getSessionHistory(user.uid).then(setSessions);
+          });
+        }
+      }
+    }
 
-    // Load history and stats
+    // Load history and stats (works offline too)
     const init = async () => {
-      const history = await chantService.getSessionHistory(user.uid);
+      const history = await chantService.getSessionHistory(user?.uid);
       setSessions(history);
+      setLoading(false);
     };
-
     init();
 
-    const unsub = chantService.subscribeToUserChants(user.uid, (updated) => {
+    const unsub = chantService.subscribeToUserChants(user?.uid, (updated) => {
       setChants(updated);
       if (!selectedChantId && updated.length > 0) {
         setSelectedChantId(updated[0].id);
@@ -53,7 +66,7 @@ export function ChantsScreen() {
     });
 
     return () => unsub();
-  }, [user]);
+  }, [user, selectedChantId]);
 
   const stats = useMemo<UserChantStats>(() => {
     const distribution: Record<string, number> = {};
@@ -85,18 +98,18 @@ export function ChantsScreen() {
   const selectedChant = chants.find(c => c.id === selectedChantId);
 
   const handleCommitSession = async () => {
-    if (!user || !selectedChantId || activeSessionCount === 0) return;
+    if (!selectedChantId || activeSessionCount === 0) return;
     
-    await chantService.logSession(user.uid, selectedChantId, activeSessionCount);
+    await chantService.logSession(user?.uid, selectedChantId, activeSessionCount);
     setActiveSessionCount(0);
     // Refresh history
-    const history = await chantService.getSessionHistory(user.uid);
+    const history = await chantService.getSessionHistory(user?.uid);
     setSessions(history);
   };
 
   const handleAddChant = async () => {
-    if (!user || !newChant.title) return;
-    await chantService.addChant(user.uid, {
+    if (!newChant.title) return;
+    await chantService.addChant(user?.uid, {
       ...newChant,
       isCustom: true
     });
@@ -105,42 +118,16 @@ export function ChantsScreen() {
   };
 
   if (loading) return <div className="flex items-center justify-center py-20">Loading...</div>;
-  if (!user) return (
-    <div className="flex flex-col items-center justify-center py-20 text-center px-10 max-w-sm mx-auto">
-      <div className="w-20 h-20 bg-amber-50 dark:bg-amber-900/20 rounded-full flex items-center justify-center mb-6 text-amber-600">
-        <Lock size={32} />
-      </div>
-      <h2 className="font-serif text-3xl mb-4 text-[#7f5700]">Sacred Data Protection</h2>
-      <p className="text-slate-400 mb-10 leading-relaxed">
-        Please sign in to track your chanting practice, earn milestones, and sync your progress across devices.
-      </p>
-      <div className="w-full space-y-3">
-        <button 
-          onClick={() => signInWithGoogle()}
-          className="w-full py-4 bg-[#7f5700] text-white rounded-full text-[10px] font-black uppercase tracking-[0.3em] shadow-lg shadow-[#7f5700]/20 active:scale-95 transition-all flex items-center justify-center gap-3"
-        >
-          <LogIn size={16} />
-          Sign In with Google
-        </button>
-        <button 
-          onClick={() => setShowSettings(true)}
-          className="w-full py-4 bg-white dark:bg-slate-800 text-slate-500 rounded-full text-[10px] font-black uppercase tracking-[0.3em] border border-slate-100 dark:border-slate-700 active:scale-95 transition-all"
-        >
-          Open Settings
-        </button>
-      </div>
-    </div>
-  );
 
   return (
     <div className="max-w-2xl mx-auto space-y-6">
       <header className="text-center py-6">
-        <h2 className="font-serif text-4xl text-[#7f5700] mb-1">Chant Counter</h2>
-        <p className="text-[0.65rem] font-black uppercase tracking-[0.4em] text-slate-400">Focus your mind</p>
+        <h2 className="font-serif text-4xl text-saffron dark:text-amber-500 mb-1">Chant Counter</h2>
+        <p className="text-[0.65rem] font-black uppercase tracking-[0.4em] text-primary-400 dark:text-primary-500">Focus your mind</p>
       </header>
 
       {/* Mode Switcher */}
-      <div className="flex justify-center gap-2 bg-white/50 dark:bg-slate-900/50 p-1.5 rounded-full w-fit mx-auto border border-slate-100 dark:border-slate-800">
+      <div className="flex justify-center gap-2 p-1.5 rounded-full w-fit mx-auto border border-slate-100 dark:border-slate-800">
         {[
           { id: 'counter', icon: List, label: 'Chant' },
           { id: 'insights', icon: BarChart2, label: 'Insights' }
@@ -151,8 +138,8 @@ export function ChantsScreen() {
             className={cn(
               "flex items-center gap-2 px-6 py-2.5 rounded-full text-[0.65rem] font-black uppercase tracking-widest transition-all",
               view === m.id 
-                ? "bg-saffron text-white shadow-md shadow-saffron/20" 
-                : "text-slate-400 hover:text-slate-600"
+            ? "bg-saffron text-white shadow-md shadow-saffron/20" 
+            : "text-primary-300 dark:text-primary-700 hover:text-primary-600 dark:hover:text-primary-300"
             )}
           >
             <m.icon size={14} />
@@ -177,15 +164,14 @@ export function ChantsScreen() {
                   <span className="font-bold text-lg">!</span>
                 </div>
                 <div>
-                  <p className="text-[0.6rem] font-black uppercase tracking-widest text-slate-400 mb-0.5">Consecutive Practice</p>
-                  <p className="text-lg font-bold text-slate-800 dark:text-slate-200">{stats.streakDays} Days</p>
+                  <p className="text-[0.6rem] font-black uppercase tracking-widest text-primary-300 dark:text-primary-700 mb-0.5">Consecutive Practice</p>
+                  <p className="text-lg font-bold text-primary-200 dark:text-primary-800">{stats.streakDays} Days</p>
                 </div>
-              </div>
-              <button 
+              </div>                <button 
                 onClick={() => setView('insights')}
-                className="w-10 h-10 rounded-full bg-white dark:bg-slate-800 flex items-center justify-center border border-slate-100 dark:border-slate-700 shadow-sm"
+                className="w-10 h-10 rounded-full flex items-center justify-center border border-slate-100 dark:border-slate-700 shadow-sm"
               >
-                <BarChart2 size={18} className="text-slate-400" />
+                <BarChart2 size={18} className="text-primary-400 dark:text-primary-500" />
               </button>
             </div>
 
@@ -195,6 +181,7 @@ export function ChantsScreen() {
               selectedChantId={selectedChantId} 
               onSelect={setSelectedChantId} 
               onAddChant={() => setShowAddModal(true)}
+              onViewChant={(id) => setViewChant(chants.find(c => c.id === id) || null)}
             />
 
             {selectedChant && (
@@ -222,35 +209,35 @@ export function ChantsScreen() {
 
       {/* Add Modal */}
       {showAddModal && (
-        <div className="fixed inset-0 z-[100] flex items-center justify-center p-6 bg-slate-900/60 backdrop-blur-sm">
+        <div className="fixed inset-0 z-[100] flex items-center justify-center p-6 bg-slate-900/60 dark:bg-black/70 backdrop-blur-sm">
           <motion.div
             initial={{ opacity: 0, scale: 0.9 }}
             animate={{ opacity: 1, scale: 1 }}
             className="w-full max-w-sm bg-white/90 dark:bg-slate-900/90 backdrop-blur-md rounded-[2.5rem] p-8 shadow-2xl space-y-6 border border-white/50 dark:border-slate-800"
           >
             <div className="flex justify-between items-center">
-              <h3 className="font-serif text-2xl">New Chant</h3>
-              <button onClick={() => setShowAddModal(false)} className="text-slate-400"><X /></button>
+              <h3 className="font-serif text-2xl text-stone-900 dark:text-stone-100">New Chant</h3>
+              <button onClick={() => setShowAddModal(false)} className="text-primary-400 dark:text-primary-500"><X /></button>
             </div>
             
             <div className="space-y-4">
               <div>
-                <label className="text-[0.65rem] font-black uppercase tracking-widest text-slate-400 block mb-2 px-1">Chant Name</label>
+                <label className="text-[0.65rem] font-black uppercase tracking-widest text-primary-300 dark:text-primary-700 block mb-2 px-1">Chant Name</label>
                 <input 
                   type="text" 
                   value={newChant.title}
                   onChange={e => setNewChant({...newChant, title: e.target.value})}
                   placeholder="e.g. Itipiso"
-                  className="w-full px-5 py-4 rounded-2xl bg-slate-50 dark:bg-slate-800 border-none focus:ring-2 focus:ring-saffron/20"
+                  className="w-full px-5 py-4 rounded-2xl bg-slate-50 dark:bg-slate-800 text-stone-900 dark:text-stone-100 border-none focus:ring-2 focus:ring-saffron/20"
                 />
               </div>
               <div>
-                <label className="text-[0.65rem] font-black uppercase tracking-widest text-slate-400 block mb-2 px-1">MileStone (e.g. 108)</label>
+                <label className="text-[0.65rem] font-black uppercase tracking-widest text-primary-300 dark:text-primary-700 block mb-2 px-1">MileStone (e.g. 108)</label>
                 <input 
                   type="number" 
                   value={newChant.milestone}
                   onChange={e => setNewChant({...newChant, milestone: parseInt(e.target.value) || 108})}
-                  className="w-full px-5 py-4 rounded-2xl bg-slate-50 dark:bg-slate-800 border-none focus:ring-2 focus:ring-saffron/20"
+                  className="w-full px-5 py-4 rounded-2xl bg-slate-50 dark:bg-slate-800 text-stone-900 dark:text-stone-100 border-none focus:ring-2 focus:ring-saffron/20"
                 />
               </div>
             </div>
@@ -262,6 +249,25 @@ export function ChantsScreen() {
             >
               Create Chant
             </button>
+          </motion.div>
+        </div>
+      )}
+
+      {/* View Chant Modal */}
+      {viewChant && (
+        <div className="fixed inset-0 z-[100] flex items-center justify-center p-6 bg-slate-900/60 dark:bg-black/70 backdrop-blur-sm">
+          <motion.div
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={{ opacity: 1, scale: 1 }}
+            className="w-full max-w-lg max-h-[80vh] flex flex-col bg-white/90 dark:bg-slate-900/90 backdrop-blur-md rounded-[2.5rem] p-8 shadow-2xl border border-white/50 dark:border-slate-800 overflow-hidden"
+          >
+            <div className="flex justify-between items-center mb-6">
+              <h3 className="font-serif text-2xl text-stone-900 dark:text-stone-100">{viewChant.title}</h3>
+              <button onClick={() => setViewChant(null)} className="text-primary-400 dark:text-primary-500"><X /></button>
+            </div>
+            
+            <div className="overflow-y-auto pr-4 scrollbar-hide text-[var(--text-secondary)] whitespace-pre-wrap leading-relaxed text-lg" dangerouslySetInnerHTML={{ __html: viewChant.chant || '' }}>
+            </div>
           </motion.div>
         </div>
       )}

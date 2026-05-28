@@ -1,10 +1,9 @@
 import React from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, MapPin, Search, Loader2, LogOut, User as UserIcon, LogIn } from 'lucide-react';
-import { Settings, CalendarType } from '../types';
+import { Settings } from '../types';
 import { useI18n } from '../hooks/useI18n';
 import { cn } from '../lib/utils';
-import {COLOR_TOKENS, CSS_VARS} from '../theme/index'
 import { auth, signInWithGoogle } from '../lib/firebase';
 import { signOut, onAuthStateChanged, User } from 'firebase/auth';
 
@@ -74,32 +73,33 @@ export function SettingsModal({
 
   return (
     <AnimatePresence>
-      <style>{CSS_VARS}</style>
-
       <motion.div
         initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
         className="fixed inset-0 z-[100] flex items-end sm:items-center justify-center p-4 backdrop-blur-md"
-        style={{ background: 'var(--sm-overlay)' }}
+        style={{ background: 'rgba(0,0,0,0.45)' }}
       >
         <motion.div
           initial={{ y: 100 }} animate={{ y: 0 }} exit={{ y: 100 }}
-          className="glass-card w-full max-w-lg rounded-[2.5rem] p-8 shadow-2xl relative"
-          style={{ background: 'var(--sm-surface)', border: '1px solid var(--sm-border)' }}
+          className="glass-card w-full max-w-lg rounded-[2.5rem] px-2 py-4 shadow-2xl relative"
+          style={{
+            backgroundColor: 'var(--bg-card)',
+            borderColor: 'var(--border-subtle)',
+          }}
         >
-            {/* Close button */}
+          {/* Close button */}
           <button
             onClick={onClose}
             className="absolute top-6 right-6 p-2 rounded-full transition-colors"
-            style={{ color: 'var(--sm-text-muted)' }}
-            onMouseEnter={e => (e.currentTarget.style.color = 'var(--sm-accent)')}
-            onMouseLeave={e => (e.currentTarget.style.color = 'var(--sm-text-muted)')}
+            style={{ color: 'var(--accent)' }}
+            onMouseEnter={e => (e.currentTarget.style.color = 'var(--text-primary)')}
+            onMouseLeave={e => (e.currentTarget.style.color = 'var(--accent)')}
           >
             <X size="1.5em"/>
           </button>
 
           <h2
-            className="font-serif text-3xl font-bold mb-8"
-            style={{ color: 'var(--sm-accent)' }}
+            className="font-serif text-3xl font-bold mb-6 ml-4"
+            style={{ color: 'var(--accent)' }}
           >
             {t('common.settings')}
           </h2>
@@ -109,34 +109,74 @@ export function SettingsModal({
             {/* 0. Account Section */}
             <section className="space-y-4">
               <SectionLabel>Account</SectionLabel>
-              <div className="glass-card rounded-[1.5rem] p-5 bg-white/40 dark:bg-slate-800/40 border border-slate-100 dark:border-slate-700">
+              <div
+                className="rounded-[1.5rem] p-5 border"
+                style={{ backgroundColor: 'var(--bg-card-alt)', borderColor: 'var(--border-subtle)' }}
+              >
                 {user ? (
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-4">
-                      {user.photoURL ? (
-                        <img src={user.photoURL} alt={user.displayName || 'User'} className="w-12 h-12 rounded-full border border-slate-200" />
-                      ) : (
-                        <div className="w-12 h-12 rounded-full bg-slate-100 dark:bg-slate-800 flex items-center justify-center">
-                          <UserIcon size={24} className="text-slate-400" />
+                  <div className="flex flex-col gap-4">
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-4">
+                        {user.photoURL ? (
+                          <img
+                            src={user.photoURL}
+                            alt={user.displayName || 'User'}
+                            className="w-12 h-12 rounded-full"
+                            style={{ border: '1px solid var(--border-base)' }}
+                          />
+                        ) : (
+                          <div
+                            className="w-12 h-12 rounded-full flex items-center justify-center"
+                            style={{ backgroundColor: 'var(--bg-muted)', color: 'var(--accent)' }}
+                          >
+                            <UserIcon size={24} />
+                          </div>
+                        )}
+                        <div>
+                          <p className="text-sm font-bold" style={{ color: 'var(--text-primary)' }}>
+                            {user.displayName || 'Practitioner'}
+                          </p>
+                          <p
+                            className="text-[10px] uppercase tracking-widest"
+                            style={{ color: 'var(--accent)' }}
+                          >
+                            {user.email}
+                          </p>
                         </div>
-                      )}
-                      <div>
-                        <p className="text-sm font-bold text-slate-800 dark:text-slate-200">{user.displayName || 'Practitioner'}</p>
-                        <p className="text-[10px] text-slate-400 uppercase tracking-widest">{user.email}</p>
                       </div>
+                      <button 
+                        onClick={handleSignOut}
+                        className="p-3 rounded-2xl transition-colors text-rose-500"
+                        style={{ backgroundColor: 'rgba(244,63,94,0.07)' }}
+                        onMouseEnter={e => (e.currentTarget.style.backgroundColor = 'rgba(244,63,94,0.14)')}
+                        onMouseLeave={e => (e.currentTarget.style.backgroundColor = 'rgba(244,63,94,0.07)')}
+                      >
+                        <LogOut size={20} />
+                      </button>
                     </div>
-                    <button 
-                      onClick={handleSignOut}
-                      className="p-3 rounded-2xl bg-rose-50 dark:bg-rose-900/20 text-rose-500 hover:bg-rose-100 dark:hover:bg-rose-900/40 transition-colors"
+                    <div
+                      className="border-t pt-4 flex justify-between items-center w-full"
+                      style={{ borderColor: 'var(--border-subtle)' }}
                     >
-                      <LogOut size={20} />
-                    </button>
+                      <span className="text-sm font-bold" style={{ color: 'var(--text-secondary)' }}>
+                        Sync Data to Cloud
+                      </span>
+                      <Toggle
+                        value={settings.syncToFirebase}
+                        onToggle={() => onUpdate({ ...settings, syncToFirebase: !settings.syncToFirebase })}
+                      />
+                    </div>
                   </div>
                 ) : (
                   <div className="text-center space-y-4 py-2">
-                    <p className="text-xs text-slate-400 px-4">Sign in to sync your chanting progress and meditation stats across devices.</p>
+                    <p className="text-xs px-4" style={{ color: 'var(--accent)' }}>
+                      Sign in to sync your chanting progress and meditation stats across devices.
+                    </p>
                     {loginError && (
-                      <div className="mx-4 p-3 rounded-xl bg-rose-50 dark:bg-rose-900/20 text-[10px] text-rose-600 dark:text-rose-400 font-medium leading-relaxed border border-rose-100 dark:border-rose-900/40">
+                      <div
+                        className="mx-4 p-3 rounded-xl text-[10px] font-medium leading-relaxed border text-rose-500"
+                        style={{ backgroundColor: 'rgba(244,63,94,0.06)', borderColor: 'rgba(244,63,94,0.15)' }}
+                      >
                         {loginError}
                         <p className="mt-2 text-[9px] opacity-70">
                           Tip: In AI Studio, you must add the App URL to "Authorized Domains" in Firebase Authentication settings.
@@ -145,7 +185,12 @@ export function SettingsModal({
                     )}
                     <button
                       onClick={handleSignIn}
-                      className="w-full py-4 rounded-2xl bg-[#7f5700] text-white font-bold uppercase tracking-widest text-[10px] flex items-center justify-center gap-3 shadow-lg shadow-[#7f5700]/20 active:scale-95 transition-all"
+                      className="w-full py-4 rounded-2xl font-bold uppercase tracking-widest text-[10px] flex items-center justify-center gap-3 active:scale-95 transition-all"
+                      style={{
+                        backgroundColor: 'var(--accent)',
+                        color: '#fff',
+                        boxShadow: '0 8px 20px var(--accent-ring)',
+                      }}
                     >
                       <LogIn size={16} />
                       Sign in with Google
@@ -186,25 +231,25 @@ export function SettingsModal({
             <section className="space-y-4">
               <div className="flex justify-between items-center px-1">
                 <SectionLabel>Font Size</SectionLabel>
-                <span className="text-sm font-bold opacity-60" style={{ color: 'var(--sm-text-primary)' }}>
-                   {settings.fontSize}px
+                <span className="text-sm font-bold opacity-60" style={{ color: 'var(--text-primary)' }}>
+                  {settings.fontSize}px
                 </span>
               </div>
               <div className="px-1">
                 <input
                   type="range"
-                  min="14"
-                  max="24"
+                  min="8"
+                  max="20"
                   step="1"
                   value={settings.fontSize}
                   onChange={(e) => onUpdate({ ...settings, fontSize: parseInt(e.target.value) })}
                   className="w-full h-1.5 rounded-lg appearance-none cursor-pointer"
-                  style={{ 
-                    background: 'var(--sm-input-border)',
-                    accentColor: 'var(--sm-accent)'
-                  }}
+                  style={{ accentColor: 'var(--accent)', backgroundColor: 'var(--bg-muted)' }}
                 />
-                <div className="flex justify-between mt-2 text-[10px] font-black uppercase tracking-widest text-slate-400">
+                <div
+                  className="flex justify-between mt-2 text-[10px] font-black uppercase tracking-widest"
+                  style={{ color: 'var(--accent)' }}
+                >
                   <span>Small</span>
                   <span>Normal</span>
                   <span>Large</span>
@@ -216,13 +261,13 @@ export function SettingsModal({
             <section className="space-y-4">
               <div className="flex items-center justify-between px-1">
                 <div className="flex items-center gap-2">
-                  <MapPin size="1em" style={{ color: 'var(--sm-text-muted)' }} />
+                  <MapPin size="1em" style={{ color: 'var(--accent)' }} />
                   <SectionLabel inline>{t('settings.location')}</SectionLabel>
                 </div>
                 <button
-                  onClick={onGetLocation}
                   className="text-sm font-bold hover:underline"
-                  style={{ color: 'var(--sm-accent)' }}
+                  style={{ color: 'var(--accent)' }}
+                  onClick={onGetLocation}
                 >
                   {t('settings.useCurrent')}
                 </button>
@@ -237,20 +282,22 @@ export function SettingsModal({
                     value={addressSearch}
                     onChange={e => setAddressSearch(e.target.value)}
                     onKeyDown={e => e.key === 'Enter' && handleSearch()}
-                    className="w-full pl-4 pr-12 py-4 rounded-2xl text-base focus:outline-none transition-all"
+                    className="w-full pl-4 pr-12 py-4 rounded-2xl text-base focus:outline-none transition-all bg-transparent"
                     style={{
-                      background: 'transparent',
-                      border: '1px solid var(--sm-input-border)',
-                      color: 'var(--sm-text-primary)',
-                      caretColor: 'var(--sm-accent)',
+                      border: '1px solid var(--border-base)',
+                      color: 'var(--text-primary)',
+                      caretColor: 'var(--accent)',
                     }}
-                    onFocus={e => (e.currentTarget.style.boxShadow = `0 0 0 2px var(--sm-accent-muted)`)}
+                    onFocus={e => (e.currentTarget.style.boxShadow = '0 0 0 2px var(--accent-ring)')}
                     onBlur={e => (e.currentTarget.style.boxShadow = 'none')}
                   />
                   <button
                     onClick={handleSearch}
                     className="absolute right-2 top-2 bottom-2 px-3 rounded-xl text-white active:scale-95 transition-all"
-                    style={{ background: 'var(--sm-accent)', boxShadow: 'var(--sm-accent-shadow)' }}
+                    style={{
+                      backgroundColor: 'var(--accent)',
+                      boxShadow: '0 4px 12px var(--accent-ring)',
+                    }}
                   >
                     {isSearching ? <Loader2 size="1.2em" className="animate-spin" /> : <Search size="1.2em" />}
                   </button>
@@ -261,16 +308,16 @@ export function SettingsModal({
                   <div
                     className="px-4 py-3 rounded-2xl flex items-start gap-3"
                     style={{
-                      background: 'var(--sm-accent-subtle)',
-                      border: '1px solid var(--sm-accent-muted)',
+                      backgroundColor: 'var(--accent-soft)',
+                      border: '1px solid var(--accent-ring)',
                     }}
                   >
-                    <MapPin size="1.1em" className="mt-1 shrink-0" style={{ color: 'var(--sm-accent)' }} />
+                    <MapPin size="1.1em" className="mt-1 shrink-0" style={{ color: 'var(--accent)' }} />
                     <div>
-                      <p className="text-sm leading-tight font-medium" style={{ color: 'var(--sm-text-secondary)' }}>
+                      <p className="text-sm leading-tight font-medium" style={{ color: 'var(--text-secondary)' }}>
                         {settings.address}
                       </p>
-                      <p className="text-sm mt-1 font-mono" style={{ color: 'var(--sm-text-muted)' }}>
+                      <p className="text-sm mt-1 font-mono" style={{ color: 'var(--accent)' }}>
                         {settings.lat.toFixed(4)}°, {settings.lng.toFixed(4)}°
                       </p>
                     </div>
@@ -284,58 +331,56 @@ export function SettingsModal({
               <SectionLabel>{t('common.appearance')}</SectionLabel>
               <div className="flex flex-col gap-4 px-1">
                 <div className="flex justify-between items-center w-full">
-                  <span className="text-sm font-bold" style={{ color: 'var(--sm-text-secondary)' }}>Solar Noon Bell</span>
-                  <button
-                    onClick={() => onUpdate({ ...settings, solarNoonBell: !settings.solarNoonBell })}
-                    className="w-12 h-6 rounded-full relative transition-colors"
-                    style={{ backgroundColor: settings.solarNoonBell ? 'var(--sm-accent)' : 'var(--sm-input-border)' }}
-                  >
-                    <motion.div 
-                      animate={{ x: settings.solarNoonBell ? 24 : 4 }}
-                      className="absolute top-1 w-4 h-4 rounded-full bg-white shadow-sm"
-                    />
-                  </button>
+                  <span className="text-sm font-bold" style={{ color: 'var(--text-secondary)' }}>
+                    Solar Noon Bell
+                  </span>
+                  <Toggle
+                    value={settings.solarNoonBell}
+                    onToggle={() => onUpdate({ ...settings, solarNoonBell: !settings.solarNoonBell })}
+                  />
                 </div>
 
                 <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-6">
-                {/* Theme color swatches */}
-                <div className="flex gap-2">
-                  {(['saffron', 'indigo', 'emerald', 'rose', 'slate'] as const).map(color => (
-                    <button
-                      key={`theme-opt-${color}`}
-                      onClick={() => onUpdate({ ...settings, themeColor: color })}
-                      className={cn(
-                        "w-8 h-8 rounded-full transition-all",
-                        color === 'saffron'  && "bg-saffron",
-                        color === 'indigo'   && "bg-indigo-500",
-                        color === 'emerald'  && "bg-emerald-500",
-                        color === 'rose'     && "bg-rose-500",
-                        color === 'slate'    && "bg-slate-700",
-                      )}
-                      style={{
-                        border: settings.themeColor === color
-                          ? '2px solid var(--sm-text-primary)'
-                          : '2px solid var(--sm-border)',
-                        transform: settings.themeColor === color ? 'scale(1.12)' : 'scale(1)',
-                      }}
-                    />
-                  ))}
-                </div>
+                  {/* Theme color swatches */}
+                  <div className="flex gap-2">
+                    {(['saffron', 'indigo', 'emerald', 'rose', 'slate'] as const).map(color => (
+                      <button
+                        key={`theme-opt-${color}`}
+                        onClick={() => onUpdate({ ...settings, themeColor: color })}
+                        style={{
+                          transform: settings.themeColor === color ? 'scale(1.12)' : 'scale(1)',
+                        }}
+                        className={cn(
+                          "w-8 h-8 rounded-full transition-all",
+                          color === 'saffron'  && "bg-[#7f5700]",
+                          color === 'indigo'   && "bg-indigo-500",
+                          color === 'emerald'  && "bg-emerald-500",
+                          color === 'rose'     && "bg-rose-500",
+                          color === 'slate'    && "bg-slate-700",
+                          settings.themeColor === color
+                            ? "ring-2 ring-offset-1 ring-[var(--text-primary)]"
+                            : "ring-2 ring-[var(--border-subtle)]"
+                        )}
+                      />
+                    ))}
+                  </div>
 
-                {/* Dark/Light toggle */}
-                <button
-                  onClick={() => onUpdate({ ...settings, darkMode: !settings.darkMode })}
-                  className="px-6 py-2 rounded-full text-xs font-black uppercase tracking-widest transition-all active:scale-95"
-                  style={settings.darkMode
-                    ? { background: 'var(--sm-accent)', color: 'rgb(20 14 6)' }
-                    : { background: 'var(--sm-text-primary)', color: 'rgb(255 249 242)' }
-                  }
-                >
-                  {settings.darkMode ? "Light Mode" : "Dark Mode"}
-                </button>
+                  {/* Dark/Light toggle */}
+                  <button
+                    onClick={() => onUpdate({ ...settings, darkMode: !settings.darkMode })}
+                    className="px-6 py-2 rounded-full text-xs font-black uppercase tracking-widest transition-all active:scale-95"
+                    style={{
+                      backgroundColor: 'var(--text-primary)',
+                      color: 'var(--bg-main)',
+                    }}
+                    onMouseEnter={e => (e.currentTarget.style.opacity = '0.85')}
+                    onMouseLeave={e => (e.currentTarget.style.opacity = '1')}
+                  >
+                    {settings.darkMode ? "☀ Light Mode" : "☾ Dark Mode"}
+                  </button>
+                </div>
               </div>
-            </div>
-          </section>
+            </section>
 
             {/* 4. Tradition & Calculation */}
             <section className="space-y-4 pb-4">
@@ -346,9 +391,19 @@ export function SettingsModal({
                     key={`cal-type-opt-${type}`}
                     onClick={() => onUpdate({ ...settings, calendarType: type })}
                     className="px-4 py-3 rounded-2xl text-xs font-bold capitalize transition-all"
-                    style={settings.calendarType === type
-                      ? { background: 'var(--sm-accent)', color: 'white', border: '1px solid var(--sm-accent)', boxShadow: `0 4px 16px var(--sm-accent-shadow)` }
-                      : { background: 'transparent', border: '1px solid var(--sm-input-border)', color: 'var(--sm-text-secondary)' }
+                    style={
+                      settings.calendarType === type
+                        ? {
+                            backgroundColor: 'var(--accent)',
+                            color: '#fff',
+                            border: '1px solid var(--accent)',
+                            boxShadow: '0 4px 16px var(--accent-ring)',
+                          }
+                        : {
+                            backgroundColor: 'transparent',
+                            color: 'var(--text-secondary)',
+                            border: '1px solid var(--border-base)',
+                          }
                     }
                   >
                     {type === 'srilanka' ? t('calendar.srilanka') : type}
@@ -363,9 +418,19 @@ export function SettingsModal({
                     key={`dawn-opt-${m}`}
                     onClick={() => onUpdate({ ...settings, dawnMethod: m })}
                     className="px-4 py-3 rounded-2xl text-xs font-black uppercase tracking-widest flex justify-between items-center transition-all"
-                    style={settings.dawnMethod === m
-                      ? { background: 'var(--sm-accent)', color: 'white', border: '1px solid var(--sm-accent)', boxShadow: `0 4px 16px var(--sm-accent-shadow)` }
-                      : { background: 'transparent', border: '1px solid var(--sm-input-border)', color: 'var(--sm-text-muted)' }
+                    style={
+                      settings.dawnMethod === m
+                        ? {
+                            backgroundColor: 'var(--accent)',
+                            color: '#fff',
+                            border: '1px solid var(--accent)',
+                            boxShadow: '0 4px 16px var(--accent-ring)',
+                          }
+                        : {
+                            backgroundColor: 'transparent',
+                            color: 'var(--text-saffron)',
+                            border: '1px solid var(--border-base)',
+                          }
                     }
                   >
                     <span>{t(`settings.dawnMethods.${m}`)}</span>
@@ -379,7 +444,10 @@ export function SettingsModal({
             <button
               onClick={onClose}
               className="w-full py-4 rounded-3xl font-bold uppercase tracking-[0.2em] text-xs shadow-xl active:scale-[0.98] transition-all"
-              style={{ background: 'var(--sm-text-primary)', color: 'var(--sm-bg)' }}
+              style={{
+                backgroundColor: 'var(--text-primary)',
+                color: 'var(--bg-main)',
+              }}
             >
               {t('common.confirm')}
             </button>
@@ -400,7 +468,7 @@ function SectionLabel({ children, inline, centered }: { children: React.ReactNod
         !inline && "px-1",
         centered && "text-center pt-2",
       )}
-      style={{ color: 'var(--sm-text-muted)' }}
+      style={{ color: 'var(--accent)' }}
     >
       {children}
     </h3>
@@ -412,7 +480,7 @@ function FieldGroup({ label, children }: { label: string; children: React.ReactN
     <div className="space-y-2">
       <label
         className="text-sm font-bold uppercase ml-1 block"
-        style={{ color: 'var(--sm-text-muted)' }}
+        style={{ color: 'var(--accent)' }}
       >
         {label}
       </label>
@@ -432,12 +500,28 @@ function StyledSelect({ value, onChange, children }: {
       onChange={onChange}
       className="w-full px-4 py-3 rounded-2xl text-sm focus:outline-none appearance-none"
       style={{
-        background: 'var(--sm-select-bg)',
-        border: '1px solid var(--sm-input-border)',
-        color: 'var(--sm-text-primary)',
+        backgroundColor: 'var(--bg-input)',
+        border: '1px solid var(--border-base)',
+        color: 'var(--text-primary)',
       }}
     >
       {children}
     </select>
+  );
+}
+
+/** Reusable toggle switch driven entirely by CSS variables */
+function Toggle({ value, onToggle }: { value: boolean; onToggle: () => void }) {
+  return (
+    <button
+      onClick={onToggle}
+      className="w-12 h-6 rounded-full relative transition-colors"
+      style={{ backgroundColor: value ? 'var(--accent)' : 'var(--bg-muted)' }}
+    >
+      <motion.div
+        animate={{ x: value ? 24 : 4 }}
+        className="absolute top-1 w-4 h-4 rounded-full bg-white shadow-sm"
+      />
+    </button>
   );
 }

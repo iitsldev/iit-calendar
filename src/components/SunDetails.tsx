@@ -27,12 +27,14 @@ function SunTimeItem({ icon, label, time, color, hasBorder, active }: SunTimeIte
   return (
     <div className={cn(
       "flex flex-col items-center gap-1.5 flex-1 transition-all duration-500",
-      hasBorder && "border-x border-slate-200/50",
+      hasBorder && "border-x border-slate-200/50 dark:border-slate-700/50",
       active ? "scale-100" : "scale-110"
     )}>
       <div className={cn("transition-transform duration-500", active && "scale-125 translate-y-[-4px]", color)}>{icon}</div>
       <span className="text-sm font-black text-slate-400 dark:text-slate-500 uppercase tracking-widest">{label}</span>
-      <span className="text-base font-bold text-slate-200 dark:text-slate-800 tracking-tight">{time}</span>
+      <span className="text-base font-bold text-slate-800 dark:text-slate-200 tracking-tight"
+        style={{color: 'var(--accent)'}}>{time}
+      </span>
     </div>
   );
 }
@@ -45,7 +47,7 @@ function Marker({ label, time, align }: { label: string, time: string, align: 's
       align === 'end' && "items-end text-right"
     )}>
       <span className="text-sm font-black text-slate-400 dark:text-slate-500 uppercase tracking-widest">{label}</span>
-      <span className="text-sm font-bold text-slate-800 dark:text-slate-300 font-mono">{time}</span>
+      <span className="text-sm font-bold text-slate-800 dark:text-slate-200 font-mono">{time}</span>
     </div>
   );
 }
@@ -54,7 +56,7 @@ function LegendItem({ color, label }: { color: string, label: string }) {
   return (
     <div className="flex items-center gap-1.5">
       <div className={cn("w-2 h-2 rounded-full", color)} />
-      <span className="text-sm font-bold text-slate-500 uppercase tracking-widest">{label}</span>
+      <span className="text-sm font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest">{label}</span>
     </div>
   );
 }
@@ -215,7 +217,7 @@ export function SunDetails({
           <div className="pt-6 space-y-4">
             <div className="flex justify-between items-center mb-2 px-1">
               <div className="flex flex-col gap-0.5">
-                <h5 className="text-xs font-black text-slate-400 uppercase tracking-widest">{t('sun.dayNightCycle')}</h5>
+                <h5 className="text-xs font-black text-slate-400 dark:text-slate-500 uppercase tracking-widest">{t('sun.dayNightCycle')}</h5>
                 {selectedPhase !== null && (
                   <motion.span 
                     initial={{ opacity: 0, x: -5 }} animate={{ opacity: 1, x: 0 }}
@@ -247,7 +249,7 @@ export function SunDetails({
                 );
               })}
             </div>
-            <div className="flex justify-between w-full text-xs font-black text-slate-400 px-2 uppercase tracking-tighter">
+            <div className="flex justify-between w-full text-xs font-black text-slate-400 dark:text-slate-500 px-2 uppercase tracking-tighter">
               <span>00:00</span><span>06:00</span><span>12:00</span><span>18:00</span><span>24:00</span>
             </div>
           </div>
@@ -263,7 +265,7 @@ export function SunDetails({
             <DetailRow label={t('sun.solarNoon')} value={safeFormat(times.solarNoon, 'hh:mm:ss a')} />
             <div className="col-span-2 mt-2 flex items-center justify-between p-4 rounded-2xl bg-saffron/5 border border-saffron/20">
               <div className="flex items-center gap-3">
-                <div className={cn("p-2 rounded-xl transition-colors", isBellEnabled ? "bg-saffron text-white" : "bg-slate-200 text-slate-400")}>
+                <div className={cn("p-2 rounded-xl transition-colors", isBellEnabled ? "bg-saffron text-white" : "bg-slate-200 dark:bg-slate-700 text-slate-400 dark:text-slate-500")}>
                   {isBellEnabled ? <Bell size={18} /> : <BellOff size={18} />}
                 </div>
                 <div className="flex flex-col">
@@ -278,7 +280,7 @@ export function SunDetails({
                 className={cn(
                   "px-4 py-2 rounded-xl text-xs font-black uppercase tracking-widest transition-all shadow-sm active:scale-95",
                   isBellEnabled 
-                    ? "bg-slate-800 text-white hover:bg-slate-700" 
+                    ? "bg-slate-800 dark:bg-slate-700 text-white hover:bg-slate-700 dark:hover:bg-slate-600" 
                     : "bg-saffron text-white hover:bg-saffron/90"
                 )}
               >

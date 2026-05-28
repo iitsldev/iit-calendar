@@ -5,7 +5,8 @@ import {
   Settings as SettingsIcon, 
   Wind, 
   Timer, 
-  BookOpen, 
+  BookOpen,
+  Book,
   Info,
   User as UserIcon
 } from 'lucide-react';
@@ -24,6 +25,8 @@ import { SettingsModal } from './components/SettingsModal';
 import { CalendarScreen } from './screens/CalendarScreen';
 import { MeditationScreen } from './screens/MeditationScreen';
 import { ChantsScreen } from './screens/ChantsScreen';
+import { StudyScreen } from './screens/StudyScreen';
+import { BookScreen } from './screens/BookScreen';
 import { CSS_VARS } from './theme/index';
 import { notificationService } from './services/NotificationService';
 import { useUI } from './UIContext';
@@ -85,7 +88,7 @@ export default function App() {
       slate: '#475569'
     };
     
-    root.style.setProperty('--saffron', colors[settings.themeColor]);
+    root.style.setProperty('--accent', colors[settings.themeColor]);
 
     // Refresh notifications when settings change
     notificationService.refreshAll(settings);
@@ -150,7 +153,7 @@ export default function App() {
       <style>{CSS_VARS}</style>
       
       {/* Top App Bar */}
-      <header className="px-6 py-8 flex justify-between items-center relative z-[60]" style={{ backgroundColor: 'var(--bg-header)' }}>
+      <header className="px-2 py-4 mb-2 flex justify-between items-center relative z-[60]" style={{ backgroundColor: 'var(--bg-header)' }}>
         <div className="flex items-center gap-4">
           <motion.div 
             initial={{ scale: 0.9, rotate: -5 }} animate={{ scale: 1, rotate: 0 }}
@@ -179,23 +182,23 @@ export default function App() {
               {user.photoURL ? (
                 <img src={user.photoURL} alt="Profile" className="w-full h-full object-cover" />
               ) : (
-                <div className="w-full h-full bg-slate-100 dark:bg-slate-800 flex items-center justify-center text-slate-400">
+                <div className="w-full h-full flex items-center justify-center text-slate-400">
                   <UserIcon size={20} />
                 </div>
               )}
             </button>
           ) : (
-            <button 
-              onClick={() => setShowSettings(true)}
-              className="px-4 py-2 rounded-full border border-white dark:border-slate-700 bg-white/50 dark:bg-slate-800/50 text-[10px] font-black uppercase tracking-widest text-[#7f5700] active:scale-95 transition-all"
-            >
+          <button 
+            onClick={() => setShowSettings(true)}
+            className="px-4 py-2 rounded-full border border-white dark:border-slate-700 bg-white/50 dark:bg-slate-800/50 text-[10px] font-black uppercase tracking-widest text-amber-700 dark:text-amber-500 active:scale-95 transition-all"
+          >
               Sign In
             </button>
           )}
           <button 
             onClick={() => setShowSettings(true)}
             className="p-2.5 rounded-full shadow-sm border border-white dark:border-slate-700 transition-colors"
-            style={{ backgroundColor: 'var(--btn-header-bg)', color: 'var(--btn-header-text)' }}
+            style={{ color: 'var(--btn-header-text)' }}
           >
             <SettingsIcon size="1.25em" />
           </button>
@@ -220,7 +223,8 @@ export default function App() {
         </div>
 
         {activeTab === 'chants' && <ChantsScreen />}
-        {activeTab === 'study' && <PlaceholderTab icon={<BookOpen size={64} />} title={t('common.study')} text="Deepen your understanding with digital manuscripts and teachings." />}
+        {activeTab === 'study' && <StudyScreen />}
+        {activeTab === 'book' && <BookScreen settings={settings} />}
       </main>
 
       <SettingsModal 
@@ -232,11 +236,12 @@ export default function App() {
       />
 
       {/* Bottom Nav */}
-      <nav className="fixed bottom-0 left-0 right-0 z-50 glass-card px-6 py-5 rounded-t-[2.5rem] flex justify-around items-center border-t border-white/80 bg-white/70 shadow-[0_-10px_40px_rgba(0,0,0,0.03)] backdrop-blur-3xl">
-        <NavButton active={activeTab === 'calendar'} onClick={() => setActiveTab('calendar')} icon={<CalendarIcon size={22}/>} label={t('common.calendar')} />
-        <NavButton active={activeTab === 'meditation'} onClick={() => setActiveTab('meditation')} icon={<Timer size={22}/>} label={t('common.stillness')} />
-        <NavButton active={activeTab === 'chants'} onClick={() => setActiveTab('chants')} icon={<Wind size={22}/>} label={t('common.chants')} />
-        <NavButton active={activeTab === 'study'} onClick={() => setActiveTab('study')} icon={<BookOpen size={22}/>} label={t('common.study')} />
+      <nav className="fixed bottom-0 left-0 right-0 z-50 glass-card px-6 py-5 rounded-t-[2.5rem] flex justify-around items-center border-t border-white/80 dark:border-slate-800/80 bg-white/70 dark:bg-slate-900/70 shadow-[0_-10px_40px_rgba(0,0,0,0.03)] dark:shadow-[0_-10px_40px_rgba(0,0,0,0.3)] backdrop-blur-3xl overflow-x-auto">
+        <NavButton active={activeTab === 'calendar'} onClick={() => setActiveTab('calendar')} icon={<CalendarIcon size={22}/>} label={t('common.calendar') || 'Calendar'} />
+        <NavButton active={activeTab === 'meditation'} onClick={() => setActiveTab('meditation')} icon={<Timer size={22}/>} label={t('common.stillness') || 'Stillness'} />
+        <NavButton active={activeTab === 'chants'} onClick={() => setActiveTab('chants')} icon={<Wind size={22}/>} label={t('common.chants') || 'Chants'} />
+        <NavButton active={activeTab === 'book'} onClick={() => setActiveTab('book')} icon={<Book size={22}/>} label={t('common.book') || 'Book'} />
+        <NavButton active={activeTab === 'study'} onClick={() => setActiveTab('study')} icon={<BookOpen size={22}/>} label={t('common.study') || 'Study'} />
       </nav>
     </div>
   );
@@ -247,13 +252,13 @@ function NavButton({ icon, label, active, onClick }: { icon: React.ReactNode, la
     <button onClick={onClick} className="flex flex-col items-center gap-1.5 relative group min-w-[64px]">
       <div className={cn(
         "transition-all duration-300",
-        active ? "text-saffron scale-110" : "text-slate-400 group-hover:text-slate-600"
+        active ? "text-saffron scale-110" : "text-slate-400 dark:text-slate-500 group-hover:text-slate-600 dark:group-hover:text-slate-400"
       )}>
         {React.isValidElement(icon) ? React.cloneElement(icon as React.ReactElement, { size: '1.4em' } as any) : icon}
       </div>
       <span className={cn(
         "text-sm font-black uppercase tracking-widest transition-all",
-        active ? "text-slate-700 opacity-100" : "text-slate-400 opacity-0 group-hover:opacity-60"
+        active ? "text-slate-700 dark:text-slate-300 opacity-100" : "text-slate-400 dark:text-slate-500 opacity-0 group-hover:opacity-60"
       )}>{label}</span>
       {active && <motion.div layoutId="nav" className="absolute -bottom-1 w-1 h-1 bg-saffron rounded-full" />}
     </button>
@@ -268,10 +273,9 @@ function PlaceholderTab({ icon, title, text }: { icon: React.ReactNode, title: s
     >
       <div className="w-[192px] h-[192px] flex items-center justify-center mb-8 overflow-hidden">
         <img src="/logo.png" alt="IIT Logo" className="w-[144px] h-[144px] object-contain opacity-20" />
-      </div>
-      <h2 className="font-serif text-3xl font-bold text-slate-800 mb-4">{title}</h2>
-      <p className="text-slate-400 max-w-sm leading-relaxed">{text}</p>
-      <button className="mt-10 px-8 py-4 bg-white rounded-full text-sm font-black text-saffron uppercase tracking-widest border border-saffron/20 shadow-sm active:scale-95 transition-all">Coming Soon</button>
+      </div>          <h2 className="font-serif text-3xl font-bold text-slate-800 dark:text-slate-200 mb-4">{title}</h2>
+      <p className="text-slate-400 dark:text-slate-500 max-w-sm leading-relaxed">{text}</p>
+      <button className="mt-10 px-8 py-4 bg-white dark:bg-slate-800 rounded-full text-sm font-black text-saffron uppercase tracking-widest border border-saffron/20 shadow-sm active:scale-95 transition-all">Coming Soon</button>
     </motion.div>
   );
 }

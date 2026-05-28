@@ -1,45 +1,82 @@
 @import url('https://fonts.googleapis.com/css2?family=Noto+Serif:wght@400;700&family=Manrope:wght@400;500;600;700&display=swap');
 @import "tailwindcss";
 
+@custom-variant dark (&:is(.dark *));
+
 @theme {
   --font-serif: "Noto Serif", serif;
   --font-sans: "Manrope", ui-sans-serif, system-ui, sans-serif;
-
   --color-saffron: var(--saffron, #7f5700);
   --color-lotus: #95445b;
   --color-gold: #e8ac41;
   --color-zen-cream: #fbf9f6;
   --color-zen-gray: #e5e9ec;
-
   --spacing-container: 24px;
   --spacing-glass: 20px;
   --spacing-section: 40px;
 }
 
 @layer base {
-  body {
-    @apply bg-zen-cream text-slate-900 transition-colors duration-300;
-    min-height: 100vh;
-  }
-  
-:root {
-    --bg-main: #fffffd;
-    --bg-header: #e5e5e5;
-    --text-primary: #0e0e14;
-    --text-secondary: #1c212f;
-    --btn-header-bg: #a8b6d0;
-    --btn-header-text: #000000;
-    --saffron: #7f5700;
+  /* ── Light mode tokens ───────────────────────────────────── */
+  :root {
+    /* Surfaces */
+    --bg-main:        #fffffd;
+    --bg-header:      #e5e5e5;
+    --bg-card:        #ffffff;
+    --bg-card-alt:    #f5f3f0;   /* section background inside modal */
+    --bg-input:       #f5f3f0;
+    --bg-muted:       #e8e4df;   /* toggle off-state, range track */
+
+    /* Text */
+    --text-primary:   #1c1917;   /* stone-900 */
+    --text-secondary: #44403c;   /* stone-700 */
+    --text-muted:     #78716c;   /* stone-500 */
+    --text-faint:     #2596be;   /* stone-400 — labels, placeholders */
+
+    /* Borders */
+    --border-base:    #d6d3d1;   /* stone-300 */
+    --border-subtle:  #e7e5e4;   /* stone-200 */
+
+    /* Accent (saffron in light) */
+    --accent:         #7f5700;
+    --accent-soft:    rgba(127, 87, 0, 0.08);
+    --accent-ring:    rgba(127, 87, 0, 0.15);
+
+    /* Legacy tokens kept for other components */
+    --btn-header-bg:  #a8b6d0;
+    --btn-header-text:#000000;
+    --saffron:        #7f5700;
   }
 
+  /* ── Dark mode tokens ────────────────────────────────────── */
   .dark {
-    --bg-main: #020617;
-    --bg-header: #0f172a;
-    --text-primary: #f8fafc;
-    --text-secondary: #94a3b8;
-    --btn-header-bg: #1e293b;
-    --btn-header-text: #ffffff;
-    --saffron: #e8ac41;
+    /* Surfaces */
+    --bg-main:        #020617;
+    --bg-header:      #0f172a;
+    --bg-card:        #111827;
+    --bg-card-alt:    #1c2333;
+    --bg-input:       #1e293b;
+    --bg-muted:       #1e293b;
+
+    /* Text */
+    --text-primary:   #f5f5f4;   /* stone-100 */
+    --text-secondary: #d6d3d1;   /* stone-300 */
+    --text-muted:     #a8a29e;   /* stone-400 */
+    --text-faint:     #78716c;   /* stone-500 */
+
+    /* Borders */
+    --border-base:    #3f3f46;   /* zinc-700 */
+    --border-subtle:  #292524;   /* stone-800 */
+
+    /* Accent (gold in dark) */
+    --accent:         #e8ac41;
+    --accent-soft:    rgba(232, 172, 65, 0.08);
+    --accent-ring:    rgba(232, 172, 65, 0.15);
+
+    /* Legacy tokens */
+    --btn-header-bg:  #1e293b;
+    --btn-header-text:#ffffff;
+    --saffron:        #e8ac41;
   }
 
   body {
@@ -50,15 +87,13 @@
   }
 }
 
+/* ── Glass card — uses tokens so it flips with the theme ─── */
 .glass-card {
   @apply backdrop-blur-3xl border transition-colors duration-300;
-  @apply bg-white/70 border-white/80;
-}
-
-.dark .glass-card {
-  @apply bg-slate-900/40 border-slate-800/80;
+  background-color: color-mix(in srgb, var(--bg-card) 85%, transparent);
+  border-color: var(--border-subtle);
 }
 
 .progress-glow {
-  box-shadow: 0 0 15px rgba(232, 172, 65, 0.4);
+  box-shadow: 0 0 15px var(--accent-ring);
 }

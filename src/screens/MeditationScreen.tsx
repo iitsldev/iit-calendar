@@ -4,6 +4,9 @@ import { Play, Square, RotateCcw, Volume2, Activity, Award, Clock, Settings2, X 
 import { cn } from '../lib/utils';
 import { format, differenceInDays, startOfDay, subDays, isSameDay } from 'date-fns';
 import { notificationService, ActiveMeditation } from '../services/NotificationService';
+import { meditationService } from '../services/MeditationService';
+import { auth } from '../lib/firebase';
+import { onAuthStateChanged } from 'firebase/auth';
 
 interface MeditationSession {
   id: string;
@@ -16,13 +19,32 @@ interface MeditationStats {
 }
 
 export function MeditationScreen() {
-  const [stats, setStats] = useState<MeditationStats>(() => {
+  const loadStats = () => {
     if (typeof window !== 'undefined') {
       const saved = localStorage.getItem('zen_meditation_stats');
       return saved ? JSON.parse(saved) : { sessions: [] };
     }
     return { sessions: [] };
-  });
+  };
+
+  const [stats, setStats] = useState<MeditationStats>(loadStats);
+
+  useEffect(() => {
+    const unsub = onAuthStateChanged(auth, (user) => {
+      if (user) {
+        const savedSettings = localStorage.getItem('iit_settings');
+        if (savedSettings) {
+          const settings = JSON.parse(savedSettings);
+          if (settings.syncToFirebase) {
+            meditationService.syncWithFirebase(user.uid).then(() => {
+              setStats(loadStats());
+            });
+          }
+        }
+      }
+    });
+    return () => unsub();
+  }, []);
 
   const [settings, setSettings] = useState({
     durationHours: 0,
@@ -223,6 +245,17 @@ export function MeditationScreen() {
     const newStats = { ...stats, sessions: [...stats.sessions, newSession] };
     setStats(newStats);
     localStorage.setItem('zen_meditation_stats', JSON.stringify(newStats));
+
+    // Trigger sync
+    if (auth.currentUser) {
+      const savedSettings = localStorage.getItem('iit_settings');
+      if (savedSettings) {
+        const parsed = JSON.parse(savedSettings);
+        if (parsed.syncToFirebase) {
+          meditationService.syncWithFirebase(auth.currentUser.uid);
+        }
+      }
+    }
   };
 
   const handleStop = async () => {
@@ -242,6 +275,17 @@ export function MeditationScreen() {
       const newStats = { ...stats, sessions: [...stats.sessions, newSession] };
       setStats(newStats);
       localStorage.setItem('zen_meditation_stats', JSON.stringify(newStats));
+
+      // Trigger sync
+      if (auth.currentUser) {
+        const savedSettings = localStorage.getItem('iit_settings');
+        if (savedSettings) {
+          const parsed = JSON.parse(savedSettings);
+          if (parsed.syncToFirebase) {
+            meditationService.syncWithFirebase(auth.currentUser.uid);
+          }
+        }
+      }
     }
     
     resetTimer();
@@ -525,29 +569,26 @@ export function MeditationScreen() {
         {showSettings && (
           <motion.div
             initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
-            className="fixed inset-0 z-[100] flex items-end sm:items-center justify-center p-4 backdrop-blur-md"
-            style={{ background: 'var(--sm-overlay)' }}
+            className="fixed inset-0 z-[100] flex items-end sm:items-center justify-center p-4 backdrop-blur-md bg-black/35 dark:bg-black/55"
           >
             <motion.div
               initial={{ y: 100 }} animate={{ y: 0 }} exit={{ y: 100 }}
-              className="glass-card w-full max-w-lg rounded-[2.5rem] p-8 shadow-2xl relative"
-              style={{ background: 'var(--sm-surface)', border: '1px solid var(--sm-border)' }}
+              className="glass-card w-full max-w-lg rounded-[2.5rem] p-8 shadow-2xl relative bg-white/92 dark:bg-stone-950/95 border border-stone-200/60 dark:border-yellow-950"
             >
               <button
                 onClick={() => setShowSettings(false)}
-                className="absolute top-6 right-6 p-2 rounded-full transition-colors"
-                style={{ color: 'var(--sm-text-muted)' }}
+                className="absolute top-6 right-6 p-2 rounded-full transition-colors text-stone-400 dark:text-amber-700/70 hover:text-amber-700 dark:hover:text-amber-500"
               >
                 <X size={24}/>
               </button>
 
-              <h2 className="font-serif text-2xl font-bold mb-8" style={{ color: 'var(--sm-text-primary)' }}>
+              <h2 className="font-serif text-2xl font-bold mb-8 text-stone-900 dark:text-stone-100">
                 Session Settings
               </h2>
 
               <div className="space-y-6">
                 <div>
-                  <label className="block text-xs font-black uppercase tracking-widest mb-2" style={{ color: 'var(--sm-text-muted)' }}>Duration (Hours & Minutes)</label>
+                  <label className="block text-xs font-black uppercase tracking-widest mb-2 text-stone-400 dark:text-amber-700/70">Duration (Hours & Minutes)</label>
                   <div className="flex gap-2">
                     <div className="flex-1">
                       <input 
@@ -555,8 +596,7 @@ export function MeditationScreen() {
                         min="0"
                         value={settings.durationHours}
                         onChange={(e) => setSettings({...settings, durationHours: Math.max(0, parseInt(e.target.value) || 0) })}
-                        className="w-full bg-transparent px-4 py-3 rounded-2xl border outline-none font-serif text-xl text-center"
-                        style={{ borderColor: 'var(--sm-input-border)', color: 'var(--sm-text-primary)' }}
+                        className="w-full bg-transparent px-4 py-3 rounded-2xl border outline-none font-serif text-xl text-center border-stone-300 dark:border-amber-900 text-stone-900 dark:text-stone-100"
                         placeholder="Hr"
                       />
                     </div>
@@ -567,8 +607,7 @@ export function MeditationScreen() {
                         max="59"
                         value={settings.durationMinutes}
                         onChange={(e) => setSettings({...settings, durationMinutes: Math.max(0, parseInt(e.target.value) || 0) })}
-                        className="w-full bg-transparent px-4 py-3 rounded-2xl border outline-none font-serif text-xl text-center"
-                        style={{ borderColor: 'var(--sm-input-border)', color: 'var(--sm-text-primary)' }}
+                        className="w-full bg-transparent px-4 py-3 rounded-2xl border outline-none font-serif text-xl text-center border-stone-300 dark:border-amber-900 text-stone-900 dark:text-stone-100"
                         placeholder="Min"
                       />
                     </div>
@@ -576,7 +615,7 @@ export function MeditationScreen() {
                 </div>
 
                 <div>
-                  <label className="block text-xs font-black uppercase tracking-widest mb-2" style={{ color: 'var(--sm-text-muted)' }}>Interval Bell (Minutes & Seconds)</label>
+                  <label className="block text-xs font-black uppercase tracking-widest mb-2 text-stone-400 dark:text-amber-700/70">Interval Bell (Minutes & Seconds)</label>
                   <div className="flex gap-2">
                     <div className="flex-1">
                       <input 
@@ -584,8 +623,7 @@ export function MeditationScreen() {
                         min="0"
                         value={settings.intervalMinutes}
                         onChange={(e) => setSettings({...settings, intervalMinutes: Math.max(0, parseInt(e.target.value) || 0) })}
-                        className="w-full bg-transparent px-4 py-3 rounded-2xl border outline-none font-serif text-xl text-center"
-                        style={{ borderColor: 'var(--sm-input-border)', color: 'var(--sm-text-primary)' }}
+                        className="w-full bg-transparent px-4 py-3 rounded-2xl border outline-none font-serif text-xl text-center border-stone-300 dark:border-amber-900 text-stone-900 dark:text-stone-100"
                         placeholder="Min"
                       />
                     </div>
@@ -596,8 +634,7 @@ export function MeditationScreen() {
                         max="59"
                         value={settings.intervalSeconds}
                         onChange={(e) => setSettings({...settings, intervalSeconds: Math.max(0, parseInt(e.target.value) || 0) })}
-                        className="w-full bg-transparent px-4 py-3 rounded-2xl border outline-none font-serif text-xl text-center"
-                        style={{ borderColor: 'var(--sm-input-border)', color: 'var(--sm-text-primary)' }}
+                        className="w-full bg-transparent px-4 py-3 rounded-2xl border outline-none font-serif text-xl text-center border-stone-300 dark:border-amber-900 text-stone-900 dark:text-stone-100"
                         placeholder="Sec"
                       />
                     </div>
@@ -605,24 +642,20 @@ export function MeditationScreen() {
                 </div>
 
                 <div>
-                  <label className="block text-xs font-black uppercase tracking-widest mb-2" style={{ color: 'var(--sm-text-muted)' }}>Preparation Check (sec)</label>
+                  <label className="block text-xs font-black uppercase tracking-widest mb-2 text-stone-400 dark:text-amber-700/70">Preparation Check (sec)</label>
                   <select 
                     value={settings.delaySeconds}
                     onChange={(e) => setSettings({...settings, delaySeconds: parseInt(e.target.value)})}
-                    className="w-full bg-transparent px-4 py-3 rounded-2xl border outline-none font-serif text-lg"
-                    style={{ 
-                      borderColor: 'var(--sm-input-border)',
-                      color: 'var(--sm-text-primary)',
-                    }}
+                    className="w-full px-4 py-3 rounded-2xl outline-none font-serif text-lg border border-stone-300 dark:border-amber-900 text-stone-900 dark:text-stone-100 bg-amber-50 dark:bg-stone-950"
                   >
-                     <option value={0} style={{ background: 'var(--sm-select-bg)' }}>No delay</option>
-                     <option value={5} style={{ background: 'var(--sm-select-bg)' }}>5 seconds</option>
-                     <option value={10} style={{ background: 'var(--sm-select-bg)' }}>10 seconds</option>
+                     <option value={0}>No delay</option>
+                     <option value={5}>5 seconds</option>
+                     <option value={10}>10 seconds</option>
                   </select>
                 </div>
 
                 <div>
-                  <label className="block text-xs font-black uppercase tracking-widest mb-2" style={{ color: 'var(--sm-text-muted)' }}>Bell Type</label>
+                  <label className="block text-xs font-black uppercase tracking-widest mb-2 text-stone-400 dark:text-amber-700/70">Bell Type</label>
                   <div className="flex gap-2 overflow-x-auto pb-2 snap-x scrollbar-hide" style={{ WebkitOverflowScrolling: 'touch' }}>
                     {['bowl', 'gong', 'chime', 'tibetan', 'woodblock', 'bell'].map(bell => (
                       <button
@@ -631,12 +664,12 @@ export function MeditationScreen() {
                           setSettings({...settings, bellType: bell});
                           playBell(bell);
                         }}
-                        className="flex-none w-24 py-3 text-sm rounded-xl capitalize font-medium border transition-colors snap-center"
-                        style={{
-                           backgroundColor: settings.bellType === bell ? 'var(--sm-accent-muted)' : 'transparent',
-                           borderColor: settings.bellType === bell ? 'var(--sm-accent)' : 'var(--sm-input-border)',
-                           color: settings.bellType === bell ? 'var(--sm-accent)' : 'var(--sm-text-secondary)',
-                        }}
+                        className={cn(
+                          "flex-none w-24 py-3 text-sm rounded-xl capitalize font-medium border transition-colors snap-center",
+                          settings.bellType === bell
+                            ? "bg-amber-700/15 dark:bg-amber-500/15 border-amber-700 dark:border-amber-500 text-amber-700 dark:text-amber-500"
+                            : "bg-transparent border-stone-300 dark:border-amber-900 text-stone-600 dark:text-amber-800/90"
+                        )}
                       >
                         {bell}
                       </button>
@@ -646,8 +679,7 @@ export function MeditationScreen() {
 
                 <button 
                   onClick={() => setShowSettings(false)}
-                  className="w-full mt-4 py-4 rounded-2xl font-bold tracking-widest text-xs uppercase text-white shadow-lg transition-transform active:scale-95"
-                  style={{ background: 'var(--sm-accent)' }}
+                  className="w-full mt-4 py-4 rounded-2xl font-bold tracking-widest text-xs uppercase text-white shadow-lg transition-transform active:scale-95 bg-amber-700 dark:bg-amber-600"
                 >
                   Save Settings
                 </button>
