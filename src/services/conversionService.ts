@@ -19,11 +19,17 @@ export async function convertPali(text: string, targetScript: string): Promise<s
   if (cache[cacheKey]) return cache[cacheKey];
 
   try {
-    // Basic pali-script conversion:
-    // First convert to Sinhala (the pivot script), then to target
-    // IF the source is Roman, convertFrom handles that.
-    let baseSinhalaText = TextProcessor.convertFromMixed(text); 
-    const result = TextProcessor.convert(baseSinhalaText, target);
+    // Safely skip HTML tags during conversion
+    const parts = text.split(/(<[^>]+>)/g);
+    const result = parts.map((part, index) => {
+      // Even indices are text content, odd are tags
+      if (index % 2 === 0 && part.trim()) {
+        const baseSinhalaText = TextProcessor.convertFromMixed(part);
+        return TextProcessor.convert(baseSinhalaText, target);
+      }
+      return part;
+    }).join('');
+
     cache[cacheKey] = result;
     return result;
   } catch (e) {

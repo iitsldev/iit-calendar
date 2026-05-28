@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { BookOpen, List, X, ChevronRight, Search } from 'lucide-react';
+import { BookOpen, List, X, ChevronRight, Search, ChevronUp, ChevronDown } from 'lucide-react';
 import { cn } from '../lib/utils';
 import chantBookHtml from '../data/chantingbook.html?raw';
 import { useI18n } from '../hooks/useI18n';
@@ -48,6 +48,8 @@ export function BookScreen({ settings }: { settings: Settings }) {
   const { t } = useI18n();
   const [showToc, setShowToc] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
+  const [currentMatchIndex, setCurrentMatchIndex] = useState(-1);
+  const [totalMatches, setTotalMatches] = useState(0);
   
   const toc = useMemo(() => parseTocFromHtml(chantBookHtml, settings.paliScript), [settings.paliScript]);
   const contentRef = useRef<HTMLDivElement>(null);
@@ -57,12 +59,24 @@ export function BookScreen({ settings }: { settings: Settings }) {
     const scriptKey = getScriptKey(settings.paliScript);
 
     if (scriptKey !== Script.RO) {
-      html = html.replace(/(>|^)([^<]+)(?=<|$)/g, (match, p1, p2) => {
-        if (!p2.trim()) return match;
-        const sinhala = TextProcessor.convertFrom(p2, Script.RO);
-        const target = TextProcessor.convert(sinhala, scriptKey);
-        return p1 + target;
-      });
+      const parts = html.split(/(<[^>]+>)/g);
+      html = parts.map((part, index) => {
+        // Even indices are text nodes (content between tags)
+        if (index % 2 === 0 && part.trim()) {
+          // Special case: don't convert if it looks like an HTML entity or is just punctuation
+          if (part.length === 1 && /[\s,.;:!?]/.test(part)) return part;
+          
+          try {
+            const sinhala = TextProcessor.convertFrom(part, Script.RO);
+            return TextProcessor.convert(sinhala, scriptKey);
+          } catch (e) {
+            console.error("Conversion failed for part:", part, e);
+            return part;
+          }
+        }
+        // Odd indices are the tags themselves, return unchanged
+        return part;
+      }).join('');
     }
 
     if (searchTerm.trim() && searchTerm.length >= 2) {
@@ -79,11 +93,59 @@ export function BookScreen({ settings }: { settings: Settings }) {
 
       const escapedSearch = searchPattern.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
       const regex = new RegExp(`(?![^<]*>)${escapedSearch}`, 'gi');
-      html = html.replace(regex, (match) => `<mark class="bg-amber-200 dark:bg-amber-500/40 text-slate-900 dark:text-white rounded px-0.5 ring-1 ring-amber-400/50">${match}</mark>`);
+      html = html.replace(regex, (match) => `<mark class="bg-amber-200 dark:bg-amber-500/40 text-slate-900 dark:text-white rounded px-0.5 ring-1 ring-amber-400/50 transition-all duration-300">${match}</mark>`);
     }
 
     return html;
   }, [settings.paliScript, searchTerm]);
+
+  useEffect(() => {
+    if (!searchTerm || searchTerm.length < 2) {
+      setTotalMatches(0);
+      setCurrentMatchIndex(-1);
+      return;
+    }
+
+    // Wait for DOM to update with processedHtml
+    const timer = setTimeout(() => {
+      if (contentRef.current) {
+        const marks = contentRef.current.querySelectorAll('mark');
+        setTotalMatches(marks.length);
+        if (marks.length > 0) {
+          setCurrentMatchIndex(0);
+          marks[0].scrollIntoView({ behavior: 'smooth', block: 'center' });
+          marks[0].classList.add('ring-2', 'ring-amber-600', 'dark:ring-amber-300', 'scale-110');
+        } else {
+          setCurrentMatchIndex(-1);
+        }
+      }
+    }, 100);
+
+    return () => clearTimeout(timer);
+  }, [processedHtml, searchTerm]);
+
+  const navigateMatch = (direction: 'next' | 'prev') => {
+    if (totalMatches === 0 || !contentRef.current) return;
+
+    const marks = contentRef.current.querySelectorAll('mark');
+    // Remove previous active highlight
+    if (currentMatchIndex >= 0 && marks[currentMatchIndex]) {
+       marks[currentMatchIndex].classList.remove('ring-2', 'ring-amber-600', 'dark:ring-amber-300', 'scale-110');
+    }
+
+    let nextIndex = direction === 'next' ? currentMatchIndex + 1 : currentMatchIndex - 1;
+    
+    // Cycle logic
+    if (nextIndex >= totalMatches) nextIndex = 0;
+    if (nextIndex < 0) nextIndex = totalMatches - 1;
+
+    setCurrentMatchIndex(nextIndex);
+    const target = marks[nextIndex];
+    if (target) {
+      target.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      target.classList.add('ring-2', 'ring-amber-600', 'dark:ring-amber-300', 'scale-110');
+    }
+  };
 
   const scrollToId = (id: string) => {
     const el = document.getElementById(id);
@@ -103,7 +165,7 @@ export function BookScreen({ settings }: { settings: Settings }) {
           </h2>
           {searchTerm && (
             <span className="text-[10px] font-black uppercase tracking-widest text-slate-400 ml-8">
-              {t('settings.searching')}
+              {totalMatches > 0 ? `${currentMatchIndex + 1} / ${totalMatches}` : t('settings.searching')}
             </span>
           )}
         </div>
@@ -119,12 +181,26 @@ export function BookScreen({ settings }: { settings: Settings }) {
               className="w-32 sm:w-48 pl-10 pr-8 py-2 bg-slate-100 dark:bg-slate-800 rounded-full text-sm focus:outline-none focus:ring-2 focus:ring-saffron/50 transition-all focus:w-48 sm:focus:w-64"
             />
             {searchTerm && (
-              <button 
-                onClick={() => setSearchTerm('')}
-                className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200"
-              >
-                <X size={14} />
-              </button>
+              <div className="absolute right-2 top-1/2 -translate-y-1/2 flex items-center gap-0.5">
+                <button 
+                  onClick={() => navigateMatch('prev')}
+                  className="p-1 hover:bg-slate-200 dark:hover:bg-slate-700 rounded-full text-slate-500 transition-colors"
+                >
+                  <ChevronUp size={14} />
+                </button>
+                <button 
+                  onClick={() => navigateMatch('next')}
+                  className="p-1 hover:bg-slate-200 dark:hover:bg-slate-700 rounded-full text-slate-500 transition-colors"
+                >
+                  <ChevronDown size={14} />
+                </button>
+                <button 
+                  onClick={() => setSearchTerm('')}
+                  className="p-1 text-slate-400 hover:text-rose-500 transition-colors ml-1"
+                >
+                  <X size={14} />
+                </button>
+              </div>
             )}
           </div>
           <button 

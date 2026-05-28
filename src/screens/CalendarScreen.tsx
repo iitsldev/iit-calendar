@@ -57,14 +57,11 @@ function PaliText({ text, script, className, style }: { text: string; script: st
   }, [text, script]);
 
   return (
-    <span className={className} style={{ ...style, whiteSpace: 'pre-wrap' } as React.CSSProperties}>
-      {displayText.split('<br/>').map((part, i) => (
-        <React.Fragment key={`pali-part-${i}`}>
-          {i > 0 && <br />}
-          {part}
-        </React.Fragment>
-      ))}
-    </span>
+    <span 
+      className={className} 
+      style={{ ...style, whiteSpace: 'pre-wrap' } as React.CSSProperties}
+      dangerouslySetInnerHTML={{ __html: displayText }}
+    />
   );
 }
 

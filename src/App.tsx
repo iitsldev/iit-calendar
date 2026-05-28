@@ -42,7 +42,7 @@ export default function App() {
       const parsed = JSON.parse(saved);
       // Ensure new settings have defaults
       return {
-        calendarType: 'thai',
+        calendarType: 'srilanka',
         lat: 6.9271,
         lng: 79.8612,
         dawnMethod: 'astrology',
@@ -56,7 +56,7 @@ export default function App() {
       };
     }
     return {
-      calendarType: 'thai',
+      calendarType: 'srilanka',
       lat: 6.9271,
       lng: 79.8612,
       dawnMethod: 'astrology',
@@ -173,11 +173,11 @@ export default function App() {
             )}
           </div>
         </div>
-        <div className="flex items-center gap-3">
+        <div className="items-center gap-3">
           {user ? (
             <button 
               onClick={() => setShowSettings(true)}
-              className="w-10 h-10 rounded-full border-2 border-white dark:border-slate-700 overflow-hidden shadow-sm active:scale-95 transition-all"
+              className="hidden sm:flex x-10 h-10 rounded-full border-2 border-white dark:border-slate-700 overflow-hidden shadow-sm active:scale-95 transition-all"
             >
               {user.photoURL ? (
                 <img src={user.photoURL} alt="Profile" className="w-full h-full object-cover" />
@@ -190,7 +190,7 @@ export default function App() {
           ) : (
           <button 
             onClick={() => setShowSettings(true)}
-            className="px-4 py-2 rounded-full border border-white dark:border-slate-700 bg-white/50 dark:bg-slate-800/50 text-[10px] font-black uppercase tracking-widest text-amber-700 dark:text-amber-500 active:scale-95 transition-all"
+            className="hidden sm:flex px-4 py-2 rounded-full border border-white dark:border-slate-700 bg-white/50 dark:bg-slate-800/50 text-[10px] font-black uppercase tracking-widest text-amber-700 dark:text-amber-500 active:scale-95 transition-all"
           >
               Sign In
             </button>

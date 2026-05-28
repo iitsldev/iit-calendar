@@ -32,7 +32,7 @@
     "srilanka": "Sri Lanka"
   },
   "settings": {
-    "tradition": "Month",
+    "tradition": "Calendar style",
     "location": "Location",
     "address": "Search Address",
     "searching": "Searching...",
