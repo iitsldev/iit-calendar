@@ -2,6 +2,8 @@ apply plugin: 'com.android.application'
 // Apply the Google Services plugin cleanly at the top scope so it registers dependencies before evaluation
 apply plugin: 'com.google.gms.google-services'
 
+def sysBuildNumber = System.getenv("CI_BUILD_NUMBER") ?: "4"
+
 android {
     namespace = "com.iitcalendar.applet"
     compileSdk = rootProject.ext.compileSdkVersion
@@ -10,8 +12,8 @@ android {
         applicationId "com.iitcalendar.applet"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 1
-        versionName "1.0"
+        versionCode sysBuildNumber.toInteger()
+        versionName "1.0." + sysBuildNumber
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         
         aaptOptions {
