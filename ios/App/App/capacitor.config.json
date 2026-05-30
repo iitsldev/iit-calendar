@@ -1,7 +1,12 @@
 {
-	"appId": "com.iitcalendar.app",
+	"appId": "com.iitcalendar.applet",
 	"appName": "IIT Calendar",
 	"webDir": "dist",
-	"bundledWebRuntime": false,
-	"packageClassList": []
+	"packageClassList": [
+		"FirebaseAuthenticationPlugin",
+		"AppPlugin",
+		"DevicePlugin",
+		"HapticsPlugin",
+		"LocalNotificationsPlugin"
+	]
 }

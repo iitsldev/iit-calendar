@@ -4,6 +4,15 @@ import { Check, Trash2, Eye } from 'lucide-react';
 import { cn } from '../../lib/utils';
 import { UserChant } from '../../types';
 import { formatDistanceToNow } from 'date-fns';
+import { convertPali } from '../../services/conversionService';
+
+function ConvertedTitle({ text, script }: { text: string; script: string }) {
+  const [display, setDisplay] = React.useState(text);
+  React.useEffect(() => {
+    convertPali(text, script).then(setDisplay);
+  }, [text, script]);
+  return <>{display}</>;
+}
 
 interface ChantCardProps {
   chant: UserChant;
@@ -11,9 +20,10 @@ interface ChantCardProps {
   onClick: () => void;
   onDelete?: () => void;
   onView?: () => void;
+  paliScript: string;
 }
 
-export function ChantCard({ chant, selected, onClick, onDelete, onView }: ChantCardProps) {
+export function ChantCard({ chant, selected, onClick, onDelete, onView, paliScript }: ChantCardProps) {
   const lastUsedText = chant.lastUsed 
     ? formatDistanceToNow(chant.lastUsed, { addSuffix: true })
     : 'Never used';
@@ -57,7 +67,7 @@ export function ChantCard({ chant, selected, onClick, onDelete, onView }: ChantC
               "text-lg font-bold leading-tight",
               selected ? "text-[var(--accent)]" : "text-[var(--text-primary)]"
             )}>
-              {chant.title}
+              <ConvertedTitle text={chant.title} script={paliScript} />
             </h4>
             <div className="flex items-center gap-2 mt-1">
               {selected && <Check size={12} className="text-white/70" />}

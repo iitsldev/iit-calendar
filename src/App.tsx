@@ -15,8 +15,6 @@ import { MyanmarCalendar } from './lib/calendar/MyanmarCalendar';
 import { AstroLunarCalendar } from './lib/calendar/AstroLunarCalendar';
 import { SunTimesCalculator } from './lib/calendar/SunTimesCalculator';
 import { cn } from './lib/utils';
-import { auth } from './lib/firebase';
-import { onAuthStateChanged, User } from 'firebase/auth';
 
 // New specialized components and hooks
 import { Settings, CalendarType } from './types';
@@ -114,12 +112,6 @@ export default function App() {
   const [selectedDate, setSelectedDate] = React.useState(new Date());
   const [activeTab, setActiveTab] = React.useState('calendar');
   const { showSettings, setShowSettings } = useUI();
-  const [user, setUser] = useState<User | null>(auth.currentUser);
-
-  useEffect(() => {
-    const unsub = onAuthStateChanged(auth, u => setUser(u));
-    return () => unsub();
-  }, []);
   
   // Choose engine based on settings
   const calendarEngine = useMemo(() => {
@@ -173,28 +165,7 @@ export default function App() {
             )}
           </div>
         </div>
-        <div className="items-center gap-3">
-          {user ? (
-            <button 
-              onClick={() => setShowSettings(true)}
-              className="hidden sm:flex x-10 h-10 rounded-full border-2 border-white dark:border-slate-700 overflow-hidden shadow-sm active:scale-95 transition-all"
-            >
-              {user.photoURL ? (
-                <img src={user.photoURL} alt="Profile" className="w-full h-full object-cover" />
-              ) : (
-                <div className="w-full h-full flex items-center justify-center text-slate-400">
-                  <UserIcon size={20} />
-                </div>
-              )}
-            </button>
-          ) : (
-          <button 
-            onClick={() => setShowSettings(true)}
-            className="hidden sm:flex px-4 py-2 rounded-full border border-white dark:border-slate-700 bg-white/50 dark:bg-slate-800/50 text-[10px] font-black uppercase tracking-widest text-amber-700 dark:text-amber-500 active:scale-95 transition-all"
-          >
-              Sign In
-            </button>
-          )}
+        <div className="flex items-center gap-3">
           <button 
             onClick={() => setShowSettings(true)}
             className="p-2.5 rounded-full shadow-sm border border-white dark:border-slate-700 transition-colors"
@@ -222,7 +193,7 @@ export default function App() {
           <MeditationScreen />
         </div>
 
-        {activeTab === 'chants' && <ChantsScreen />}
+        {activeTab === 'chants' && <ChantsScreen settings={settings} />}
         {activeTab === 'study' && <StudyScreen />}
         {activeTab === 'book' && <BookScreen settings={settings} />}
       </main>

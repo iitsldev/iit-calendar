@@ -22,6 +22,7 @@ export interface Chant {
   id: string;
   title: string;
   content?: string;
+  chant?: string;
   category?: string;
 }
 

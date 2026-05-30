@@ -1,11 +1,12 @@
 import React from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { X, MapPin, Search, Loader2, LogOut, User as UserIcon, LogIn } from 'lucide-react';
+import { X, MapPin, Search, Loader2, Download, Upload } from 'lucide-react';
 import { Settings } from '../types';
 import { useI18n } from '../hooks/useI18n';
 import { cn } from '../lib/utils';
-import { auth, signInWithGoogle } from '../lib/firebase';
-import { signOut, onAuthStateChanged, User } from 'firebase/auth';
+import { Capacitor } from '@capacitor/core';
+import { Filesystem, Directory, Encoding } from '@capacitor/filesystem';
+import { Share } from '@capacitor/share';
 
 export function SettingsModal({ 
   show, 
@@ -23,30 +24,90 @@ export function SettingsModal({
   const { t } = useI18n();
   const [addressSearch, setAddressSearch] = React.useState('');
   const [isSearching, setIsSearching] = React.useState(false);
-  const [user, setUser] = React.useState<User | null>(auth.currentUser);
-  const [loginError, setLoginError] = React.useState<string | null>(null);
+  const fileInputRef = React.useRef<HTMLInputElement>(null);
 
   React.useEffect(() => {
-    const unsub = onAuthStateChanged(auth, u => setUser(u));
-    return () => unsub();
-  }, []);
+    if (show) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = '';
+    }
+    return () => {
+      document.body.style.overflow = '';
+    };
+  }, [show]);
 
-  const handleSignIn = async () => {
-    setLoginError(null);
-    try {
-      await signInWithGoogle();
-    } catch (error: any) {
-      console.error("Sign in failed:", error);
-      setLoginError(error.message || "Authentication failed. Check if your domain is authorized in Firebase Console.");
+  const handleExportData = async () => {
+    const backup = {
+      version: 1,
+      timestamp: Date.now(),
+      settings: localStorage.getItem('iit_settings'),
+      chants: localStorage.getItem('app_user_chants'),
+      chant_sessions: localStorage.getItem('app_chant_sessions'),
+      meditation_stats: localStorage.getItem('zen_meditation_stats')
+    };
+
+    const jsonStr = JSON.stringify(backup, null, 2);
+    const fileName = `iit_calendar_backup_${new Date().toISOString().slice(0, 10)}.json`;
+
+    if (Capacitor.isNativePlatform()) {
+      try {
+        // Write to cache directory, then share via native share sheet
+        const result = await Filesystem.writeFile({
+          path: fileName,
+          data: jsonStr,
+          directory: Directory.Cache,
+          encoding: Encoding.UTF8,
+        });
+
+        await Share.share({
+          title: 'IIT Calendar Backup',
+          text: 'IIT Calendar backup data',
+          url: result.uri,
+          dialogTitle: 'Export Backup',
+        });
+      } catch (err: any) {
+        console.error('Export failed:', err);
+        alert('Export failed: ' + (err.message || 'Unknown error'));
+      }
+    } else {
+      // Web fallback: anchor download
+      const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(jsonStr);
+      const downloadAnchor = document.createElement('a');
+      downloadAnchor.setAttribute("href", dataStr);
+      downloadAnchor.setAttribute("download", fileName);
+      document.body.appendChild(downloadAnchor);
+      downloadAnchor.click();
+      downloadAnchor.remove();
     }
   };
 
-  const handleSignOut = async () => {
-    try {
-      await signOut(auth);
-    } catch (error) {
-      console.error("Sign out failed:", error);
-    }
+  const handleImportData = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+    
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      try {
+        const content = e.target?.result as string;
+        const backup = JSON.parse(content);
+        
+        if (backup && typeof backup === 'object') {
+          if (backup.settings) localStorage.setItem('iit_settings', backup.settings);
+          if (backup.chants) localStorage.setItem('app_user_chants', backup.chants);
+          if (backup.chant_sessions) localStorage.setItem('app_chant_sessions', backup.chant_sessions);
+          if (backup.meditation_stats) localStorage.setItem('zen_meditation_stats', backup.meditation_stats);
+          
+          alert("Data imported successfully! The application will now reload to apply changes.");
+          window.location.reload();
+        } else {
+          throw new Error("Invalid backup file structure.");
+        }
+      } catch (err: any) {
+        alert("Failed to import data: " + (err.message || "Invalid JSON or corrupt file."));
+      }
+    };
+    reader.readAsText(file);
   };
 
   const handleSearch = async () => {
@@ -75,12 +136,12 @@ export function SettingsModal({
     <AnimatePresence>
       <motion.div
         initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
-        className="fixed inset-0 z-[100] flex items-end sm:items-center justify-center p-4 backdrop-blur-md"
+        className="fixed inset-0 z-[100] flex items-end sm:items-center justify-center p-4"
         style={{ background: 'rgba(0,0,0,0.45)' }}
       >
         <motion.div
           initial={{ y: 100 }} animate={{ y: 0 }} exit={{ y: 100 }}
-          className="glass-card w-full max-w-lg rounded-[2.5rem] px-2 py-4 shadow-2xl relative"
+          className="w-full max-w-lg rounded-[2.5rem] px-2 py-4 shadow-2xl relative border"
           style={{
             backgroundColor: 'var(--bg-card)',
             borderColor: 'var(--border-subtle)',
@@ -104,99 +165,50 @@ export function SettingsModal({
             {t('common.settings')}
           </h2>
 
-          <div className="space-y-8 max-h-[70vh] overflow-y-auto pr-2 scrollbar-hide">
+          <div className="space-y-8 max-h-[70vh] overflow-y-auto pr-2 scrollbar-hide overscroll-contain">
 
-            {/* 0. Account Section */}
+            {/* Backup & Restore Section */}
             <section className="space-y-4">
-              <SectionLabel>Account</SectionLabel>
+              <SectionLabel>Backup & Restore</SectionLabel>
               <div
-                className="rounded-[1.5rem] p-5 border"
+                className="rounded-[1.5rem] p-5 border flex flex-col gap-4"
                 style={{ backgroundColor: 'var(--bg-card-alt)', borderColor: 'var(--border-subtle)' }}
               >
-                {user ? (
-                  <div className="flex flex-col gap-4">
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-4">
-                        {user.photoURL ? (
-                          <img
-                            src={user.photoURL}
-                            alt={user.displayName || 'User'}
-                            className="w-12 h-12 rounded-full"
-                            style={{ border: '1px solid var(--border-base)' }}
-                          />
-                        ) : (
-                          <div
-                            className="w-12 h-12 rounded-full flex items-center justify-center"
-                            style={{ backgroundColor: 'var(--bg-muted)', color: 'var(--accent)' }}
-                          >
-                            <UserIcon size={24} />
-                          </div>
-                        )}
-                        <div>
-                          <p className="text-sm font-bold" style={{ color: 'var(--text-primary)' }}>
-                            {user.displayName || 'Practitioner'}
-                          </p>
-                          <p
-                            className="text-[10px] uppercase tracking-widest"
-                            style={{ color: 'var(--accent)' }}
-                          >
-                            {user.email}
-                          </p>
-                        </div>
-                      </div>
-                      <button 
-                        onClick={handleSignOut}
-                        className="p-3 rounded-2xl transition-colors text-rose-500"
-                        style={{ backgroundColor: 'rgba(244,63,94,0.07)' }}
-                        onMouseEnter={e => (e.currentTarget.style.backgroundColor = 'rgba(244,63,94,0.14)')}
-                        onMouseLeave={e => (e.currentTarget.style.backgroundColor = 'rgba(244,63,94,0.07)')}
-                      >
-                        <LogOut size={20} />
-                      </button>
-                    </div>
-                    <div
-                      className="border-t pt-4 flex justify-between items-center w-full"
-                      style={{ borderColor: 'var(--border-subtle)' }}
-                    >
-                      <span className="text-sm font-bold" style={{ color: 'var(--text-secondary)' }}>
-                        Sync Data to Cloud
-                      </span>
-                      <Toggle
-                        value={settings.syncToFirebase}
-                        onToggle={() => onUpdate({ ...settings, syncToFirebase: !settings.syncToFirebase })}
-                      />
-                    </div>
-                  </div>
-                ) : (
-                  <div className="text-center space-y-4 py-2">
-                    <p className="text-xs px-4" style={{ color: 'var(--accent)' }}>
-                      Sign in to sync your chanting progress and meditation stats across devices.
-                    </p>
-                    {loginError && (
-                      <div
-                        className="mx-4 p-3 rounded-xl text-[10px] font-medium leading-relaxed border text-rose-500"
-                        style={{ backgroundColor: 'rgba(244,63,94,0.06)', borderColor: 'rgba(244,63,94,0.15)' }}
-                      >
-                        {loginError}
-                        <p className="mt-2 text-[9px] opacity-70">
-                          Tip: In AI Studio, you must add the App URL to "Authorized Domains" in Firebase Authentication settings.
-                        </p>
-                      </div>
-                    )}
-                    <button
-                      onClick={handleSignIn}
-                      className="w-full py-4 rounded-2xl font-bold uppercase tracking-widest text-[10px] flex items-center justify-center gap-3 active:scale-95 transition-all"
-                      style={{
-                        backgroundColor: 'var(--accent)',
-                        color: '#fff',
-                        boxShadow: '0 8px 20px var(--accent-ring)',
-                      }}
-                    >
-                      <LogIn size={16} />
-                      Sign in with Google
-                    </button>
-                  </div>
-                )}
+                <p className="text-xs" style={{ color: 'var(--text-secondary)' }}>
+                  Export your local settings, chanting history, and meditation stats to move them to another device, or import a previously saved backup file.
+                </p>
+                <div className="flex gap-4">
+                  <button
+                    onClick={handleExportData}
+                    className="flex-grow py-3 px-4 rounded-2xl text-[10px] font-black uppercase tracking-widest flex items-center justify-center gap-2 border transition-all active:scale-95"
+                    style={{
+                      borderColor: 'var(--accent)',
+                      color: 'var(--accent)',
+                      backgroundColor: 'transparent'
+                    }}
+                  >
+                    <Download size={14} />
+                    Export
+                  </button>
+                  <button
+                    onClick={() => fileInputRef.current?.click()}
+                    className="flex-grow py-3 px-4 rounded-2xl text-[10px] font-black uppercase tracking-widest flex items-center justify-center gap-2 transition-all active:scale-95 text-white"
+                    style={{
+                      backgroundColor: 'var(--accent)',
+                      boxShadow: '0 4px 12px var(--accent-ring)'
+                    }}
+                  >
+                    <Upload size={14} />
+                    Import
+                  </button>
+                  <input
+                    type="file"
+                    ref={fileInputRef}
+                    onChange={handleImportData}
+                    accept=".json"
+                    className="hidden"
+                  />
+                </div>
               </div>
             </section>
 

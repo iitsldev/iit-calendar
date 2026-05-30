@@ -5,8 +5,6 @@ import { cn } from '../lib/utils';
 import { format, differenceInDays, startOfDay, subDays, isSameDay } from 'date-fns';
 import { notificationService, ActiveMeditation } from '../services/NotificationService';
 import { meditationService } from '../services/MeditationService';
-import { auth } from '../lib/firebase';
-import { onAuthStateChanged } from 'firebase/auth';
 
 interface MeditationSession {
   id: string;
@@ -29,22 +27,7 @@ export function MeditationScreen() {
 
   const [stats, setStats] = useState<MeditationStats>(loadStats);
 
-  useEffect(() => {
-    const unsub = onAuthStateChanged(auth, (user) => {
-      if (user) {
-        const savedSettings = localStorage.getItem('iit_settings');
-        if (savedSettings) {
-          const settings = JSON.parse(savedSettings);
-          if (settings.syncToFirebase) {
-            meditationService.syncWithFirebase(user.uid).then(() => {
-              setStats(loadStats());
-            });
-          }
-        }
-      }
-    });
-    return () => unsub();
-  }, []);
+
 
   const [settings, setSettings] = useState({
     durationHours: 0,
@@ -246,16 +229,7 @@ export function MeditationScreen() {
     setStats(newStats);
     localStorage.setItem('zen_meditation_stats', JSON.stringify(newStats));
 
-    // Trigger sync
-    if (auth.currentUser) {
-      const savedSettings = localStorage.getItem('iit_settings');
-      if (savedSettings) {
-        const parsed = JSON.parse(savedSettings);
-        if (parsed.syncToFirebase) {
-          meditationService.syncWithFirebase(auth.currentUser.uid);
-        }
-      }
-    }
+
   };
 
   const handleStop = async () => {
@@ -276,16 +250,7 @@ export function MeditationScreen() {
       setStats(newStats);
       localStorage.setItem('zen_meditation_stats', JSON.stringify(newStats));
 
-      // Trigger sync
-      if (auth.currentUser) {
-        const savedSettings = localStorage.getItem('iit_settings');
-        if (savedSettings) {
-          const parsed = JSON.parse(savedSettings);
-          if (parsed.syncToFirebase) {
-            meditationService.syncWithFirebase(auth.currentUser.uid);
-          }
-        }
-      }
+
     }
     
     resetTimer();

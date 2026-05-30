@@ -104,7 +104,6 @@ class NotificationService {
             title: "Solar Noon Approach",
             body: "5 minutes until Solar Noon.",
             schedule: { at: bellTime, allowWhileIdle: true },
-            vibrationPattern: [0, 500],
             sound: 'bell.wav',
             channelId: 'solar_noon'
           });
@@ -142,7 +141,6 @@ class NotificationService {
           title: "Meditation Complete",
           body: "Your session has ended. May you be peaceful.",
           schedule: { at: new Date(Date.now() + ms) },
-          vibrationPattern: [0, 500],
           sound: 'bell.wav',
           channelId: 'meditation',
           extra: { type: 'meditation_complete' }

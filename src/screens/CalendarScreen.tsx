@@ -65,6 +65,52 @@ function PaliText({ text, script, className, style }: { text: string; script: st
   );
 }
 
+/**
+ * Renders an HTML string, converting only text inside <span class="pali">
+ * to the user's chosen Pali script. English spans are left untouched.
+ */function HtmlWithPali({ html, script, className, style }: { html: string; script: string; className?: string; style?: React.CSSProperties }) {
+  const [rendered, setRendered] = React.useState(html);
+  React.useEffect(() => {
+    let active = true;
+    (async () => {
+      const parser = new DOMParser();
+      const doc = parser.parseFromString(`<body>${html}</body>`, 'text/html');
+      const paliDivs = doc.querySelectorAll('.pali');
+      await Promise.all(
+        Array.from(paliDivs).map(async (div) => {
+          const textNodes: Text[] = [];
+          div.childNodes.forEach((node) => {
+            if (node.nodeType === Node.TEXT_NODE && node.textContent?.trim()) {
+              textNodes.push(node as Text);
+            }
+          });
+          await Promise.all(
+            textNodes.map(async (textNode) => {
+              const original = textNode.textContent || '';
+              const converted = await convertPali(original, script);
+              // Replace text node directly with converted text — no wrapper element
+              const temp = doc.createElement('template');
+              temp.innerHTML = converted;
+              textNode.replaceWith(temp.content);
+            })
+          );
+        })
+      );
+      if (active) {
+        setRendered(doc.body.innerHTML);
+      }
+    })();
+    return () => { active = false; };
+  }, [html, script]);
+  return (
+    <div
+      className={className}
+      style={style}
+      dangerouslySetInnerHTML={{ __html: rendered }}
+    />
+  );
+}
+
 export function CalendarScreen({ 
   settings, 
   currentDate, 
@@ -562,7 +608,11 @@ export function CalendarScreen({
                     className="font-serif text-xl leading-[1.8] whitespace-pre-wrap italic text-center mt-6"
                     style={{ color: 'var(--text-secondary)' }}
                   >
-                    <PaliText text={dateDetails.paliChant} script={settings.paliScript} />
+                    <PaliText 
+                      text={dateDetails.paliChant}
+                      script={settings.paliScript} 
+                      style={{ whiteSpace: 'pre-wrap' } as React.CSSProperties}
+                    />
                   </pre>
                 </motion.div>
               )}
@@ -649,9 +699,12 @@ export function CalendarScreen({
             <div className="flex justify-center mb-2">
               <BookOpen size={24} style={{ color: 'var(--accent)' }} />
             </div>
-            <p className="font-serif text-xl italic leading-relaxed" style={{ color: 'var(--accent)' }}>
-              "{reflection.quote}"
-            </p>
+            <HtmlWithPali
+              html={reflection.quote}
+              script={settings.paliScript}
+              className="font-serif text-xl italic leading-relaxed text-center"
+              style={{ color: 'var(--accent)' }}
+            />
             <div className="flex flex-col items-center gap-1">
               <span className="text-sm font-bold" style={{ color: 'var(--text-secondary)' }}>
                 {reflection.author === "Buddha" ? "The Buddha" : reflection.author}

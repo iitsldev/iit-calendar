@@ -11,9 +11,10 @@ interface ChantListProps {
   onSelect: (id: string) => void;
   onAddChant: () => void;
   onViewChant: (id: string) => void;
+  paliScript: string;
 }
 
-export function ChantList({ chants, selectedChantId, onSelect, onAddChant, onViewChant }: ChantListProps) {
+export function ChantList({ chants, selectedChantId, onSelect, onAddChant, onViewChant, paliScript }: ChantListProps) {
   const [searchTerm, setSearchTerm] = useState('');
 
   const filteredChants = chants
@@ -52,9 +53,10 @@ export function ChantList({ chants, selectedChantId, onSelect, onAddChant, onVie
             selected={chant.id === selectedChantId}
             onClick={() => onSelect(chant.id)}
             onView={() => onViewChant(chant.id)}
+            paliScript={paliScript}
             onDelete={() => {
               if (confirm('Are you sure you want to delete this chant?')) {
-                chantService.deleteChant(undefined, chant.id);
+                chantService.deleteChant(chant.id);
               }
             }}
           />
