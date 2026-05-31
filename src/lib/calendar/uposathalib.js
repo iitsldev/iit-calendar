@@ -140,9 +140,15 @@ export function getUposathasForYear(ce) {
 }
 
 function ordinalSuffix(n) {
-  const s = ["th","st","nd","rd"];
   const v = n % 100;
-  return s[(v - 20) % 10] ?? s[v] ?? s[0];
+  // 11th, 12th, 13th are exceptions to the 1st/2nd/3rd rule
+  if (v >= 11 && v <= 13) return "th";
+  switch (n % 10) {
+    case 1: return "st";
+    case 2: return "nd";
+    case 3: return "rd";
+    default: return "th";
+  }
 }
 
 export function uposathaPositionInSeason(uposatha) {
@@ -218,4 +224,53 @@ export function getVassaDates(ce) {
   }
 
   return { pubbaVassaEntry, pubbaVassaPavarana, pacchimaVassaEntry, pacchimaVassaPavarana };
+}
+
+/**
+ * Returns Atikkanta (elapsed) and Avasiṭṭha (remaining) counts
+ * for a given date within the Buddhist calendar.
+ *
+ * Definitions
+ * ───────────
+ * Atikkanta (elapsed):
+ *   - years  : Buddhist Era years fully completed before the current year (bYear − 1)
+ *   - months : lunar months elapsed since the start of the current BE year
+ *              i.e. months from the last Vesak full moon up to, but not including,
+ *              the lunar month in which `date` falls  (bMonth − 1)
+ *   - days   : days elapsed since the most recent uposatha (new moon or full moon),
+ *              counting from 0 on the uposatha day itself
+ *
+ * Avasiṭṭha (remaining):
+ *   - years  : years remaining until BE 5000  (5000 − bYear)
+ *   - months : lunar months remaining from the current month to the end of this BE year
+ *              i.e. (totalMonthsInYear − bMonth)
+ *   - days   : days remaining until the next full-moon uposatha (paṇṇarasī),
+ *              counting 0 on the full-moon day itself
+ *
+ * @param {object} params
+ * @param {number} params.bYear           – Buddhist Era year (e.g. 2569)
+ * @param {number} params.bMonth          – current lunar month number within the BE year (1-based)
+ * @param {number} params.totalMonths     – total lunar months in this BE year (12 or 13)
+ * @param {number} params.daysSinceUposatha – days since the last new-moon or full-moon uposatha
+ * @param {number} params.daysToFullMoon  – days until the next full-moon uposatha (paṇṇarasī)
+ *
+ * @returns {{
+ *   atikkantaY: number,  // elapsed years
+ *   atikkantaM: number,  // elapsed months
+ *   atikkantaD: number,  // elapsed days
+ *   avasitthaY: number,  // remaining years
+ *   avasitthaM: number,  // remaining months
+ *   avasitthaD: number   // remaining days (to full moon)
+ * }}
+ */
+export function getAtikkantaAvasittha({ bYear, bMonth, totalMonths, daysSinceUposatha, daysToFullMoon }) {
+  const atikkantaY = bYear - 1;
+  const atikkantaM = Math.max(0, bMonth - 1);
+  const atikkantaD = Math.max(0, daysSinceUposatha);
+
+  const avasitthaY = 5000 - bYear;
+  const avasitthaM = Math.max(0, totalMonths - bMonth);
+  const avasitthaD = Math.max(0, daysToFullMoon);
+
+  return { atikkantaY, atikkantaM, atikkantaD, avasitthaY, avasitthaM, avasitthaD };
 }

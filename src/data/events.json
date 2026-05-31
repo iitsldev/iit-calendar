@@ -62,18 +62,18 @@
     }
   ],
 
-  "IIT_2027_schedule": [
+  "IIT_2026_2nd_semester_schedule": [
     {
       "calendar_type": "day_of_week",
       "day_of_week": "Monday",
       "time": "08:00-08:45",
-      "subject": "Khuddaka Nikāya"
+      "subject": "Suttanta"
     },
     {
       "calendar_type": "day_of_week",
       "day_of_week": "Monday",
       "time": "08:50-09:35",
-      "subject": "Suttanta"
+      "subject": "Pāḷi"
     },
     {
       "calendar_type": "day_of_week",
@@ -110,7 +110,7 @@
       "calendar_type": "day_of_week",
       "day_of_week": "Tuesday",
       "time": "08:50-09:35",
-      "subject": "Vibhaṅga Vinaya"
+      "subject": "Fundamentals"
     },
     {
       "calendar_type": "day_of_week",
@@ -122,7 +122,7 @@
       "calendar_type": "day_of_week",
       "day_of_week": "Tuesday",
       "time": "13:30-14:15",
-      "subject": "Fundamentals"
+      "subject": "Vibhaṅga Vinaya"
     },
     {
       "calendar_type": "day_of_week",
@@ -141,13 +141,13 @@
       "calendar_type": "day_of_week",
       "day_of_week": "Wednesday",
       "time": "08:00-08:45",
-      "subject": "Khuddaka Nikāya"
+      "subject": "Suttanta"
     },
     {
       "calendar_type": "day_of_week",
       "day_of_week": "Wednesday",
       "time": "08:50-09:35",
-      "subject": "Suttanta"
+      "subject": "Khuddaka Nikāya"
     },
     {
       "calendar_type": "day_of_week",
@@ -159,7 +159,7 @@
       "calendar_type": "day_of_week",
       "day_of_week": "Wednesday",
       "time": "13:30-14:15",
-      "subject": "Pāḷi"
+      "subject": "Samatha"
     },
     {
       "calendar_type": "day_of_week",
@@ -202,7 +202,7 @@
       "calendar_type": "day_of_week",
       "day_of_week": "Thursday",
       "time": "14:20-15:05",
-      "subject": "Samatha"
+      "subject": "Khuddaka Nikāya"
     },
     {
       "calendar_type": "day_of_week",

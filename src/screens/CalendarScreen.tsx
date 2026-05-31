@@ -34,15 +34,6 @@ import { uposathaPositionInSeason, uposathasRemainingInSeason, uposathaSeason, g
 import { useData } from '../DataContext';
 import {COLOR_TOKENS} from '../theme/index'
 
-// ─── Color tokens (edit here to retheme the entire calendar) ───────────────────
-//
-//  LIGHT MODE  — warm cream + golden-brown (Image 2 / IIT Calendar style)
-//  DARK  MODE  — near-black + saffron-gold  (Image 1 / Zenith style)
-//
-// Every value that appears in JSX is looked up via the `t` helper below,
-// so you only need to touch this one object to change the palette.
-// ─────────────────────────────────────────────────────────────────────────────
-
 const DAYS_OF_WEEK = ['SUN', 'MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT'];
 
 function PaliText({ text, script, className, style }: { text: string; script: string; className?: string; style?: React.CSSProperties }) {
@@ -65,10 +56,7 @@ function PaliText({ text, script, className, style }: { text: string; script: st
   );
 }
 
-/**
- * Renders an HTML string, converting only text inside <span class="pali">
- * to the user's chosen Pali script. English spans are left untouched.
- */function HtmlWithPali({ html, script, className, style }: { html: string; script: string; className?: string; style?: React.CSSProperties }) {
+function HtmlWithPali({ html, script, className, style }: { html: string; script: string; className?: string; style?: React.CSSProperties }) {
   const [rendered, setRendered] = React.useState(html);
   React.useEffect(() => {
     let active = true;
@@ -88,7 +76,6 @@ function PaliText({ text, script, className, style }: { text: string; script: st
             textNodes.map(async (textNode) => {
               const original = textNode.textContent || '';
               const converted = await convertPali(original, script);
-              // Replace text node directly with converted text — no wrapper element
               const temp = doc.createElement('template');
               temp.innerHTML = converted;
               textNode.replaceWith(temp.content);
@@ -168,11 +155,17 @@ export function CalendarScreen({
 
   const vassaDates = React.useMemo(() => getVassaDates(currentDate.getFullYear()), [currentDate]);
 
+  // ── Atikkanta / Avasiṭṭha ─────────────────────────────────────────────
+  const elapsed = React.useMemo(
+    () => calendarEngine.getAtikkantaAvasittha(selectedDate),
+    [selectedDate, calendarEngine]
+  );
+
   // ── Events Logic ────────────────────────────────────────────────────────
   const todaysEvents = React.useMemo(() => {
     const groups: Record<string, any[]> = {};
     const day = selectedDate.getDate();
-    const month = selectedDate.getMonth() + 1; // 1-indexed
+    const month = selectedDate.getMonth() + 1;
     const year = selectedDate.getFullYear();
     const dayOfWeek = format(selectedDate, 'EEEE');
 
@@ -184,7 +177,6 @@ export function CalendarScreen({
       return false;
     };
 
-    // Regional events (filtered by date)
     firebaseEvents.forEach(evt => {
       if (checkEvent(evt)) {
         const groupName = evt.category.replace(/_/g, ' ');
@@ -198,7 +190,6 @@ export function CalendarScreen({
 
   // ── Reflections Logic ───────────────────────────────────────────────────
   const reflection = React.useMemo(() => {
-    // Deterministic "random" based on date
     const seed = selectedDate.getFullYear() * 10000 + (selectedDate.getMonth() + 1) * 100 + selectedDate.getDate();
     const baseIndex = seed % firebaseReflections.length;
     const index = (baseIndex + reflectionOffset) % firebaseReflections.length;
@@ -225,13 +216,10 @@ export function CalendarScreen({
       <section
         className="glass-card rounded-[2.5rem] p-4 pt-6 relative overflow-hidden shadow-sm"
         style={{
-          // Light: white-ish frosted glass  |  Dark: dark frosted glass
           background: 'color-mix(in srgb, var(--surface) 100%, transparent)',
           borderColor: 'var(--border)',
         }}
       >
-        
-
         <header className="flex flex-col gap-4 mt-4 mb-8 px-2 relative z-10">
           <div className="flex justify-between items-center w-full">
             <h2
@@ -256,7 +244,6 @@ export function CalendarScreen({
           </div>
 
           <div className="flex items-center gap-3">
-            {/* Year nav */}
             <div
               className="flex items-center p-1 rounded-2xl shadow-sm"
               style={{ background: 'var(--surface)', border: '1px solid var(--border)' }}
@@ -268,7 +255,6 @@ export function CalendarScreen({
               <NavBtn onClick={nextYear} small title="Next Year"><ChevronRight size="1.2em" className="stroke-[3px]"/></NavBtn>
             </div>
 
-            {/* Month nav */}
             <div
               className="flex items-center p-1 rounded-xl shadow-sm"
               style={{ background: 'var(--surface)', border: '1px solid var(--border)' }}
@@ -283,7 +269,6 @@ export function CalendarScreen({
         </header>
 
         <div className="relative z-10 px-1">
-          {/* Day-of-week headers */}
           <div className="grid grid-cols-7 mb-6">
             {DAYS_OF_WEEK.map(day => (
               <span
@@ -296,7 +281,6 @@ export function CalendarScreen({
             ))}
           </div>
 
-          {/* Date cells */}
           <div className="grid grid-cols-7 gap-y-3">
             {Array.from({ length: getDay(startOfMonth(currentDate)) }).map((_, i) => (
               <div key={`month-pad-${i}`} className="h-12 w-full" />
@@ -308,7 +292,6 @@ export function CalendarScreen({
               const isTodayDate = isToday(date);
               const isCurrentMonth = isSameMonth(date, currentDate);
 
-              // Check if date has events (Regular calculation, not a hook)
               const dateDay = date.getDate();
               const dateMonth = date.getMonth() + 1;
               const dateYear = date.getFullYear();
@@ -322,11 +305,8 @@ export function CalendarScreen({
                 return false;
               };
               
-              const hasEvents = (() => {
-                return firebaseEvents.some(check);
-              })();
+              const hasEvents = firebaseEvents.some(check);
 
-              // Compute text colour imperatively to keep inline styles tidy
               let dateColor: string;
               if (isSelected) dateColor = 'rgb(255 255 255)';
               else if (isTodayDate) dateColor = 'var(--accent)';
@@ -352,7 +332,6 @@ export function CalendarScreen({
                       {format(date, 'd')}
                     </span>
 
-                    {/* Uposatha indicator */}
                     {dateInfo.isUposatha && (
                       <div
                         className="absolute -top-1 -right-1 z-20 transition-transform"
@@ -371,7 +350,6 @@ export function CalendarScreen({
                       </div>
                     )}
 
-                    {/* Today dot */}
                     {isTodayDate && (
                       <div
                         className="absolute bottom-1 left-1/2 -translate-x-1/2 w-1.5 h-1.5 rounded-full"
@@ -379,7 +357,6 @@ export function CalendarScreen({
                       />
                     )}
 
-                    {/* Event dash */}
                     {hasEvents && !isTodayDate && (
                       <div
                         className="absolute bottom-1 left-1/2 -translate-x-1/2 w-3 h-0.5 rounded-full opacity-40"
@@ -507,7 +484,6 @@ export function CalendarScreen({
                         script={settings.paliScript}
                       />
                     </MetaCell>
-                    
                     <MetaCell label="Pakkha" right>
                       <PaliText
                         text={nextUposatha.phase === 'full' ? 'Sukka' : 'Kaṇha'}
@@ -534,45 +510,145 @@ export function CalendarScreen({
             activeDawn={activeDawn}
           />
 
-      {/* ── Pali & Vassa Details ─────────────────────────────────────────────── */}
-      <section 
-        className="glass-card rounded-[2.5rem] p-4 space-y-6 shadow-sm border border-white/80 dark:border-slate-800"
-        style={{
-          background: 'var(--surface)',
-          borderColor: 'var(--border)',
-        }}
-      >
-        {/* Basic Pali Details Grid */}
-        <div className="grid grid-cols-2 gap-y-4 gap-x-6">
-          <DetailRow label={t('calendar.month')} value={dateDetails.mName} script={settings.paliScript} />
-          <DetailRow label={t('calendar.year')} value={dateDetails.animal} script={settings.paliScript} />
-          <DetailRow label={t('calendar.season')} value={dateDetails.season} script={settings.paliScript} />
-          <DetailRow label={t('calendar.weekDay')} value={dateDetails.weekDay} script={settings.paliScript} />
-        </div>
+          {/* ── Pali & Vassa Details ──────────────────────────────────────── */}
+          <section 
+            className="glass-card rounded-[2.5rem] p-4 space-y-6 shadow-sm border border-white/80 dark:border-slate-800"
+            style={{
+              background: 'var(--surface)',
+              borderColor: 'var(--border)',
+            }}
+          >
+            <div className="grid grid-cols-2 gap-y-4 gap-x-6">
+              <DetailRow label={t('calendar.month')} value={dateDetails.mName} script={settings.paliScript} />
+              <DetailRow label={t('calendar.year')} value={dateDetails.animal} script={settings.paliScript} />
+              <DetailRow label={t('calendar.season')} value={dateDetails.season} script={settings.paliScript} />
+              <DetailRow label={t('calendar.weekDay')} value={dateDetails.weekDay} script={settings.paliScript} />
+            </div>
 
-        {/* Vassa Information Section */}
-        <div className="pt-6 border-t border-slate-200/50 dark:border-slate-700/50">
-          <h4 className="text-xs font-black uppercase tracking-[0.2em] mb-4 text-center" style={{ color: 'var(--text-muted)' }}>
-            Vassa & Pavāraṇā
-          </h4>
-          <div className="grid grid-cols-2 gap-4">
-            <VassaItem 
-              label="Pubba Vassa" 
-              entry={vassaDates.pubbaVassaEntry} 
-              pavarana={vassaDates.pubbaVassaPavarana} 
-            />
-            <VassaItem 
-              label="Pacchima Vassa" 
-              entry={vassaDates.pacchimaVassaEntry} 
-              pavarana={vassaDates.pacchimaVassaPavarana} 
-            />
-          </div>
-        </div>
-      </section>
+            <div className="pt-6 border-t border-slate-200/50 dark:border-slate-700/50">
+              <h4 className="text-xs font-black uppercase tracking-[0.2em] mb-4 text-center" style={{ color: 'var(--text-muted)' }}>
+                Vassa & Pavāraṇā
+              </h4>
+              <div className="grid grid-cols-2 gap-4">
+                <VassaItem 
+                  label="Pubba Vassa" 
+                  entry={vassaDates.pubbaVassaEntry} 
+                  pavarana={vassaDates.pubbaVassaPavarana} 
+                />
+                <VassaItem 
+                  label="Pacchima Vassa" 
+                  entry={vassaDates.pacchimaVassaEntry} 
+                  pavarana={vassaDates.pacchimaVassaPavarana} 
+                />
+              </div>
+            </div>
+          </section>
 
-          {/* Pali Recitation */}
+          {/* ── Atikkanta / Avasiṭṭha Card ───────────────────────────────── */}
+          <section
+            className="glass-card rounded-[2.5rem] overflow-hidden shadow-sm"
+            style={{ borderColor: 'var(--border)' }}
+          >
+            {/* Header strip */}
+            <div
+              className="px-5 py-3 flex items-center justify-center gap-3"
+              style={{ background: 'var(--accent-subtle)', borderBottom: '1px solid var(--border)' }}
+            >
+              <span className="w-6 h-[1px] opacity-30" style={{ background: 'var(--accent)' }} />
+              <span className="text-[10px] font-black uppercase tracking-[0.25em]" style={{ color: 'var(--accent)' }}>
+                Buddhist Era Progress
+              </span>
+              <span className="w-6 h-[1px] opacity-30" style={{ background: 'var(--accent)' }} />
+            </div>
+
+            {/* Three-column grid — Atikkanta | current values | Avasiṭṭha */}
+            <div
+              className="grid grid-cols-3 divide-x"
+              style={{ divideColor: 'var(--border)' } as React.CSSProperties}
+            >
+              {/* ── Atikkanta (Elapsed) ── */}
+              <div
+                className="flex flex-col items-center gap-3 p-4"
+                style={{ background: 'color-mix(in srgb, var(--surface) 97%, #fce4ec)' }}
+              >
+                <span
+                  className="text-[9px] font-black uppercase tracking-[0.2em] text-center leading-tight"
+                  style={{ color: 'var(--text-muted)' }}
+                >
+                  Atikkanta{'\n'}(Elapsed)
+                </span>
+                <EraCounter value={elapsed.atikkantaY} unit="Y" dimmed />
+                <EraCounter value={elapsed.atikkantaM} unit="M" dimmed />
+                <EraCounter value={elapsed.atikkantaD} unit="D" dimmed />
+              </div>
+
+              {/* ── Current BE values (centre column) ── */}
+              <div
+                className="flex flex-col items-center gap-3 p-4"
+                style={{ background: 'var(--surface)' }}
+              >
+                <span
+                  className="text-[9px] font-black uppercase tracking-[0.2em] text-center leading-tight"
+                  style={{ color: 'var(--accent)' }}
+                >
+                  Buddhist Era
+                </span>
+                <EraCounter value={elapsed.bYear} unit="Y" accent />
+                <EraCounter value={elapsed.bM} unit="M" accent />
+                <EraCounter value={elapsed.tithi} unit="D" accent />
+              </div>
+
+              {/* ── Avasiṭṭha (Remaining) ── */}
+              <div
+                className="flex flex-col items-center gap-3 p-4"
+                style={{ background: 'color-mix(in srgb, var(--surface) 97%, #e8f5e9)' }}
+              >
+                <span
+                  className="text-[9px] font-black uppercase tracking-[0.2em] text-center leading-tight"
+                  style={{ color: 'var(--text-muted)' }}
+                >
+                  Avasiṭṭha{'\n'}(Remaining)
+                </span>
+                <EraCounter value={elapsed.avasitthaY} unit="Y" />
+                <EraCounter value={elapsed.avasitthaM} unit="M" />
+                <EraCounter value={elapsed.avasitthaD} unit="D" />
+              </div>
+            </div>
+
+            {/* Progress bar — fraction of BE 5000 elapsed */}
+            <div
+              className="px-5 pb-4 pt-3 flex flex-col gap-1.5"
+              style={{ background: 'var(--surface)', borderTop: '1px solid var(--border)' }}
+            >
+              <div className="flex justify-between items-center">
+                <span className="text-[9px] font-black uppercase tracking-widest" style={{ color: 'var(--text-muted)' }}>
+                  BE 1
+                </span>
+                <span className="text-[9px] font-black" style={{ color: 'var(--accent)' }}>
+                  {(elapsed.bYear / 5000 * 100).toFixed(2)}%
+                </span>
+                <span className="text-[9px] font-black uppercase tracking-widest" style={{ color: 'var(--text-muted)' }}>
+                  BE 5000
+                </span>
+              </div>
+              <div
+                className="w-full h-2 rounded-full overflow-hidden"
+                style={{ background: 'var(--accent-subtle)' }}
+              >
+                <motion.div
+                  className="h-full rounded-full"
+                  style={{ background: 'var(--accent)' }}
+                  initial={{ width: 0 }}
+                  animate={{ width: `${elapsed.bYear / 5000 * 100}%` }}
+                  transition={{ duration: 1.2, ease: 'easeOut' }}
+                />
+              </div>
+            </div>
+          </section>
+
+          {/* ── Pali Recitation ───────────────────────────────────────────── */}
           <div
-            className="glass-card rounded-[2.5rem] p-4 space-y-10 relative overflow-hidden shadow-sm border border-white/80 dark:border-slate-800"
+            className="glass-card rounded-[2.5rem] p-4 space-y-4 relative overflow-hidden shadow-sm border border-white/80 dark:border-slate-800"
             style={{
               background: 'var(--surface)',
               borderColor: 'var(--border)',
@@ -604,7 +680,7 @@ export function CalendarScreen({
                   className="overflow-hidden"
                 >
                   <pre
-                    className="font-serif text-xl leading-[1.8] whitespace-pre-wrap italic text-center mt-6"
+                    className="font-serif text-xl leading-[1.8] whitespace-pre-wrap italic text-center"
                     style={{ color: 'var(--text-secondary)' }}
                   >
                     <PaliText 
@@ -651,35 +727,61 @@ export function CalendarScreen({
                     exit={{ height: 0, opacity: 0 }}
                     className="overflow-hidden space-y-6 pt-2"
                   >
-                    {Object.entries(todaysEvents).map(([groupName, events]) => (
-                      <div key={`event-group-${groupName}`} className="space-y-3">
-                        <div className="flex items-center gap-2">
-                          <div className="w-1.5 h-1.5 rounded-full" style={{ background: 'var(--accent)' }} />
-                          <span className="text-xs font-black uppercase tracking-widest leading-none opacity-60" style={{ color: 'var(--text-muted)' }}>
-                            {groupName}
-                          </span>
-                        </div>
-                        <div className="space-y-2">
-                          {(events as any[]).map((evt, idx) => (
-                            <div 
-                              key={`event-item-${groupName}-${evt.id || idx}`} 
-                              className="flex justify-between items-center p-3 rounded-2xl bg-slate-50/50 dark:bg-slate-800/30 border border-slate-100 dark:border-slate-700/50"
+                    {Object.entries(todaysEvents).map(([groupName, events]) => {
+                      const sortedEvents = [...(events as any[])].sort((a, b) => {
+                        if (!a.time) return 1;
+                        if (!b.time) return -1;
+                        const toMinutes = (time: string) => {
+                          const [h, m] = time.split(':').map(Number);
+                          return h * 60 + m;
+                        };
+                        return toMinutes(a.time) - toMinutes(b.time);
+                      });
+
+                      return (
+                        <div key={`event-group-${groupName}`} className="space-y-3">
+                          <div className="flex items-center gap-2">
+                            <div
+                              className="w-1.5 h-1.5 rounded-full"
+                              style={{ background: 'var(--accent)' }}
+                            />
+                            <span
+                              className="text-xs font-black uppercase tracking-widest leading-none opacity-60"
+                              style={{ color: 'var(--text-muted)' }}
                             >
-                              <div className="flex flex-col gap-1">
-                                <span className="text-sm font-bold" style={{ color: 'var(--accent)' }}>
-                                  {evt.event_name || evt.subject}
-                                </span>
+                              {groupName}
+                            </span>
+                          </div>
+
+                          <div className="space-y-2">
+                            {sortedEvents.map((evt, idx) => (
+                              <div
+                                key={`event-item-${groupName}-${evt.id || idx}`}
+                                className="flex justify-between items-center p-3 rounded-2xl bg-slate-50/50 dark:bg-slate-800/30 border border-slate-100 dark:border-slate-700/50"
+                              >
+                                <div className="flex flex-col gap-1">
+                                  <span
+                                    className="text-sm font-bold"
+                                    style={{ color: 'var(--accent)' }}
+                                  >
+                                    {evt.event_name || evt.subject}
+                                  </span>
+                                </div>
+
+                                {evt.time && (
+                                  <span
+                                    className="text-xs font-mono font-bold px-2 py-0.5 rounded-lg bg-white dark:bg-slate-900 shadow-sm"
+                                    style={{ color: 'var(--accent)' }}
+                                  >
+                                    {evt.time}
+                                  </span>
+                                )}
                               </div>
-                              {evt.time && (
-                                <span className="text-xs font-mono font-bold px-2 py-0.5 rounded-lg bg-white dark:bg-slate-900 shadow-sm" style={{ color: 'var(--accent)' }}>
-                                  {evt.time}
-                                </span>
-                              )}
-                            </div>
-                          ))}
+                            ))}
+                          </div>
                         </div>
-                      </div>
-                    ))}
+                      );
+                    })}
                   </motion.div>
                 )}
               </AnimatePresence>
@@ -799,7 +901,7 @@ function VassaItem({ label, entry, pavarana }: { label: string; entry: Date | nu
   if (!entry || !pavarana) return null;
   return (
     <div className="flex flex-col gap-2 p-3 rounded-2xl bg-slate-50/50 dark:bg-slate-800/30">
-      <span className="text-sm font-black uppercase tracking-tighter" style={{ color: 'var(--accent)' }}>{label}</span>
+      <span className="text-[11px] font-black uppercase tracking-tighter" style={{ color: 'var(--accent)' }}>{label}</span>
       <div className="space-y-1">
         <div className="flex justify-between items-center">
           <span className="text-sm" style={{ color: 'var(--text-muted)' }}>Entry</span>
@@ -810,6 +912,46 @@ function VassaItem({ label, entry, pavarana }: { label: string; entry: Date | nu
           <span className="text-sm font-bold" style={{ color: 'var(--accent)' }}>{format(pavarana, 'MMM d')}</span>
         </div>
       </div>
+    </div>
+  );
+}
+
+/**
+ * A single number+unit pill used in the Atikkanta/Avasiṭṭha card.
+ * accent  — uses --accent colour (centre column)
+ * dimmed  — uses --text-muted   (elapsed / atikkanta column)
+ * default — uses --accent with reduced opacity (remaining / avasiṭṭha column)
+ */
+function EraCounter({
+  value, unit, accent, dimmed
+}: {
+  value: number;
+  unit: 'Y' | 'M' | 'D';
+  accent?: boolean;
+  dimmed?: boolean;
+}) {
+  const unitLabels: Record<string, string> = { Y: 'yrs', M: 'mo', D: 'days' };
+  return (
+    <div className="flex flex-col items-center gap-0.5 w-full">
+      <span
+        className="text-2xl font-black leading-none tabular-nums"
+        style={{
+          color: accent
+            ? 'var(--accent)'
+            : dimmed
+            ? 'var(--text-muted)'
+            : 'var(--accent)',
+          opacity: dimmed ? 0.6 : accent ? 1 : 0.75,
+        }}
+      >
+        {value.toLocaleString()}
+      </span>
+      <span
+        className="text-[9px] font-black uppercase tracking-widest"
+        style={{ color: 'var(--text-muted)', opacity: 0.6 }}
+      >
+        {unitLabels[unit]}
+      </span>
     </div>
   );
 }
