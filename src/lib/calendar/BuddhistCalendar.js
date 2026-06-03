@@ -38,14 +38,20 @@ export class BuddhistCalendar {
 
   /**
    * Returns the date of the Vesak full moon for a given CE year.
-   * Subclasses may override; default implementation scans getUposathasForYear()
-   * for the first full-moon uposatha on or after April 15 of that year.
+   * Prefers the uposatha explicitly marked event="vesakha" (correct in both
+   * normal and adhikamasa/leap years). Falls back to the first full moon on
+   * or after April 15 for calendar systems that don't set event names.
    * @param {number} year – CE year
    * @returns {Date}
    */
   getVesakDate(year) {
     const uposathas = this.getUposathasForYear(year);
-    const threshold = new Date(year, 3, 15).getTime(); // April 15
+    // Primary: use the explicitly labelled Vesak event (works correctly in
+    // leap years where an extra month precedes Vesākha)
+    const vesakEvent = uposathas.find(u => u.event === "vesakha" && (u.phase ?? u.type) === "full");
+    if (vesakEvent) return vesakEvent.date;
+    // Fallback: first full moon on or after April 15
+    const threshold = new Date(year, 3, 15).getTime();
     const vesak = uposathas.find(u => (u.phase ?? u.type) === "full" && u.date.getTime() >= threshold);
     if (!vesak) throw new Error(`Vesak not found for year ${year}`);
     return vesak.date;
@@ -79,12 +85,14 @@ export class BuddhistCalendar {
     const time = d.getTime();
     const y = d.getFullYear();
 
-    // Buddhist Era year: before Vesak → y+543, on/after Vesak → y+544
-    const vesakThisYear = this.getVesakDate(y);
-    const bYear = (time <= vesakThisYear.getTime()) ? (y + 543) : (y + 544);
+    // Buddhist Era year (Elapsed): before Vesak → y+543, on/after Vesak → y+544
+    // Note: The user wants bYear to represent the "Atikkanta" (fully passed) years.
+    const _vRaw = this.getVesakDate(y);
+    const vesakThisYear = new Date(_vRaw.getFullYear(), _vRaw.getMonth(), _vRaw.getDate());
+    const bYear = (time < vesakThisYear.getTime()) ? (y + 543) : (y + 544);
 
     // Vesak dates bracketing the current BE year
-    const lastCEYear = (time <= vesakThisYear.getTime()) ? y - 1 : y;
+    const lastCEYear = (time < vesakThisYear.getTime()) ? y - 1 : y;
     const lastVD = this.getVesakDate(lastCEYear).getTime();
     const nextVD = this.getVesakDate(lastCEYear + 1).getTime();
 
@@ -101,23 +109,22 @@ export class BuddhistCalendar {
 
     const fullMoons = allUposathas.filter(u => (u.phase ?? u.type) === "full");
 
-    // tithi: days since last full-moon uposatha (1-based: 1 on full-moon day itself)
-    const pastFullMoons = fullMoons.filter(u => u.time < time);
+    // lastFullMoon: the most recent full moon on or before today
+    const pastFullMoons = fullMoons.filter(u => u.time <= time);
     const lastFullMoon = pastFullMoons.length > 0 ? pastFullMoons[pastFullMoons.length - 1] : null;
-    let tithi = lastFullMoon
-      ? Math.round((time - lastFullMoon.time) / 86400000)
-      : 1;
-    if (tithi === 0) tithi = 1;
 
-    // bM: lunar month index within BE year (1 = first month at Vesak)
-    // = months from lastVD to the next upcoming full moon, rounded
-    const nextFullMoon = fullMoons.find(u => u.time >= time);
-    let bM = nextFullMoon
-      ? Math.round((nextFullMoon.time - lastVD) / SYNODIC)
+    // tithi (BE Day): days since the last full moon (1-based: 1 on full-moon day itself)
+    const tithi = lastFullMoon
+      ? Math.round((time - lastFullMoon.time) / 86400000) + 1
       : 1;
-    bM = (bM <= 0) ? totM : (bM > totM ? totM : bM);
+
+    // bM (BE Month): count of full moons since the last Vesak (inclusive of Vesak itself)
+    // 1-based: on the month starting with Vesak, bM is 1.
+    const fullMoonsInYear = fullMoons.filter(u => u.time >= lastVD && u.time <= time);
+    const bM = Math.max(1, fullMoonsInYear.length);
 
     // avasitthaD: days from today to next full-moon uposatha (0 on that day)
+    const nextFullMoon = fullMoons.find(u => u.time > time);
     let avasitthaD = 0;
     if (nextFullMoon) {
       const nfd = new Date(nextFullMoon.date);
@@ -126,16 +133,17 @@ export class BuddhistCalendar {
     }
 
     return {
-      bYear,
-      bM,
+      bYear: bYear - 1, // Change to fully elapsed years
+      bM: bM % 13,
       totM,
-      tithi,
+      tithi: tithi - 1,
       atikkantaY: bYear - 1,
-      atikkantaM: bM - 1,
-      atikkantaD: tithi - 1,
+      atikkantaM: bM % 13, // Months passed before the current month
+      atikkantaD: tithi-2, // Days passed before today
       avasitthaY: 5000 - bYear,
-      avasitthaM: totM - bM,
-      avasitthaD,
+      avasitthaM: Math.max(0, totM - bM ),
+      avasitthaD: avasitthaD,
     };
+
   }
 }

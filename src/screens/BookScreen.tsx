@@ -1,11 +1,14 @@
 import React, { useState, useEffect, useRef, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { BookOpen, List, X, ChevronRight, Search, ChevronUp, ChevronDown } from 'lucide-react';
+import { BookOpen, List, X, ChevronRight, Search, ChevronUp, ChevronDown, Library } from 'lucide-react';
 import { cn } from '../lib/utils';
 import chantBookHtml from '../data/chantingbook.html?raw';
+import memorizationHtml from '../data/memorization.html?raw';
 import { useI18n } from '../hooks/useI18n';
 import { Settings, PaliScript } from '../types';
 import { TextProcessor, Script } from '../lib/pali-script';
+
+import { SCRIPTS } from '../services/conversionService';
 
 interface TocItem {
   id: string;
@@ -13,13 +16,21 @@ interface TocItem {
   level: number;
 }
 
-function getScriptKey(paliScript: PaliScript): string {
-  switch (paliScript) {
-    case 'sinhala': return Script.SI;
-    case 'burmese': return Script.MY;
-    case 'thai': return Script.THAI;
-    default: return Script.RO;
+const BOOKS = {
+  chanting: {
+    titleKey: 'common.chantingBook',
+    html: chantBookHtml
+  },
+  memorization: {
+    titleKey: 'common.memorization',
+    html: memorizationHtml
   }
+} as const;
+
+type BookType = keyof typeof BOOKS;
+
+function getScriptKey(paliScript: PaliScript): string {
+  return SCRIPTS[paliScript] || Script.RO;
 }
 
 function parseTocFromHtml(html: string, paliScript: PaliScript): TocItem[] {
@@ -47,15 +58,17 @@ function parseTocFromHtml(html: string, paliScript: PaliScript): TocItem[] {
 export function BookScreen({ settings }: { settings: Settings }) {
   const { t } = useI18n();
   const [showToc, setShowToc] = useState(false);
+  const [activeBook, setActiveBook] = useState<BookType>('chanting');
   const [searchTerm, setSearchTerm] = useState('');
   const [currentMatchIndex, setCurrentMatchIndex] = useState(-1);
   const [totalMatches, setTotalMatches] = useState(0);
   
-  const toc = useMemo(() => parseTocFromHtml(chantBookHtml, settings.paliScript), [settings.paliScript]);
+  const currentHtml = BOOKS[activeBook].html;
+  const toc = useMemo(() => parseTocFromHtml(currentHtml, settings.paliScript), [currentHtml, settings.paliScript]);
   const contentRef = useRef<HTMLDivElement>(null);
 
   const processedHtml = useMemo(() => {
-    let html = chantBookHtml;
+    let html = currentHtml;
     const scriptKey = getScriptKey(settings.paliScript);
 
     if (scriptKey !== Script.RO) {
@@ -97,7 +110,7 @@ export function BookScreen({ settings }: { settings: Settings }) {
     }
 
     return html;
-  }, [settings.paliScript, searchTerm]);
+  }, [currentHtml, settings.paliScript, searchTerm]);
 
   useEffect(() => {
     if (!searchTerm || searchTerm.length < 2) {
@@ -156,29 +169,35 @@ export function BookScreen({ settings }: { settings: Settings }) {
     setShowToc(false);
   };
 
+  const toggleBook = () => {
+    setActiveBook(prev => prev === 'chanting' ? 'memorization' : 'chanting');
+    setSearchTerm('');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
   return (
     <div className="max-w-3xl mx-auto pb-20 relative animate-in fade-in duration-500">
       <header className="sticky top-0 z-40 bg-white/80 dark:bg-slate-900/80 backdrop-blur-md border-b border-slate-200 dark:border-slate-800 py-4 px-4 sm:px-6 flex justify-between items-center rounded-b-3xl shadow-[0_4px_30px_rgba(0,0,0,0.03)] dark:shadow-[0_4px_30px_rgba(0,0,0,0.2)]">
         <div className="flex flex-col">
-          <h2 className="font-serif text-2xl font-bold text-saffron dark:text-amber-500 flex items-center gap-2">
-            <BookOpen size={24} /> {t('common.book')}
+          <h2 className="hidden sm:flex font-serif text-2xl font-bold text-saffron dark:text-amber-500 items-center gap-2">
+            <BookOpen size={24} /> {t(BOOKS[activeBook].titleKey as any)}
           </h2>
           {searchTerm && (
-            <span className="text-[10px] font-black uppercase tracking-widest text-slate-400 ml-8">
+            <span className="text-[10px] font-black uppercase tracking-widest text-slate-400 ml-0 sm:ml-8">
               {totalMatches > 0 ? `${currentMatchIndex + 1} / ${totalMatches}` : t('settings.searching')}
             </span>
           )}
         </div>
         
-        <div className="flex items-center gap-2">
-          <div className="relative group">
+        <div className="flex items-center gap-2 flex-1 sm:flex-initial justify-end">
+          <div className="relative group flex-1 sm:flex-initial">
             <Search size={18} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-saffron transition-colors" />
             <input
               type="text"
               placeholder={`${t('common.search')}...`}
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="w-32 sm:w-48 pl-10 pr-8 py-2 bg-slate-100 dark:bg-slate-800 rounded-full text-sm focus:outline-none focus:ring-2 focus:ring-saffron/50 transition-all focus:w-48 sm:focus:w-64"
+              className="w-full sm:w-48 pl-10 pr-8 py-2 bg-slate-100 dark:bg-slate-800 rounded-full text-sm focus:outline-none focus:ring-2 focus:ring-saffron/50 transition-all sm:focus:w-64"
             />
             {searchTerm && (
               <div className="absolute right-2 top-1/2 -translate-y-1/2 flex items-center gap-0.5">
@@ -204,8 +223,15 @@ export function BookScreen({ settings }: { settings: Settings }) {
             )}
           </div>
           <button 
+            onClick={toggleBook}
+            title={t(activeBook === 'chanting' ? 'common.memorization' : 'common.chantingBook' as any)}
+            className="p-2.5 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors shadow-sm active:scale-95 flex-shrink-0"
+          >
+            <Library size={20} />
+          </button>
+          <button 
             onClick={() => setShowToc(true)}
-            className="p-2.5 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors shadow-sm active:scale-95"
+            className="p-2.5 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors shadow-sm active:scale-95 flex-shrink-0"
           >
             <List size={20} />
           </button>
@@ -249,6 +275,7 @@ export function BookScreen({ settings }: { settings: Settings }) {
         <div
           ref={contentRef}
           className="book-container prose prose-stone dark:prose-invert prose-p:leading-relaxed prose-headings:font-serif prose-headings:text-saffron dark:prose-headings:text-amber-500 max-w-none prose-a:text-saffron prose-strong:text-slate-900 dark:prose-strong:text-slate-100"
+          script={getScriptKey(settings.paliScript)}
           dangerouslySetInnerHTML={{ __html: processedHtml }}
         />
       </div>

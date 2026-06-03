@@ -2,7 +2,25 @@ apply plugin: 'com.android.application'
 // Apply the Google Services plugin cleanly at the top scope so it registers dependencies before evaluation
 apply plugin: 'com.google.gms.google-services'
 
-def sysBuildNumber = System.getenv("CI_BUILD_NUMBER") ?: "4"
+def versionPropsFile = file('version.properties')
+def versionProps = new Properties()
+
+if (versionPropsFile.canRead()) {
+    versionProps.load(new FileInputStream(versionPropsFile))
+}
+
+def buildNumber = (versionProps['buildNumber'] ?: "5").toInteger()
+
+// Increment buildNumber only during actual build tasks to avoid accidental increments
+def isBuilding = gradle.startParameter.taskNames.any { it.toLowerCase().contains('assemble') || it.toLowerCase().contains('bundle') }
+
+if (!System.getenv("CI") && isBuilding) {
+    buildNumber++
+    versionProps['buildNumber'] = buildNumber.toString()
+    versionProps.store(versionPropsFile.newWriter(), null)
+} else if (System.getenv("CI_BUILD_NUMBER")) {
+    buildNumber = System.getenv("CI_BUILD_NUMBER").toInteger()
+}
 
 android {
     namespace = "com.iitcalendar.applet"
@@ -12,8 +30,8 @@ android {
         applicationId "com.iitcalendar.applet"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode sysBuildNumber.toInteger()
-        versionName "1.0." + sysBuildNumber
+        versionCode buildNumber
+        versionName "1.0." + buildNumber
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         
         aaptOptions {

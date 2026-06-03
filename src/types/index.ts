@@ -1,5 +1,5 @@
 export type CalendarType = 'myanmar' | 'thai' | 'srilanka' | 'lunar';
-export type PaliScript = 'roman' | 'sinhala' | 'burmese' | 'thai';
+export type PaliScript = 'roman' | 'sinhala' | 'burmese' | 'thai' | 'devanagari' | 'lao' | 'khmer' | 'bengali' | 'gurmukhi' | 'gujarati' | 'telugu' | 'kannada' | 'malayalam' | 'taitham' | 'brahmi' | 'tibetan' | 'cyrillic' | 'assamese';
 export type ThemeColor = 'saffron' | 'indigo' | 'emerald' | 'rose' | 'slate';
 export type FontSize = number;
 

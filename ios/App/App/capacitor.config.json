@@ -3,10 +3,11 @@
 	"appName": "IIT Calendar",
 	"webDir": "dist",
 	"packageClassList": [
-		"FirebaseAuthenticationPlugin",
 		"AppPlugin",
 		"DevicePlugin",
+		"FilesystemPlugin",
 		"HapticsPlugin",
-		"LocalNotificationsPlugin"
+		"LocalNotificationsPlugin",
+		"SharePlugin"
 	]
 }

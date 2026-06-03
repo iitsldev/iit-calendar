@@ -133,7 +133,7 @@ export function getUposathasForYear(ce) {
   while (lu.date.getFullYear() <= ce) {
     lu = nextUposatha(lu);
     if (lu.date.getFullYear() === ce) {
-      results.push({ ...lu, monthName: MONTH_NAMES[lu.lunarMonth] });
+      results.push({ ...lu, monthName: MONTH_NAMES[lu.lunarMonth - 1] });
     }
   }
   return results;

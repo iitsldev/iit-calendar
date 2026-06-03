@@ -1,12 +1,12 @@
 [
   {
     "id": 1,
-    "name": "Itipiso (Buddhaguṇa)",
+    "name": "Itipiso",
     "chant": "Iti pi so bhagavā arahaṃ sammā-sambuddho vijjā-caraṇa-sampanno sugato lokavidū anuttaro purisa-damma-sārathi satthā deva-manussānaṃ buddho bhagavā ti."
   },
   {
     "id": 2,
-    "name": "Metta Sutta (Karaṇīyametta Sutta)",
+    "name": "Metta Sutta",
     "chant": "Karaṇīyam attha-kusalena yaṃ taṃ santaṃ padaṃ abhisamecca.<br/>Sakko ujū ca sūjū ca suvaco c'assa mudu anatimānī.<br/>Santussako ca subharo ca appakicco ca sallahukavutti.<br/>Sant'indriyo ca nipako ca appagabbho kulesvananugiddho.<br/>Na ca khuddaṃ samācare kiñci yena viññū pare upavadeyyuṃ.<br/>Sukhino vā khemino hontu sabbe sattā bhavantu sukhitattā.<br/>Ye keci pāṇa-bhūt'atthi tasā vā thāvarā vā anavasesā.<br/>Dīghā vā ye mahantā vā majjhimā rassakā aṇukathūlā.<br/>Diṭṭhā vā ye ca adiṭṭhā ye ca dūre vasanti avidūre.<br/>Bhūtā vā sambhavesī vā sabbe sattā bhavantu sukhitattā.<br/>Na paro paraṃ nikubbetha nātimaññetha katthaci na kañci.<br/>Byārosanā paṭighasaññā nāññamaññassa dukkham iccheyya.<br/>Mātā yathā niyaṃ puttam āyusā ekaputtam anurakkhe.<br/>Evampi sabba-bhūtesu mānasaṃ bhāvaye aparimāṇaṃ.<br/>Mettañ ca sabba-lokasmiṃ mānasaṃ bhāvaye aparimāṇaṃ.<br/>Uddhaṃ adho ca tiriyañ ca asambādhaṃ averaṃ asapattaṃ.<br/>Tiṭṭhaṃ caraṃ nisinno vā sayāno vā yāvat'assa vigatamiddho.<br/>Etaṃ satiṃ adhiṭṭheyya brahmam etaṃ vihāram idha māhu.<br/>Diṭṭhiñ ca anupaggamma sīlavā dassanena sampanno.<br/>Kāmesu vineyya gedhaṃ na hi jātu gabbhaseyyaṃ punar etī ti."
   },
   {
@@ -21,7 +21,7 @@
   },
   {
     "id": 5,
-    "name": "Dhammacakkappavattana Sutta (opening)",
+    "name": "Dhammacakkappavattana Sutta",
     "chant": "Evaṃ me sutaṃ. Ekaṃ samayaṃ bhagavā bārāṇasiyaṃ viharati isipatane migadāye.<br/>Tatra kho bhagavā pañcavaggiye bhikkhū āmantesi:<br/>Dve me bhikkhave antā pabbajitena na sevitabbā.<br/>Yo cāyaṃ kāmesu kāmasukhallikānuyogo hīno gammo pothujjaniko anariyo anatthasaṃhito.<br/>Yo cāyaṃ attakilamathānuyogo dukkho anariyo anatthasaṃhito.<br/>Ete kho bhikkhave ubho ante anupagamma majjhimā paṭipadā tathāgatena abhisambuddhā.<br/>Cakkhukaraṇī ñāṇakaraṇī upasamāya abhiññāya sambodhāya nibbānāya saṃvattati."
   },
   {
@@ -31,22 +31,22 @@
   },
   {
     "id": 7,
-    "name": "Tisaraṇa (Three Refuges)",
+    "name": "Tisaraṇa",
     "chant": "Buddhaṃ saraṇaṃ gacchāmi.<br/>Dhammaṃ saraṇaṃ gacchāmi.<br/>Saṅghaṃ saraṇaṃ gacchāmi.<br/>Dutiyampi buddhaṃ saraṇaṃ gacchāmi.<br/>Dutiyampi dhammaṃ saraṇaṃ gacchāmi.<br/>Dutiyampi saṅghaṃ saraṇaṃ gacchāmi.<br/>Tatiyampi buddhaṃ saraṇaṃ gacchāmi.<br/>Tatiyampi dhammaṃ saraṇaṃ gacchāmi.<br/>Tatiyampi saṅghaṃ saraṇaṃ gacchāmi."
   },
   {
     "id": 8,
-    "name": "Pañcasīla (Five Precepts)",
+    "name": "Pañcasīla",
     "chant": "Pāṇātipātā veramaṇī sikkhāpadaṃ samādiyāmi.<br/>Adinnādānā veramaṇī sikkhāpadaṃ samādiyāmi.<br/>Kāmesumicchācārā veramaṇī sikkhāpadaṃ samādiyāmi.<br/>Musāvādā veramaṇī sikkhāpadaṃ samādiyāmi.<br/>Surāmeraya-majja-pamādaṭṭhānā veramaṇī sikkhāpadaṃ samādiyāmi."
   },
   {
     "id": 9,
-    "name": "Buddhābhigīti (Homage to the Buddha)",
+    "name": "Buddhābhigīti",
     "chant": "Dūrepi santā manasā abhipūjayāmi.<br/>Saṃsāra-dukkhā parimocayantā.<br/>Ye cāpi nibbāna-gatā mahesi.<br/>Buddhā ca te vandāmi sadā sumedhe."
   },
   {
     "id": 10,
-    "name": "Aṭṭhanga Sīla (Eight Precepts)",
+    "name": "Aṭṭhanga Sīla",
     "chant": "Pāṇātipātā veramaṇī sikkhāpadaṃ samādiyāmi.<br/>Adinnādānā veramaṇī sikkhāpadaṃ samādiyāmi.<br/>Abrahmacariyā veramaṇī sikkhāpadaṃ samādiyāmi.<br/>Musāvādā veramaṇī sikkhāpadaṃ samādiyāmi.<br/>Surāmeraya-majja-pamādaṭṭhānā veramaṇī sikkhāpadaṃ samādiyāmi.<br/>Vikālabhojanā veramaṇī sikkhāpadaṃ samādiyāmi.<br/>Naccagīta-vādita-visūkadassanā mālā-gandha-vilepana-dhāraṇa-maṇḍana-vibhūsanaṭṭhānā veramaṇī sikkhāpadaṃ samādiyāmi.<br/>Uccāsayana-mahāsayanā veramaṇī sikkhāpadaṃ samādiyāmi."
   },
   {
@@ -61,12 +61,12 @@
   },
   {
     "id": 13,
-    "name": "Dhajagga Sutta (Paritta)",
+    "name": "Dhajagga Sutta",
     "chant": "Evaṃ me sutaṃ. Ekaṃ samayaṃ bhagavā sāvatthiyaṃ viharati jetavane anāthapiṇḍikassa ārāme.<br/>Tatra kho bhagavā bhikkhū āmantesi:<br/>Sace tumhākaṃ bhikkhave araññagatānaṃ vā rukkhamūlagatānaṃ vā suññāgāragatānaṃ vā uppajjeyya bhayaṃ chambhitattaṃ lomahaṃso.<br/>Mameva tasmiṃ samaye anussareyyātha: Iti pi so bhagavā arahaṃ sammā-sambuddho vijjā-caraṇa-sampanno sugato lokavidū anuttaro purisa-damma-sārathi satthā deva-manussānaṃ buddho bhagavā ti.<br/>Mamañhi vo bhikkhave anussarantānaṃ yaṃ bhavissati bhayaṃ vā chambhitattaṃ vā lomahaṃso vā so pahīyissati."
   },
   {
     "id": 14,
-    "name": "Āṭānāṭiya Sutta (opening)",
+    "name": "Āṭānāṭiya Sutta",
     "chant": "Vipassissa ca namatthu cakkhumantassa sirīmato.<br/>Sikhissapi ca namatthu sabba-bhūtānukampino.<br/>Vessabhussa ca namatthu nhātakassa tapassino.<br/>Namatthu kakusandhassa mārasenappamaddino.<br/>Koṇāgamanassa namatthu brāhmaṇassa vusīmato.<br/>Kassapassa ca namatthu vippamuttassa sabbadhi.<br/>Aṅgīrasassa namatthu sakyaputtassa sirīmato.<br/>Yo imaṃ dhammaṃ desesi sabbadukkhāpanūdanaṃ."
   },
   {
@@ -76,12 +76,12 @@
   },
   {
     "id": 16,
-    "name": "Pubbaṇha Sutta (Morning Chant)",
+    "name": "Pubbaṇha Sutta",
     "chant": "Yasassī c'eva nipako ca rājā sammā dhamma-kārī.<br/>Tattha pīti-sukhaṃ vipulaṃ vindati sabb'atthaṃ.<br/>Anekaṃ kappasahassaṃ punappunaṃ nibbattati.<br/>Buddhe dhamme ca saṅghe ca saddhā hoti dalhā assa.<br/>Sīlaṃ c'eva dānaṃ ceva bhāvanā ca vibhāvitā.<br/>So ca kho hoti sukhito deva-manussasampanno."
   },
   {
     "id": 17,
-    "name": "Abhidhamma Mātikā (opening homage)",
+    "name": "Abhidhamma Mātikā",
     "chant": "Namo tassa bhagavato arahato sammā-sambuddhassa.<br/>Kusalā dhammā, akusalā dhammā, abyākatā dhammā.<br/>Katame dhammā kusalā? Yasmiṃ samaye kāmāvacararaṃ kusalaṃ cittaṃ uppannaṃ hoti.<br/>Somanassasahagataṃ ñāṇasampayuttaṃ rūpārammaṇaṃ vā saddārammaṇaṃ vā gandhārammaṇaṃ vā rasārammaṇaṃ vā phoṭṭhabbārammaṇaṃ vā dhammārammaṇaṃ vā yaṃ yaṃ vā panārabbha."
   },
   {
@@ -91,12 +91,12 @@
   },
   {
     "id": 19,
-    "name": "Anattalakkhaṇa Sutta (opening)",
+    "name": "Anattalakkhaṇa Sutta",
     "chant": "Evaṃ me sutaṃ. Ekaṃ samayaṃ bhagavā bārāṇasiyaṃ viharati isipatane migadāye.<br/>Tatra kho bhagavā pañcavaggiye bhikkhū āmantesi:<br/>Rūpaṃ bhikkhave anattā. Rūpañca h'idaṃ bhikkhave attā abhavissa.<br/>nayidaṃ rūpaṃ ābādhāya saṃvatteyya.<br/>Labbhetha ca rūpe evaṃ me rūpaṃ hotu evaṃ me rūpaṃ mā ahosī ti.<br/>Yasmā ca kho bhikkhave rūpaṃ anattā.<br/>Tasmā rūpaṃ ābādhāya saṃvattati.<br/>Na ca labbhati rūpe evaṃ me rūpaṃ hotu evaṃ me rūpaṃ mā ahosī ti."
   },
   {
     "id": 20,
-    "name": "Mahāparinibbāna Sutta (last words)",
+    "name": "Mahāparinibbāna Sutta",
     "chant": "Handadāni bhikkhave āmantayāmi vo:<br/>vayadhammā saṅkhārā appamādena sampādethā ti.<br/>Ayaṃ tathāgatassa pacchimā vācā."
   }
 ]

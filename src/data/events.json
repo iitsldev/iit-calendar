@@ -7,7 +7,6 @@
     "day_month",
     "day_month_year"
   ],
-
   "srilanka_events": [
     {
       "calendar_type": "day_month",
@@ -28,7 +27,6 @@
       "day": 15
     }
   ],
-
   "myanmar_events": [
     {
       "calendar_type": "day_month",
@@ -37,7 +35,6 @@
       "day": 20
     }
   ],
-
   "thai_events": [
     {
       "calendar_type": "day_month",
@@ -46,7 +43,6 @@
       "day": 24
     }
   ],
-
   "vietnam_events": [
     {
       "calendar_type": "day_month",
@@ -61,8 +57,7 @@
       "day": 8
     }
   ],
-
-  "IIT_2026_2nd_semester_schedule": [
+  "english_IIT_2026_2nd_semester_schedule": [
     {
       "calendar_type": "day_of_week",
       "day_of_week": "Monday",
@@ -99,7 +94,6 @@
       "time": "15:10-15:55",
       "subject": "Vibhaṅga Vinaya"
     },
-
     {
       "calendar_type": "day_of_week",
       "day_of_week": "Tuesday",
@@ -136,7 +130,6 @@
       "time": "15:10-15:55",
       "subject": "Samatha"
     },
-
     {
       "calendar_type": "day_of_week",
       "day_of_week": "Wednesday",
@@ -173,7 +166,6 @@
       "time": "15:10-15:55",
       "subject": "Recitation of memorized texts"
     },
-
     {
       "calendar_type": "day_of_week",
       "day_of_week": "Thursday",
@@ -209,6 +201,404 @@
       "day_of_week": "Thursday",
       "time": "15:10-15:55",
       "subject": "Khandhaka Vinaya"
+    },
+    {
+      "calendar_type": "day_month_year",
+      "month": 6,
+      "day": 26,
+      "year": 2026,
+      "subject": "Pāḷi (NM 410)"
+    },
+    {
+      "calendar_type": "day_month_year",
+      "month": 7,
+      "day": 3,
+      "year": 2026,
+      "subject": "Vibhaṅga Vinaya (NM 402)"
+    },
+    {
+      "calendar_type": "day_month_year",
+      "month": 7,
+      "day": 10,
+      "year": 2026,
+      "subject": "Fundamentals of Theravada (NM 401)"
+    },
+    {
+      "calendar_type": "day_month_year",
+      "month": 7,
+      "day": 17,
+      "year": 2026,
+      "subject": "Samatha (NM 415)"
+    },
+    {
+      "calendar_type": "day_month_year",
+      "month": 7,
+      "day": 24,
+      "year": 2026,
+      "subject": "Suttanta (NM 404)"
+    },
+    {
+      "calendar_type": "day_month_year",
+      "month": 8,
+      "day": 7,
+      "year": 2026,
+      "subject": "Khandhaka Vinaya (NM 403)"
+    },
+    {
+      "calendar_type": "day_month_year",
+      "month": 8,
+      "day": 14,
+      "year": 2026,
+      "subject": "Khuddaka Nikāya (NM 405)"
+    },
+    {
+      "calendar_type": "day_month_year",
+      "month": 8,
+      "day": 21,
+      "year": 2026,
+      "subject": "Pāḷi (NM 410)"
+    },
+    {
+      "calendar_type": "day_month_year",
+      "month": 8,
+      "day": 28,
+      "year": 2026,
+      "subject": "Vibhaṅga Vinaya (NM 402)"
+    },
+    {
+      "calendar_type": "day_month_year",
+      "month": 9,
+      "day": 4,
+      "year": 2026,
+      "subject": "Fundamentals of Theravada (NM 401)"
+    },
+    {
+      "calendar_type": "day_month_year",
+      "month": 9,
+      "day": 18,
+      "year": 2026,
+      "subject": "English Test"
+    },
+    {
+      "calendar_type": "day_month_year",
+      "month": 10,
+      "day": 6,
+      "year": 2026,
+      "subject": "Final Exam: Fundamentals of Theravada"
+    },
+    {
+      "calendar_type": "day_month_year",
+      "month": 10,
+      "day": 9,
+      "year": 2026,
+      "subject": "Final Exam: Vibhaṅga Vinaya"
+    },
+    {
+      "calendar_type": "day_month_year",
+      "month": 10,
+      "day": 12,
+      "year": 2026,
+      "subject": "Final Exam: Khandhaka Vinaya"
+    },
+    {
+      "calendar_type": "day_month_year",
+      "month": 10,
+      "day": 15,
+      "year": 2026,
+      "subject": "Final Exam: Samatha"
+    },
+    {
+      "calendar_type": "day_month_year",
+      "month": 10,
+      "day": 18,
+      "year": 2026,
+      "subject": "Final Exam: Pāḷi"
+    },
+    {
+      "calendar_type": "day_month_year",
+      "month": 10,
+      "day": 21,
+      "year": 2026,
+      "subject": "Final Exam: Suttanta"
+    },
+    {
+      "calendar_type": "day_month_year",
+      "month": 10,
+      "day": 24,
+      "year": 2026,
+      "subject": "Final Exam: Khuddaka Nikāya"
+    }
+  ],
+  "sinhala_IIT_2026_2nd_semester_schedule": [
+    {
+      "calendar_type": "day_of_week",
+      "day_of_week": "Monday",
+      "time": "08:00-08:45",
+      "subject": "සමථ (ප්‍රායෝගික)"
+    },
+    {
+      "calendar_type": "day_of_week",
+      "day_of_week": "Monday",
+      "time": "08:50-09:35",
+      "subject": "ථේරවාද සිද්ධාන්ත"
+    },
+    {
+      "calendar_type": "day_of_week",
+      "day_of_week": "Monday",
+      "time": "09:40-10:25",
+      "subject": "සුත්තන්ත"
+    },
+    {
+      "calendar_type": "day_of_week",
+      "day_of_week": "Monday",
+      "time": "13:30-14:15",
+      "subject": "විභංග විනය"
+    },
+    {
+      "calendar_type": "day_of_week",
+      "day_of_week": "Monday",
+      "time": "14:20-15:05",
+      "subject": "සමථ"
+    },
+    {
+      "calendar_type": "day_of_week",
+      "day_of_week": "Monday",
+      "time": "15:10-15:55",
+      "subject": "ඛුද්දක නිකාය"
+    },
+    {
+      "calendar_type": "day_of_week",
+      "day_of_week": "Tuesday",
+      "time": "08:00-08:45",
+      "subject": "ඛුද්දක නිකාය"
+    },
+    {
+      "calendar_type": "day_of_week",
+      "day_of_week": "Tuesday",
+      "time": "08:50-09:35",
+      "subject": "සුත්තන්ත"
+    },
+    {
+      "calendar_type": "day_of_week",
+      "day_of_week": "Tuesday",
+      "time": "09:40-10:25",
+      "subject": "ථේරවාද සිද්ධාන්ත"
+    },
+    {
+      "calendar_type": "day_of_week",
+      "day_of_week": "Tuesday",
+      "time": "13:30-14:15",
+      "subject": "පාලි"
+    },
+    {
+      "calendar_type": "day_of_week",
+      "day_of_week": "Tuesday",
+      "time": "14:20-15:05",
+      "subject": "සමථ"
+    },
+    {
+      "calendar_type": "day_of_week",
+      "day_of_week": "Tuesday",
+      "time": "15:10-15:55",
+      "subject": "කටපාඩම් දීම"
+    },
+    {
+      "calendar_type": "day_of_week",
+      "day_of_week": "Wednesday",
+      "time": "08:00-08:45",
+      "subject": "සමථ (ප්‍රායෝගික)"
+    },
+    {
+      "calendar_type": "day_of_week",
+      "day_of_week": "Wednesday",
+      "time": "08:50-09:35",
+      "subject": "ථේරවාද සිද්ධාන්ත"
+    },
+    {
+      "calendar_type": "day_of_week",
+      "day_of_week": "Wednesday",
+      "time": "09:40-10:25",
+      "subject": "පාලි"
+    },
+    {
+      "calendar_type": "day_of_week",
+      "day_of_week": "Wednesday",
+      "time": "13:30-14:15",
+      "subject": "විභංග විනය"
+    },
+    {
+      "calendar_type": "day_of_week",
+      "day_of_week": "Wednesday",
+      "time": "14:20-15:05",
+      "subject": "ඛන්ධක විනය"
+    },
+    {
+      "calendar_type": "day_of_week",
+      "day_of_week": "Wednesday",
+      "time": "15:10-15:55",
+      "subject": "සමථ"
+    },
+    {
+      "calendar_type": "day_of_week",
+      "day_of_week": "Thursday",
+      "time": "08:00-08:45",
+      "subject": "ඛුද්දක නිකාය/සුත්තන්ත"
+    },
+    {
+      "calendar_type": "day_of_week",
+      "day_of_week": "Thursday",
+      "time": "08:50-09:35",
+      "subject": "ථේරවාද සිද්ධාන්ත"
+    },
+    {
+      "calendar_type": "day_of_week",
+      "day_of_week": "Thursday",
+      "time": "09:40-10:25",
+      "subject": "පාලි"
+    },
+    {
+      "calendar_type": "day_of_week",
+      "day_of_week": "Thursday",
+      "time": "13:30-14:15",
+      "subject": "විභංග විනය"
+    },
+    {
+      "calendar_type": "day_of_week",
+      "day_of_week": "Thursday",
+      "time": "14:20-15:05",
+      "subject": "ඛන්ධක විනය"
+    },
+    {
+      "calendar_type": "day_of_week",
+      "day_of_week": "Thursday",
+      "time": "15:10-15:55",
+      "subject": "පාලි"
+    },
+    {
+      "calendar_type": "day_month_year",
+      "month": 6,
+      "day": 26,
+      "year": 2026,
+      "subject": "පාලි (NM 410)"
+    },
+    {
+      "calendar_type": "day_month_year",
+      "month": 7,
+      "day": 3,
+      "year": 2026,
+      "subject": "විභංග විනය (NM 402)"
+    },
+    {
+      "calendar_type": "day_month_year",
+      "month": 7,
+      "day": 10,
+      "year": 2026,
+      "subject": "ථේරවාද සිද්ධාන්ත (NM 401)"
+    },
+    {
+      "calendar_type": "day_month_year",
+      "month": 7,
+      "day": 17,
+      "year": 2026,
+      "subject": "සමථ (NM 415)"
+    },
+    {
+      "calendar_type": "day_month_year",
+      "month": 7,
+      "day": 24,
+      "year": 2026,
+      "subject": "සුත්තන්ත (NM 404)"
+    },
+    {
+      "calendar_type": "day_month_year",
+      "month": 8,
+      "day": 7,
+      "year": 2026,
+      "subject": "ඛන්ධක විනය (NM 403)"
+    },
+    {
+      "calendar_type": "day_month_year",
+      "month": 8,
+      "day": 14,
+      "year": 2026,
+      "subject": "ඛුද්දක නිකාය (NM 405)"
+    },
+    {
+      "calendar_type": "day_month_year",
+      "month": 8,
+      "day": 21,
+      "year": 2026,
+      "subject": "පාලි (NM 410)"
+    },
+    {
+      "calendar_type": "day_month_year",
+      "month": 8,
+      "day": 28,
+      "year": 2026,
+      "subject": "විභංග විනය (NM 402)"
+    },
+    {
+      "calendar_type": "day_month_year",
+      "month": 9,
+      "day": 4,
+      "year": 2026,
+      "subject": "ථේරවාද සිද්ධාන්ත (NM 401)"
+    },
+    {
+      "calendar_type": "day_month_year",
+      "month": 9,
+      "day": 18,
+      "year": 2026,
+      "subject": "English Test"
+    },
+    {
+      "calendar_type": "day_month_year",
+      "month": 10,
+      "day": 6,
+      "year": 2026,
+      "subject": "අවසාන විභාගය: ථේරවාද සිද්ධාන්ත"
+    },
+    {
+      "calendar_type": "day_month_year",
+      "month": 10,
+      "day": 9,
+      "year": 2026,
+      "subject": "අවසාන විභාගය: විභංග විනය"
+    },
+    {
+      "calendar_type": "day_month_year",
+      "month": 10,
+      "day": 12,
+      "year": 2026,
+      "subject": "අවසාන විභාගය: ඛන්ධක විනය"
+    },
+    {
+      "calendar_type": "day_month_year",
+      "month": 10,
+      "day": 15,
+      "year": 2026,
+      "subject": "අවසාන විභාගය: සමථ"
+    },
+    {
+      "calendar_type": "day_month_year",
+      "month": 10,
+      "day": 18,
+      "year": 2026,
+      "subject": "අවසාන විභාගය: පාලි"
+    },
+    {
+      "calendar_type": "day_month_year",
+      "month": 10,
+      "day": 21,
+      "year": 2026,
+      "subject": "අවසාන විභාගය: සුත්තන්ත"
+    },
+    {
+      "calendar_type": "day_month_year",
+      "month": 10,
+      "day": 24,
+      "year": 2026,
+      "subject": "අවසාන විභාගය: ඛුද්දක නිකාය"
     }
   ]
 }

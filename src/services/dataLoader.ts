@@ -8,6 +8,7 @@ const GITHUB_BASE_URL = 'https://raw.githubusercontent.com/dhammanana/iit-calend
  * Loads the data file synchronously from localStorage cache, falling back to the bundled data.
  */
 export function loadDataFile<T>(filename: string, bundledData: T): T {
+  /*
   const cached = localStorage.getItem(`cached_file_${filename}`);
   if (cached) {
     try {
@@ -20,6 +21,7 @@ export function loadDataFile<T>(filename: string, bundledData: T): T {
       localStorage.removeItem(`cached_file_${filename}`);
     }
   }
+  */
   return bundledData;
 }
 

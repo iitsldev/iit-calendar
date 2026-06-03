@@ -14,6 +14,7 @@ export interface AppEvent {
   day_of_week?: string;
   time?: string;
   subject?: string;
+  language?: string;
 }
 
 export interface AppReflection {
@@ -51,25 +52,45 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   // Map events to the flat list expected by screens
   const events = React.useMemo(() => {
-    const categories = [
-      { key: 'srilanka_events', name: 'srilanka' },
-      { key: 'myanmar_events', name: 'myanmar' },
-      { key: 'thai_events', name: 'thai' },
-      { key: 'vietnam_events', name: 'vietnam' },
-      { key: 'IIT_2027_schedule', name: 'IIT_2027_schedule' }
-    ];
-
     const parsedEvents: AppEvent[] = [];
-    categories.forEach(cat => {
-      const items = rawEvents[cat.key] || [];
-      items.forEach((item: any, idx: number) => {
-        parsedEvents.push({
-          id: `${cat.name}_${idx}`,
-          ...item,
-          category: cat.name
+    // Dynamically detect categories from rawEvents keys that are arrays
+    Object.keys(rawEvents).forEach(key => {
+      if (['supported_calendar_types', 'version', 'calendar_name'].includes(key)) return;
+
+      const items = rawEvents[key];
+      if (Array.isArray(items)) {
+        // Determine language prefix
+        let language: string | undefined = undefined;
+        let categoryName = key.replace(/_/g, ' ');
+
+        if (key.startsWith('sinhala_')) {
+          language = 'si';
+          categoryName = key.substring(8).replace(/_/g, ' ');
+        } else if (key.startsWith('english_')) {
+          language = 'en';
+          categoryName = key.substring(8).replace(/_/g, ' ');
+        } else {
+          // Other regional events (myanmar_, thai_, srilanka_, etc.) are shown for everyone
+          const countryPrefixes = ['myanmar_', 'thai_', 'vietnam_', 'srilanka_'];
+          const prefix = countryPrefixes.find(p => key.startsWith(p));
+          if (prefix) {
+            categoryName = key.substring(prefix.length).replace(/_/g, ' ');
+          } else {
+            categoryName = key.replace(/_/g, ' ');
+          }
+        }
+
+        items.forEach((item: any, idx: number) => {
+          parsedEvents.push({
+            id: `${key}_${idx}`,
+            ...item,
+            category: categoryName,
+            language
+          });
         });
-      });
+      }
     });
+    console.log('Total parsed events:', parsedEvents.length);
     return parsedEvents;
   }, [rawEvents]);
 

@@ -12,7 +12,8 @@ import {
 } from 'lucide-react';
 import { ThaiCalendar } from './lib/calendar/ThaiCalendar';
 import { MyanmarCalendar } from './lib/calendar/MyanmarCalendar';
-import { AstroLunarCalendar } from './lib/calendar/AstroLunarCalendar';
+import { SriLankanCalendar } from './lib/calendar/SriLankanCalendar';
+import { TraditionalLunarCalendar } from './lib/calendar/TraditionalLunarCalendar';
 import { SunTimesCalculator } from './lib/calendar/SunTimesCalculator';
 import { cn } from './lib/utils';
 
@@ -119,8 +120,8 @@ export default function App() {
     switch (settings.calendarType) {
       case 'myanmar': return new MyanmarCalendar(config);
       case 'thai': return new ThaiCalendar(config);
-      case 'srilanka': return new AstroLunarCalendar(config);
-      case 'lunar': return new AstroLunarCalendar(config);
+      case 'srilanka': return new SriLankanCalendar(config);
+      case 'lunar': return new TraditionalLunarCalendar(config);
       default: return new ThaiCalendar(config);
     }
   }, [settings]);
@@ -141,7 +142,11 @@ export default function App() {
   };
 
   return (
-    <div className="flex flex-col min-h-screen font-sans transition-colors duration-500" style={{ backgroundColor: 'var(--bg-main)' }}>
+    <div 
+      className="flex flex-col min-h-screen font-sans transition-colors duration-500 UT" 
+      lang={settings.language}
+      style={{ backgroundColor: 'var(--bg-main)' }}
+    >
       <style>{CSS_VARS}</style>
       
       {/* Top App Bar */}

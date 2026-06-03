@@ -231,7 +231,7 @@ export function SettingsModal({
                     value={settings.paliScript}
                     onChange={e => onUpdate({ ...settings, paliScript: e.target.value as any })}
                   >
-                    {(['roman', 'sinhala', 'burmese', 'thai'] as const).map(s => (
+                    {(['roman', 'sinhala', 'burmese', 'thai', 'devanagari', 'lao', 'khmer', 'bengali', 'gurmukhi', 'gujarati', 'telugu', 'kannada', 'malayalam', 'taitham', 'brahmi', 'tibetan', 'cyrillic', 'assamese'] as const).map(s => (
                       <option key={`script-opt-${s}`} value={s}>{t(`settings.scripts.${s}`)}</option>
                     ))}
                   </StyledSelect>

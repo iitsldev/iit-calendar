@@ -4,14 +4,19 @@ import { Check, Trash2, Eye } from 'lucide-react';
 import { cn } from '../../lib/utils';
 import { UserChant } from '../../types';
 import { formatDistanceToNow } from 'date-fns';
-import { convertPali } from '../../services/conversionService';
+import { convertPali, SCRIPTS } from '../../services/conversionService';
+import { Script } from '../../lib/pali-script';
 
 function ConvertedTitle({ text, script }: { text: string; script: string }) {
   const [display, setDisplay] = React.useState(text);
   React.useEffect(() => {
     convertPali(text, script).then(setDisplay);
   }, [text, script]);
-  return <>{display}</>;
+  return (
+    <span className="PT" script={SCRIPTS[script] || Script.RO}>
+      {display}
+    </span>
+  );
 }
 
 interface ChantCardProps {

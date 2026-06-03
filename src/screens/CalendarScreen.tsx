@@ -7,7 +7,8 @@ import {
   BookOpen, 
   ChevronDown,
   Moon,
-  Circle
+  Circle,
+  Shuffle
 } from 'lucide-react';
 import { 
   format, 
@@ -29,7 +30,8 @@ import { useI18n } from '../hooks/useI18n';
 import { SunDetails } from '../components/SunDetails';
 import { SunTimesCalculator } from '../lib/calendar/SunTimesCalculator';
 import { cn } from '../lib/utils';
-import { convertPali } from '../services/conversionService';
+import { convertPali, SCRIPTS } from '../services/conversionService';
+import { Script } from '../lib/pali-script';
 import { uposathaPositionInSeason, uposathasRemainingInSeason, uposathaSeason, getVassaDates, getUposathasForYear as getUposathasFromLib } from '../lib/calendar/uposathalib';
 import { useData } from '../DataContext';
 import {COLOR_TOKENS} from '../theme/index'
@@ -49,11 +51,16 @@ function PaliText({ text, script, className, style }: { text: string; script: st
 
   return (
     <span 
-      className={className} 
+      className={cn("PT", className)} 
+      script={convertPaliShort(script)}
       style={{ ...style, whiteSpace: 'pre-wrap' } as React.CSSProperties}
       dangerouslySetInnerHTML={{ __html: displayText }}
     />
   );
+}
+
+function convertPaliShort(scriptKey: string): string {
+  return SCRIPTS[scriptKey] || Script.RO;
 }
 
 function HtmlWithPali({ html, script, className, style }: { html: string; script: string; className?: string; style?: React.CSSProperties }) {
@@ -91,8 +98,9 @@ function HtmlWithPali({ html, script, className, style }: { html: string; script
   }, [html, script]);
   return (
     <div
-      className={className}
+      className={cn("PT", className)}
       style={style}
+      script={convertPaliShort(script)}
       dangerouslySetInnerHTML={{ __html: rendered }}
     />
   );
@@ -115,12 +123,19 @@ export function CalendarScreen({
   calendarEngine: any;
   sunCalc: SunTimesCalculator;
 }) {
-  const { t } = useI18n();
+  const { t, language } = useI18n();
   const { events: firebaseEvents, reflections: firebaseReflections } = useData();
   const [sunTimesExpanded, setSunTimesExpanded] = React.useState(false);
   const [paliExpanded, setPaliExpanded] = React.useState(false);
   const [isEventsExpanded, setIsEventsExpanded] = React.useState(false);
   const [reflectionOffset, setReflectionOffset] = React.useState(0);
+
+  const filteredEvents = React.useMemo(() => {
+    return firebaseEvents.filter(evt => {
+      if (!evt.language) return true;
+      return evt.language === language;
+    });
+  }, [firebaseEvents, language]);
 
   const monthDays = React.useMemo(() => {
     const start = startOfMonth(currentDate);
@@ -131,11 +146,8 @@ export function CalendarScreen({
   const dateDetails = React.useMemo(() => calendarEngine.getDateDetails(selectedDate), [selectedDate, calendarEngine]);
   const activeDawn = React.useMemo(() => sunCalc.getDawn(selectedDate, settings.dawnMethod), [sunCalc, selectedDate, settings.dawnMethod]);
   const uposathas = React.useMemo(() => {
-    if (settings.calendarType === 'srilanka' || settings.calendarType === 'lunar') {
-      return getUposathasFromLib(currentDate.getFullYear());
-    }
     return calendarEngine.getUposathasForYear(currentDate.getFullYear());
-  }, [currentDate, calendarEngine, settings.calendarType]);
+  }, [currentDate, calendarEngine]);
   
   const nextUposatha = React.useMemo(() => {
     const refDate = startOfDay(selectedDate);
@@ -170,16 +182,24 @@ export function CalendarScreen({
     const dayOfWeek = format(selectedDate, 'EEEE');
 
     const checkEvent = (e: any) => {
-      if (e.calendar_type === 'day_month_year' && e.day === day && e.month === month && e.year === year) return true;
-      if (e.calendar_type === 'day_month' && e.day === day && e.month === month) return true;
-      if (e.calendar_type === 'day' && e.day === day) return true;
-      if (e.calendar_type === 'day_of_week' && e.day_of_week === dayOfWeek) return true;
+      if (e.calendar_type === 'day_month_year') {
+        return Number(e.day) === day && Number(e.month) === month && Number(e.year) === year;
+      }
+      if (e.calendar_type === 'day_month') {
+        return Number(e.day) === day && Number(e.month) === month;
+      }
+      if (e.calendar_type === 'day') {
+        return Number(e.day) === day;
+      }
+      if (e.calendar_type === 'day_of_week') {
+        return e.day_of_week === dayOfWeek;
+      }
       return false;
     };
 
-    firebaseEvents.forEach(evt => {
+    filteredEvents.forEach(evt => {
       if (checkEvent(evt)) {
-        const groupName = evt.category.replace(/_/g, ' ');
+        const groupName = evt.category;
         if (!groups[groupName]) groups[groupName] = [];
         groups[groupName].push(evt);
       }
@@ -190,10 +210,12 @@ export function CalendarScreen({
 
   // ── Reflections Logic ───────────────────────────────────────────────────
   const reflection = React.useMemo(() => {
+    if (!firebaseReflections.length) return { quote: '', author: '', source: '' };
     const seed = selectedDate.getFullYear() * 10000 + (selectedDate.getMonth() + 1) * 100 + selectedDate.getDate();
     const baseIndex = seed % firebaseReflections.length;
     const index = (baseIndex + reflectionOffset) % firebaseReflections.length;
-    return firebaseReflections[index];
+    const finalIndex = index < 0 ? index + firebaseReflections.length : index;
+    return firebaseReflections[finalIndex];
   }, [selectedDate, firebaseReflections, reflectionOffset]);
 
   React.useEffect(() => {
@@ -298,14 +320,22 @@ export function CalendarScreen({
               const dateDayOfWeek = format(date, 'EEEE');
               
               const check = (e: any) => {
-                if (e.calendar_type === 'day_month_year' && e.day === dateDay && e.month === dateMonth && e.year === dateYear) return true;
-                if (e.calendar_type === 'day_month' && e.day === dateDay && e.month === dateMonth) return true;
-                if (e.calendar_type === 'day' && e.day === dateDay) return true;
-                if (e.calendar_type === 'day_of_week' && e.day_of_week === dateDayOfWeek) return true;
+                if (e.calendar_type === 'day_month_year') {
+                  return Number(e.day) === dateDay && Number(e.month) === dateMonth && Number(e.year) === dateYear;
+                }
+                if (e.calendar_type === 'day_month') {
+                  return Number(e.day) === dateDay && Number(e.month) === dateMonth;
+                }
+                if (e.calendar_type === 'day') {
+                  return Number(e.day) === dateDay;
+                }
+                if (e.calendar_type === 'day_of_week') {
+                  return e.day_of_week === dateDayOfWeek;
+                }
                 return false;
               };
               
-              const hasEvents = firebaseEvents.some(check);
+              const hasEvents = filteredEvents.some(check);
 
               let dateColor: string;
               if (isSelected) dateColor = 'rgb(255 255 255)';
@@ -764,7 +794,7 @@ export function CalendarScreen({
                                     className="text-sm font-bold"
                                     style={{ color: 'var(--accent)' }}
                                   >
-                                    {evt.event_name || evt.subject}
+                                    {evt.event_name || evt.subject || evt.category}
                                   </span>
                                 </div>
 
@@ -815,13 +845,33 @@ export function CalendarScreen({
               </span>
             </div>
 
-            <div className="flex justify-center pt-2">
+            <div className="flex justify-center items-center gap-3 pt-2 relative z-10">
               <button
-                onClick={() => setReflectionOffset(prev => prev + 1)}
-                className="px-4 py-2 rounded-2xl text-[10px] font-black uppercase tracking-widest transition-all active:scale-95"
+                onClick={() => setReflectionOffset(prev => prev - 1)}
+                className="p-2 rounded-2xl transition-all active:scale-95"
                 style={{ background: 'var(--surface)', border: '1px solid var(--border)', color: 'var(--accent)' }}
               >
-                Next Quote
+                <ChevronLeft size={20} />
+              </button>
+
+              <button
+                onClick={() => {
+                  const rand = Math.floor(Math.random() * firebaseReflections.length);
+                  setReflectionOffset(rand);
+                }}
+                className="px-6 py-2 rounded-2xl text-[10px] font-black uppercase tracking-widest transition-all active:scale-95 flex items-center gap-2"
+                style={{ background: 'var(--surface)', border: '1px solid var(--border)', color: 'var(--accent)' }}
+              >
+                <Shuffle size={14} />
+                Random
+              </button>
+
+              <button
+                onClick={() => setReflectionOffset(prev => prev + 1)}
+                className="p-2 rounded-2xl transition-all active:scale-95"
+                style={{ background: 'var(--surface)', border: '1px solid var(--border)', color: 'var(--accent)' }}
+              >
+                <ChevronRight size={20} />
               </button>
             </div>
             

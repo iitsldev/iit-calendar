@@ -9,7 +9,8 @@ import { Plus, X, BarChart2, List, Trash2, Edit3, Lock, LogIn } from 'lucide-rea
 import { isSameDay, subDays } from 'date-fns';
 import { cn } from '../lib/utils';
 import { useUI } from '../UIContext';
-import { convertPali } from '../services/conversionService';
+import { convertPali, SCRIPTS } from '../services/conversionService';
+import { Script } from '../lib/pali-script';
 import { Settings } from '../types';
 
 function ConvertedText({ text, script, className }: { text: string; script: string; className?: string }) {
@@ -17,7 +18,13 @@ function ConvertedText({ text, script, className }: { text: string; script: stri
   useEffect(() => {
     convertPali(text, script).then(setDisplay);
   }, [text, script]);
-  return <span className={className} dangerouslySetInnerHTML={{ __html: display }} />;
+  return (
+    <span 
+      className={cn("PT", className)} 
+      script={SCRIPTS[script] || Script.RO}
+      dangerouslySetInnerHTML={{ __html: display }} 
+    />
+  );
 }
 
 export function ChantsScreen({ settings }: { settings: Settings }) {
