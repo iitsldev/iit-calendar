@@ -8,6 +8,7 @@ import { subMinutes } from 'date-fns';
 export enum NotificationId {
   MEDITATION = 1000,
   SOLAR_NOON_START = 2000, // 2000 to 2007 for 7 days
+  DAWN_START = 3000,
 }
 
 export interface ActiveMeditation {
@@ -61,6 +62,14 @@ class NotificationService {
           importance: 4,
           visibility: 1
         });
+        await LocalNotifications.createChannel({
+          id: 'dawn',
+          name: 'Dawn',
+          description: 'Dawn alerts',
+          sound: 'bell.wav',
+          importance: 4,
+          visibility: 1
+        });
       }
     } catch (e) {
       console.warn("Channel creation error (this is normal on web/iOS)", e);
@@ -68,8 +77,11 @@ class NotificationService {
     
     // 1. Handle Solar Noon
     await this.scheduleSolarNoonBells(settings);
+
+    // 2. Handle Dawn
+    await this.scheduleDawnBells(settings);
     
-    // 2. Meditation session check (handled in specialized method)
+    // 3. Meditation session check (handled in specialized method)
     await this.recheckMeditationSession();
   }
 
@@ -82,7 +94,6 @@ class NotificationService {
 
     const info = await Device.getInfo();
     const isIos = info.platform === 'ios';
-    const MAX_NOTIFICATIONS = 64;
     
     const sunCalc = new SunTimesCalculator(settings.lat, settings.lng);
     const notifications = [];
@@ -102,7 +113,7 @@ class NotificationService {
           notifications.push({
             id: NotificationId.SOLAR_NOON_START + i,
             title: "Solar Noon Approach",
-            body: "5 minutes until Solar Noon.",
+            body: "Solar noon is in five minutes.",
             schedule: { at: bellTime, allowWhileIdle: true },
             sound: 'bell.wav',
             channelId: 'solar_noon'
@@ -111,14 +122,52 @@ class NotificationService {
       }
     }
 
-    // On iOS, if we are near the limit, we might need to prioritize.
-    // Given 7-14 notifications, we are very safe (8 << 64).
-    
     if (notifications.length > 0) {
       try {
         await LocalNotifications.schedule({ notifications });
       } catch (e) {
         console.error("Solar noon schedule error", e);
+      }
+    }
+  }
+
+  private async scheduleDawnBells(settings: Settings) {
+    // Cancel existing dawn range
+    const idsToCancel = Array.from({ length: 15 }).map((_, i) => NotificationId.DAWN_START + i);
+    await LocalNotifications.cancel({ notifications: idsToCancel.map(id => ({ id })) });
+
+    if (!settings.dawnBell) return;
+
+    const info = await Device.getInfo();
+    const isIos = info.platform === 'ios';
+    
+    const sunCalc = new SunTimesCalculator(settings.lat, settings.lng);
+    const notifications = [];
+    
+    const daysToSchedule = isIos ? 14 : 30;
+
+    for (let i = 0; i < daysToSchedule; i++) {
+      const date = new Date();
+      date.setDate(date.getDate() + i);
+      const dawn = sunCalc.getDawn(date, settings);
+      
+      if (dawn && dawn > new Date()) {
+        notifications.push({
+          id: NotificationId.DAWN_START + i,
+          title: "Dawn",
+          body: "Dawn has arrived.",
+          schedule: { at: dawn, allowWhileIdle: true },
+          sound: 'bell.wav',
+          channelId: 'dawn'
+        });
+      }
+    }
+
+    if (notifications.length > 0) {
+      try {
+        await LocalNotifications.schedule({ notifications });
+      } catch (e) {
+        console.error("Dawn schedule error", e);
       }
     }
   }

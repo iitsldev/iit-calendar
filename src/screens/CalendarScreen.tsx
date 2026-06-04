@@ -108,6 +108,7 @@ function HtmlWithPali({ html, script, className, style }: { html: string; script
 
 export function CalendarScreen({ 
   settings, 
+  onUpdateSettings,
   currentDate, 
   setCurrentDate, 
   selectedDate, 
@@ -116,6 +117,7 @@ export function CalendarScreen({
   sunCalc 
 }: {
   settings: Settings;
+  onUpdateSettings: (settings: Settings) => void;
   currentDate: Date;
   setCurrentDate: (date: Date) => void;
   selectedDate: Date;
@@ -144,7 +146,7 @@ export function CalendarScreen({
   }, [currentDate]);
 
   const dateDetails = React.useMemo(() => calendarEngine.getDateDetails(selectedDate), [selectedDate, calendarEngine]);
-  const activeDawn = React.useMemo(() => sunCalc.getDawn(selectedDate, settings.dawnMethod), [sunCalc, selectedDate, settings.dawnMethod]);
+  const activeDawn = React.useMemo(() => sunCalc.getDawn(selectedDate, settings), [sunCalc, selectedDate, settings]);
   const uposathas = React.useMemo(() => {
     return calendarEngine.getUposathasForYear(currentDate.getFullYear());
   }, [currentDate, calendarEngine]);
@@ -535,6 +537,7 @@ export function CalendarScreen({
             expanded={sunTimesExpanded}
             setExpanded={setSunTimesExpanded}
             settings={settings}
+            onUpdateSettings={onUpdateSettings}
             date={selectedDate}
             calculator={sunCalc}
             activeDawn={activeDawn}

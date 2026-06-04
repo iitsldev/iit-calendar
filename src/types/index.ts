@@ -9,12 +9,15 @@ export interface Settings {
   lng: number;
   address?: string;
   dawnMethod: string;
+  dawnAngle?: number;
+  dawnDurationOffset?: number;
   language: string;
   paliScript: PaliScript;
   themeColor: ThemeColor;
   darkMode: boolean;
   fontSize: FontSize;
   solarNoonBell: boolean;
+  dawnBell: boolean;
   syncToFirebase: boolean;
 }
 

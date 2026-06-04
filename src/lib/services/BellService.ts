@@ -11,7 +11,6 @@ export interface AlarmConfig {
 }
 
 class BellService {
-  private audioContext: AudioContext | null = null;
   private alarms: Map<string, AlarmConfig> = new Map();
   private timer: number | null = null;
   private lastFired: string = "";
@@ -19,20 +18,44 @@ class BellService {
 
   constructor() {
     if (typeof window !== 'undefined') {
-      // Lazy init AudioContext on first interaction
-      window.addEventListener('click', () => this.initAudio(), { once: true });
       this.startCheckTimer();
       this.initLocalNotifications();
       
       // Restore state
-      const saved = localStorage.getItem(this.persistenceKey);
-      if (saved !== null) {
-        this.alarms.set('solar_noon', {
-          id: 'solar_noon',
-          time: new Date(), // Placeholder, will be updated by component
-          label: '5 mins before Solar Noon',
-          enabled: saved === 'true'
-        });
+      try {
+        const savedSettings = localStorage.getItem('iit_settings');
+        if (savedSettings) {
+          const settings = JSON.parse(savedSettings);
+          this.alarms.set('solar_noon', {
+            id: 'solar_noon',
+            time: new Date(),
+            label: '5 mins before Solar Noon',
+            enabled: !!settings.solarNoonBell
+          });
+          this.alarms.set('dawn', {
+            id: 'dawn',
+            time: new Date(),
+            label: 'Dawn',
+            enabled: !!settings.dawnBell
+          });
+        } else {
+          const savedNoon = localStorage.getItem(this.persistenceKey);
+          const savedDawn = localStorage.getItem('dawn_bell_enabled');
+          this.alarms.set('solar_noon', {
+            id: 'solar_noon',
+            time: new Date(),
+            label: '5 mins before Solar Noon',
+            enabled: savedNoon === 'true'
+          });
+          this.alarms.set('dawn', {
+            id: 'dawn',
+            time: new Date(),
+            label: 'Dawn',
+            enabled: savedDawn === 'true'
+          });
+        }
+      } catch (e) {
+        console.error('Failed to load settings in BellService', e);
       }
     }
   }
@@ -48,42 +71,26 @@ class BellService {
     }
   }
 
-  private initAudio() {
-    if (!this.audioContext) {
-      const AudioCtx = (window.AudioContext || (window as any).webkitAudioContext);
-      if (AudioCtx) {
-        this.audioContext = new AudioCtx();
-      }
-    }
-    if (this.audioContext?.state === 'suspended') {
-      this.audioContext.resume();
+  private speak(text: string) {
+    if (typeof window !== 'undefined' && window.speechSynthesis) {
+      window.speechSynthesis.cancel();
+      const utterance = new SpeechSynthesisUtterance(text);
+      utterance.rate = 0.95;
+      window.speechSynthesis.speak(utterance);
     }
   }
 
-  public async playBell(vibrate = true) {
-    this.initAudio();
-    
-    // 1. Audio
-    if (this.audioContext) {
-      const ctx = this.audioContext;
-      const now = ctx.currentTime;
-      const fundamental = 523.25; // C5 - more "bell-like" than A4
-      const partials = [1, 1.503, 1.997, 2.502, 3.011];
-      
-      partials.forEach((p, i) => {
-        const osc = ctx.createOscillator();
-        const gain = ctx.createGain();
-        osc.frequency.setValueAtTime(fundamental * p, now);
-        gain.gain.setValueAtTime(0.15 / partials.length, now);
-        gain.gain.exponentialRampToValueAtTime(0.001, now + 3 + i * 0.3);
-        osc.connect(gain);
-        gain.connect(ctx.destination);
-        osc.start(now);
-        osc.stop(now + 4);
-      });
+  public async playBell(type: 'solar_noon' | 'dawn' | 'test' = 'test', vibrate = true) {
+    let sentence = "Notification test.";
+    if (type === 'solar_noon') {
+      sentence = "Solar noon is in five minutes.";
+    } else if (type === 'dawn') {
+      sentence = "Dawn has arrived.";
     }
 
-    // 2. Haptics
+    this.speak(sentence);
+
+    // Haptics
     if (vibrate) {
       try {
         await Haptics.impact({ style: ImpactStyle.Heavy });
@@ -92,9 +99,9 @@ class BellService {
       }
     }
 
-    // 3. Web Notification (Fallback)
+    // Web Notification (Fallback)
     if (typeof Notification !== 'undefined' && Notification.permission === 'granted' && !window.hasOwnProperty('Capacitor')) {
-       new Notification('Bell', { body: 'Solar Noon Notification' });
+       new Notification('Notification', { body: sentence });
     }
   }
 
@@ -117,7 +124,7 @@ class BellService {
           notifications: [
             {
               title: "Solar Noon Approach",
-              body: "5 minutes until Solar Noon",
+              body: "Solar noon is in five minutes.",
               id: id,
               schedule: { 
                 at: bellTime,
@@ -140,8 +147,53 @@ class BellService {
     }
   }
 
+  public async setDawnBell(dawn: Date, enabled: boolean) {
+    localStorage.setItem('dawn_bell_enabled', String(enabled));
+    const id = 1002; // Specific ID for dawn
+    
+    this.alarms.set('dawn', {
+      id: 'dawn',
+      time: dawn,
+      label: 'Dawn',
+      enabled
+    });
+
+    // Schedule native notification if enabled
+    if (enabled && dawn > new Date()) {
+      try {
+        await LocalNotifications.schedule({
+          notifications: [
+            {
+              title: "Dawn",
+              body: "Dawn has arrived.",
+              id: id,
+              schedule: { 
+                at: dawn,
+                allowWhileIdle: true
+              },
+              sound: 'bell.wav',
+              attachments: [],
+              actionTypeId: "",
+              extra: null
+            }
+          ]
+        });
+      } catch (e) {
+        console.error('Failed to schedule native notification', e);
+      }
+    } else {
+      try {
+        await LocalNotifications.cancel({ notifications: [{ id }] });
+      } catch (e) {}
+    }
+  }
+
   public isSolarNoonBellEnabled(): boolean {
     return this.alarms.get('solar_noon')?.enabled || false;
+  }
+
+  public isDawnBellEnabled(): boolean {
+    return this.alarms.get('dawn')?.enabled || false;
   }
 
   private startCheckTimer() {
@@ -156,7 +208,7 @@ class BellService {
         
         // Match exact minute to avoid missing 1s window, but only fire once
         if (Math.abs(diff) < 2 && this.lastFired !== timeKey) {
-          this.playBell();
+          this.playBell(alarm.id as 'solar_noon' | 'dawn' | 'test');
           this.lastFired = timeKey;
         }
       });

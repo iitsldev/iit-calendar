@@ -47,7 +47,7 @@
     "themeColor": "Theme Color",
     "darkMode": "Dark Mode",
     "dawnMethods": {
-      "astrology": "9 Degree Angle",
+      "astrology": "Sun's Angle",
       "pa-auk": "Pa-Auk (-40 min)",
       "nauyana": "Na-Uyana (-30 min)"
     },
@@ -77,8 +77,15 @@
       "th": "ไทย",
       "si": "සිංහල",
       "my": "မြန်မာ",
-      "km": "ខ្មែរ",
+      "km": "ខ្မဲរ",
       "lo": "ລາວ"
+    },
+    "legal": {
+      "title": "Legal & Information",
+      "button": "Privacy, EULA & Attributions",
+      "about": "About",
+      "privacy": "Privacy",
+      "eula": "EULA"
     }
   },
   "sun": {

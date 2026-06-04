@@ -51,6 +51,7 @@ export default function App() {
         darkMode: false,
         fontSize: 16,
         solarNoonBell: false,
+        dawnBell: false,
         ...parsed
       };
     }
@@ -65,6 +66,7 @@ export default function App() {
       darkMode: false,
       fontSize: 16,
       solarNoonBell: false,
+      dawnBell: false,
     };
   });
 
@@ -150,41 +152,61 @@ export default function App() {
       <style>{CSS_VARS}</style>
       
       {/* Top App Bar */}
-      <header className="px-2 py-4 mb-2 flex justify-between items-center relative z-[60]" style={{ backgroundColor: 'var(--bg-header)' }}>
-        <div className="flex items-center gap-4">
-          <motion.div 
-            initial={{ scale: 0.9, rotate: -5 }} animate={{ scale: 1, rotate: 0 }}
-            className="w-[72px] h-[72px] flex items-center justify-center overflow-hidden"
+      <header
+        className="px-5 py-3 flex justify-between items-center relative z-[60] rounded-lg border shadow-sm mb-4"
+        style={{ backgroundColor: 'var(--bg-header)', borderBottom: '0.5px solid rgba(0,0,0,0.08)' }}
+      >
+        <div className="flex items-center gap-3">
+          {/* Compact logo mark */}
+          <div
+            className="w-16 h-16 rounded-lg flex items-center justify-center flex-shrink-0"
           >
-            <img src="/logo.png" alt="IIT Logo" className="w-[64px] h-[64px] object-contain" />
-          </motion.div>
-          <div>
-            <h1 className="font-serif text-3xl font-bold tracking-tight leading-none italic" style={{ color: 'var(--text-primary)' }}>IIT Calendar</h1>
-            <p className="text-sm font-black uppercase tracking-widest mt-1" style={{ color: 'var(--text-secondary)' }}>
-              {settings.calendarType === 'srilanka' ? t('calendar.srilanka') : settings.calendarType} • {t('calendar.mode')}
-            </p>
-            {settings.address && (
-              <p className="text-sm font-medium opacity-60 mt-0.5 max-w-[200px] truncate" style={{ color: 'var(--text-secondary)' }}>
-                {settings.address}
-              </p>
-            )}
+            <img src="/logo.png" alt="IIT Logo" className="w-16 h-16 object-contain" />
+          </div>
+
+          {/* Title + subtitle */}
+          <div className="flex flex-col gap-0.5">
+            <span
+              className="text-[17px] font-medium tracking-tight leading-none"
+              style={{ color: 'var(--text-primary)' }}
+            >
+              IIT Calendar
+            </span>
+            <span
+              className="text-[11px] uppercase tracking-widest leading-none"
+              style={{ color: 'var(--text-secondary)' }}
+            >
+              {settings.calendarType === 'srilanka' ? t('calendar.srilanka') : settings.calendarType}
+              {' · '}{t('calendar.mode')}
+               {settings.address && (
+                <p className="text-sm font-medium opacity-60 mt-0.5 max-w-[200px] truncate" style={{ color: 'var(--text-secondary)' }}>
+                  {settings.address}
+                </p>
+              )}
+            </span>
           </div>
         </div>
-        <div className="flex items-center gap-3">
-          <button 
-            onClick={() => setShowSettings(true)}
-            className="p-2.5 rounded-full shadow-sm border border-white dark:border-slate-700 transition-colors"
-            style={{ color: 'var(--btn-header-text)' }}
-          >
-            <SettingsIcon size="1.25em" />
-          </button>
-        </div>
+
+        {/* Settings button */}
+        <button
+          onClick={() => setShowSettings(true)}
+          className="w-9 h-9 rounded-full flex items-center justify-center border transition-colors"
+          style={{
+            borderColor: 'var(--color-border-tertiary, rgba(0,0,0,0.12))',
+            color: 'var(--btn-header-text)',
+            backgroundColor: 'transparent',
+          }}
+          aria-label="Settings"
+        >
+          <SettingsIcon size={17} />
+        </button>
       </header>
 
       <main className="flex-1 px-3 pb-32">
         {activeTab === 'calendar' && (
           <CalendarScreen 
             settings={settings}
+            onUpdateSettings={setSettings}
             currentDate={currentDate}
             setCurrentDate={setCurrentDate}
             selectedDate={selectedDate}

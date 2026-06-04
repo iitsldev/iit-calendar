@@ -77,6 +77,7 @@ export function SunDetails({
   expanded, 
   setExpanded, 
   settings, 
+  onUpdateSettings,
   date, 
   calculator,
   activeDawn 
@@ -84,6 +85,7 @@ export function SunDetails({
   expanded: boolean;
   setExpanded: (v: boolean) => void;
   settings: Settings;
+  onUpdateSettings: (settings: Settings) => void;
   date: Date;
   calculator: SunTimesCalculator;
   activeDawn: Date;
@@ -92,22 +94,36 @@ export function SunDetails({
   const times = calculator.getStandardTimes(date);
   const currentTime = new Date();
   const [selectedPhase, setSelectedPhase] = React.useState<number | null>(null);
-  const [isBellEnabled, setIsBellEnabled] = React.useState(bellService.isSolarNoonBellEnabled());
 
-  // Update bell service when noon changes or toggle changes
+  // Update bell service when noon/dawn changes or settings change
   React.useEffect(() => {
     if (times.solarNoon) {
-      bellService.setSolarNoonBell(times.solarNoon, isBellEnabled);
+      bellService.setSolarNoonBell(times.solarNoon, settings.solarNoonBell);
     }
-  }, [times.solarNoon, isBellEnabled]);
+  }, [times.solarNoon, settings.solarNoonBell]);
 
-  const toggleBell = async () => {
-    if (!isBellEnabled) {
-      await bellService.requestPermission();
-      // Test bell to announce
-      bellService.playBell();
+  React.useEffect(() => {
+    if (activeDawn) {
+      bellService.setDawnBell(activeDawn, settings.dawnBell);
     }
-    setIsBellEnabled(!isBellEnabled);
+  }, [activeDawn, settings.dawnBell]);
+
+  const toggleNoonBell = async () => {
+    const nextVal = !settings.solarNoonBell;
+    if (nextVal) {
+      await bellService.requestPermission();
+      bellService.playBell('solar_noon');
+    }
+    onUpdateSettings({ ...settings, solarNoonBell: nextVal });
+  };
+
+  const toggleDawnBell = async () => {
+    const nextVal = !settings.dawnBell;
+    if (nextVal) {
+      await bellService.requestPermission();
+      bellService.playBell('dawn');
+    }
+    onUpdateSettings({ ...settings, dawnBell: nextVal });
   };
 
   const safeFormat = (d: Date | undefined | null, fmt: string) => {
@@ -263,28 +279,55 @@ export function SunDetails({
           <div className="grid grid-cols-2 gap-y-6 gap-x-8 bg-white/40 dark:bg-slate-800/40 p-6 rounded-[2rem] border border-white/60 dark:border-slate-700">
             <DetailRow label={t('sun.traditionDawn')} value={safeFormat(activeDawn, 'hh:mm:ss a')} />
             <DetailRow label={t('sun.solarNoon')} value={safeFormat(times.solarNoon, 'hh:mm:ss a')} />
-            <div className="col-span-2 mt-2 flex items-center justify-between p-4 rounded-2xl bg-saffron/5 border border-saffron/20">
+            {/* Solar Noon Alert Row */}
+            <div className="col-span-2 sm:col-span-1 mt-2 flex items-center justify-between p-4 rounded-2xl bg-saffron/5 border border-saffron/20">
               <div className="flex items-center gap-3">
-                <div className={cn("p-2 rounded-xl transition-colors", isBellEnabled ? "bg-saffron text-white" : "bg-slate-200 dark:bg-slate-700 text-slate-400 dark:text-slate-500")}>
-                  {isBellEnabled ? <Bell size={18} /> : <BellOff size={18} />}
+                <div className={cn("p-2 rounded-xl transition-colors", settings.solarNoonBell ? "bg-saffron text-white" : "bg-slate-200 dark:bg-slate-700 text-slate-400 dark:text-slate-500")}>
+                  {settings.solarNoonBell ? <Bell size={18} /> : <BellOff size={18} />}
                 </div>
                 <div className="flex flex-col">
-                  <span className="text-xs font-black uppercase tracking-widest text-slate-500">Solar Noon Bell</span>
+                  <span className="text-[11px] font-black uppercase tracking-wider text-slate-500">Solar Noon Alert</span>
                   <span className="text-xs font-bold text-slate-800 dark:text-slate-200">
-                    {isBellEnabled ? 'Active (5 mins before)' : 'Inactive'}
+                    {settings.solarNoonBell ? 'Active (5m before)' : 'Inactive'}
                   </span>
                 </div>
               </div>
               <button 
-                onClick={toggleBell}
+                onClick={toggleNoonBell}
                 className={cn(
-                  "px-4 py-2 rounded-xl text-xs font-black uppercase tracking-widest transition-all shadow-sm active:scale-95",
-                  isBellEnabled 
+                  "px-3 py-1.5 rounded-xl text-[10px] font-black uppercase tracking-wider transition-all shadow-sm active:scale-95",
+                  settings.solarNoonBell 
                     ? "bg-slate-800 dark:bg-slate-700 text-white hover:bg-slate-700 dark:hover:bg-slate-600" 
                     : "bg-saffron text-white hover:bg-saffron/90"
                 )}
               >
-                {isBellEnabled ? 'Disable' : 'Enable Bell'}
+                {settings.solarNoonBell ? 'Disable' : 'Enable'}
+              </button>
+            </div>
+
+            {/* Dawn Alert Row */}
+            <div className="col-span-2 sm:col-span-1 mt-2 flex items-center justify-between p-4 rounded-2xl bg-saffron/5 border border-saffron/20">
+              <div className="flex items-center gap-3">
+                <div className={cn("p-2 rounded-xl transition-colors", settings.dawnBell ? "bg-saffron text-white" : "bg-slate-200 dark:bg-slate-700 text-slate-400 dark:text-slate-500")}>
+                  {settings.dawnBell ? <Bell size={18} /> : <BellOff size={18} />}
+                </div>
+                <div className="flex flex-col">
+                  <span className="text-[11px] font-black uppercase tracking-wider text-slate-500">Dawn Alert</span>
+                  <span className="text-xs font-bold text-slate-800 dark:text-slate-200">
+                    {settings.dawnBell ? 'Active' : 'Inactive'}
+                  </span>
+                </div>
+              </div>
+              <button 
+                onClick={toggleDawnBell}
+                className={cn(
+                  "px-3 py-1.5 rounded-xl text-[10px] font-black uppercase tracking-wider transition-all shadow-sm active:scale-95",
+                  settings.dawnBell 
+                    ? "bg-slate-800 dark:bg-slate-700 text-white hover:bg-slate-700 dark:hover:bg-slate-600" 
+                    : "bg-saffron text-white hover:bg-saffron/90"
+                )}
+              >
+                {settings.dawnBell ? 'Disable' : 'Enable'}
               </button>
             </div>
             <DetailRow label={t('sun.civilTwilight')} value={`${safeFormat(times.dawn, 'HH:mm')} - ${safeFormat(times.sunrise, 'HH:mm')}`} />

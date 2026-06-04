@@ -60,6 +60,17 @@ export function ChantsScreen({ settings }: { settings: Settings }) {
     return () => unsub();
   }, [selectedChantId]);
 
+  useEffect(() => {
+    if (showAddModal || viewChant) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = '';
+    }
+    return () => {
+      document.body.style.overflow = '';
+    };
+  }, [showAddModal, viewChant]);
+
   const stats = useMemo<UserChantStats>(() => {
     const distribution: Record<string, number> = {};
     chants.forEach(c => {
@@ -202,15 +213,20 @@ export function ChantsScreen({ settings }: { settings: Settings }) {
 
       {/* Add Modal */}
       {showAddModal && (
-        <div className="fixed inset-0 z-[100] flex items-center justify-center p-6 bg-slate-900/60 dark:bg-black/70 backdrop-blur-sm">
+        <div 
+          className="fixed inset-0 z-[100] flex items-center justify-center p-6 bg-slate-900/60 dark:bg-black/70 backdrop-blur-sm"
+          onClick={(e) => {
+            if (e.target === e.currentTarget) setShowAddModal(false);
+          }}
+        >
           <motion.div
             initial={{ opacity: 0, scale: 0.9 }}
             animate={{ opacity: 1, scale: 1 }}
             className="w-full max-w-sm bg-white/90 dark:bg-slate-900/90 backdrop-blur-md rounded-[2.5rem] p-8 shadow-2xl space-y-6 border border-white/50 dark:border-slate-800"
           >
-            <div className="flex justify-between items-center">
-              <h3 className="font-serif text-2xl text-stone-900 dark:text-stone-100">New Chant</h3>
-              <button onClick={() => setShowAddModal(false)} className="text-primary-400 dark:text-primary-500"><X /></button>
+            <div className="flex justify-between items-start gap-4">
+              <h3 className="font-serif text-2xl text-stone-900 dark:text-stone-100 break-words min-w-0 pr-2">New Chant</h3>
+              <button onClick={() => setShowAddModal(false)} className="text-primary-400 dark:text-primary-500 flex-shrink-0 mt-1"><X /></button>
             </div>
             
             <div className="space-y-4">
@@ -248,20 +264,25 @@ export function ChantsScreen({ settings }: { settings: Settings }) {
 
       {/* View Chant Modal */}
       {viewChant && (
-        <div className="fixed inset-0 z-[100] flex items-center justify-center p-6 bg-slate-900/60 dark:bg-black/70 backdrop-blur-sm">
+        <div 
+          className="fixed inset-0 z-[100] flex items-center justify-center p-6 bg-slate-900/60 dark:bg-black/70 backdrop-blur-sm"
+          onClick={(e) => {
+            if (e.target === e.currentTarget) setViewChant(null);
+          }}
+        >
           <motion.div
             initial={{ opacity: 0, scale: 0.9 }}
             animate={{ opacity: 1, scale: 1 }}
             className="w-full max-w-lg max-h-[80vh] flex flex-col bg-white/90 dark:bg-slate-900/90 backdrop-blur-md rounded-[2.5rem] p-8 shadow-2xl border border-white/50 dark:border-slate-800 overflow-hidden"
           >
-            <div className="flex justify-between items-center mb-6">
-              <h3 className="font-serif text-2xl text-stone-900 dark:text-stone-100">
+            <div className="flex justify-between items-start gap-4 mb-6">
+              <h3 className="font-serif text-2xl text-stone-900 dark:text-stone-100 break-words min-w-0 pr-2">
                 <ConvertedText text={viewChant.title} script={settings.paliScript} />
               </h3>
-              <button onClick={() => setViewChant(null)} className="text-primary-400 dark:text-primary-500"><X /></button>
+              <button onClick={() => setViewChant(null)} className="text-primary-400 dark:text-primary-500 flex-shrink-0 mt-1"><X /></button>
             </div>
             
-            <div className="overflow-y-auto pr-4 scrollbar-hide text-[var(--text-secondary)] whitespace-pre-wrap leading-relaxed text-lg">
+            <div className="overflow-y-auto pr-4 scrollbar-hide text-[var(--text-secondary)] whitespace-pre-wrap leading-relaxed text-lg" style={{ overscrollBehavior: 'contain' }}>
                <ConvertedText text={viewChant.content || (viewChant as any).chant || ''} script={settings.paliScript} />
             </div>
           </motion.div>
