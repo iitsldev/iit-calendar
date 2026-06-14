@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { motion, useAnimation } from 'framer-motion';
 import { Minus, Plus, Hand } from 'lucide-react';
 import { cn } from '../../lib/utils';
+import { useI18n } from '../../hooks/useI18n';
 
 interface ChantCounterProps {
   currentCount: number;
@@ -11,6 +12,7 @@ interface ChantCounterProps {
 }
 
 export function ChantCounter({ currentCount, onCountChange, onCommit, targetCount }: ChantCounterProps) {
+  const { t } = useI18n();
   const controls = useAnimation();
   const [manualValue, setManualValue] = useState(currentCount.toString());
 
@@ -53,7 +55,7 @@ export function ChantCounter({ currentCount, onCountChange, onCommit, targetCoun
             className="font-serif text-7xl font-medium tracking-tight bg-transparent text-center focus:outline-none w-48 text-[var(--accent)]"
           />
           <p className="text-xs font-black uppercase tracking-[0.2em] text-[var(--text-muted)] mt-2">
-            of {targetCount} chants
+            {t('chant.ofChants', { count: targetCount })}
           </p>
         </div>
 
@@ -95,7 +97,7 @@ export function ChantCounter({ currentCount, onCountChange, onCommit, targetCoun
               whileTap={{ opacity: 0.15 }}
             />
             <Hand size={48} className="text-white mb-2" />
-            <span className="text-[0.65rem] font-black uppercase tracking-[0.3em] text-white">Tap to Chant</span>
+            <span className="text-[0.65rem] font-black uppercase tracking-[0.3em] text-white">{t('chant.tapToChant')}</span>
           </div>
         </div>
       </motion.button>
@@ -112,7 +114,7 @@ export function ChantCounter({ currentCount, onCountChange, onCommit, targetCoun
             : "bg-slate-100 text-primary-300 pointer-events-none"
         )}
       >
-        Log Session
+        {t('chant.logSession')}
       </button>
     </div>
   );

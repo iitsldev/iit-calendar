@@ -144,7 +144,7 @@ function ordinalSuffix(n) {
   // 11th, 12th, 13th are exceptions to the 1st/2nd/3rd rule
   if (v >= 11 && v <= 13) return "th";
   switch (n % 10) {
-    case 1: return "st";
+    case 1: return _t("st");
     case 2: return "nd";
     case 3: return "rd";
     default: return "th";

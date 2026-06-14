@@ -4,6 +4,7 @@ import { ChantCard } from './ChantCard';
 import { UserChant } from '../../types';
 import { cn } from '../../lib/utils';
 import { chantService } from '../../services/ChantService';
+import { useI18n } from '../../hooks/useI18n';
 
 interface ChantListProps {
   chants: UserChant[];
@@ -15,6 +16,7 @@ interface ChantListProps {
 }
 
 export function ChantList({ chants, selectedChantId, onSelect, onAddChant, onViewChant, paliScript }: ChantListProps) {
+  const { t } = useI18n();
   const [searchTerm, setSearchTerm] = useState('');
 
   const filteredChants = chants
@@ -38,7 +40,7 @@ export function ChantList({ chants, selectedChantId, onSelect, onAddChant, onVie
         </div>
         <input
           type="text"
-          placeholder="Search chants..."
+          placeholder={t('chant.searchChants')}
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
           className="w-full pl-12 pr-4 py-4 rounded-2xl focus:outline-none focus:ring-1 focus:ring-[#7f5700]/20 transition-all border border-slate-100 dark:border-slate-700"
@@ -67,7 +69,7 @@ export function ChantList({ chants, selectedChantId, onSelect, onAddChant, onVie
           className="w-full p-5 rounded-[1.5rem] border-2 border-dashed border-slate-200 dark:border-slate-700 hover:border-[#7f5700]/30 transition-all flex items-center justify-center gap-3 font-bold uppercase tracking-widest text-xs"
         >
           <Plus size={16} />
-          Create Custom Chant
+          {t('chant.createCustomChant')}
         </button>
       </div>
     </div>

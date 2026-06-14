@@ -17,8 +17,12 @@ export interface Settings {
   darkMode: boolean;
   fontSize: FontSize;
   solarNoonBell: boolean;
+  noonSafeOffset?: number;
+  noonMultiAlert?: boolean;
+  noonVoiceAlert?: boolean;
   dawnBell: boolean;
   syncToFirebase: boolean;
+  isIITStudent?: boolean;
 }
 
 export interface Chant {

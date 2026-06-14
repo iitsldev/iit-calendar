@@ -131,13 +131,19 @@ export function CalendarScreen({
   const [paliExpanded, setPaliExpanded] = React.useState(false);
   const [isEventsExpanded, setIsEventsExpanded] = React.useState(false);
   const [reflectionOffset, setReflectionOffset] = React.useState(0);
+  const [activeIITTab, setActiveIITTab] = React.useState<'si' | 'en'>(language === 'si' ? 'si' : 'en');
+
+  React.useEffect(() => {
+    setActiveIITTab(language === 'si' ? 'si' : 'en');
+  }, [language]);
 
   const filteredEvents = React.useMemo(() => {
     return firebaseEvents.filter(evt => {
       if (!evt.language) return true;
-      return evt.language === language;
+      if (settings.isIITStudent !== false) return true;
+      return false;
     });
-  }, [firebaseEvents, language]);
+  }, [firebaseEvents, settings.isIITStudent]);
 
   const monthDays = React.useMemo(() => {
     const start = startOfMonth(currentDate);
@@ -300,7 +306,7 @@ export function CalendarScreen({
                 className="text-sm font-black text-center tracking-widest"
                 style={{ color: 'var(--text-muted)' }}
               >
-                {day}
+                {t(`calendar.days.${day.toLowerCase()}`)}
               </span>
             ))}
           </div>
@@ -435,7 +441,7 @@ export function CalendarScreen({
               }}>
                 <CalendarIcon size={14} className="text-saffron" />
                 <span className="text-[10px] font-black uppercase tracking-[0.2em]" style={{ color: 'var(--accent)' }}>
-                  Upcoming Uposatha
+                  {t('calendar.upcomingUposatha')}
                 </span>
               </div>
 
@@ -503,20 +509,20 @@ export function CalendarScreen({
 
                   <div className="pt-3 flex justify-between w-full items-center text-center"
                     style={{ borderTop: '1px solid var(--lotus-muted)' }}>
-                    <MetaCell label="Season">
+                    <MetaCell label={t('calendar.season')}>
                       <PaliText
                         text={uposathaInfo?.seas.season || ''}
                         script={settings.paliScript}
                         className="capitalize"
                       />
                     </MetaCell>
-                    <MetaCell label="Occasion">
+                    <MetaCell label={t('calendar.occasion')}>
                       <PaliText 
                         text={uposathaInfo?.pos.label || ''}
                         script={settings.paliScript}
                       />
                     </MetaCell>
-                    <MetaCell label="Pakkha" right>
+                    <MetaCell label={t('calendar.pakkha')} right>
                       <PaliText
                         text={nextUposatha.phase === 'full' ? 'Sukka' : 'Kaṇha'}
                         script={settings.paliScript}
@@ -560,18 +566,20 @@ export function CalendarScreen({
 
             <div className="pt-6 border-t border-slate-200/50 dark:border-slate-700/50">
               <h4 className="text-xs font-black uppercase tracking-[0.2em] mb-4 text-center" style={{ color: 'var(--text-muted)' }}>
-                Vassa & Pavāraṇā
+                {t('calendar.vassaAndPavarana')}
               </h4>
               <div className="grid grid-cols-2 gap-4">
                 <VassaItem 
-                  label="Pubba Vassa" 
+                  label={t('calendar.pubbaVassa')} 
                   entry={vassaDates.pubbaVassaEntry} 
-                  pavarana={vassaDates.pubbaVassaPavarana} 
+                  pavarana={vassaDates.pubbaVassaPavarana}
+                  t={t}
                 />
                 <VassaItem 
-                  label="Pacchima Vassa" 
+                  label={t('calendar.pacchimaVassa')} 
                   entry={vassaDates.pacchimaVassaEntry} 
                   pavarana={vassaDates.pacchimaVassaPavarana} 
+                  t={t}
                 />
               </div>
             </div>
@@ -589,7 +597,7 @@ export function CalendarScreen({
             >
               <span className="w-6 h-[1px] opacity-30" style={{ background: 'var(--accent)' }} />
               <span className="text-[10px] font-black uppercase tracking-[0.25em]" style={{ color: 'var(--accent)' }}>
-                Buddhist Era Progress
+                {t('calendar.buddhistEraProgress')}
               </span>
               <span className="w-6 h-[1px] opacity-30" style={{ background: 'var(--accent)' }} />
             </div>
@@ -608,7 +616,7 @@ export function CalendarScreen({
                   className="text-[9px] font-black uppercase tracking-[0.2em] text-center leading-tight"
                   style={{ color: 'var(--text-muted)' }}
                 >
-                  Atikkanta{'\n'}(Elapsed)
+                  {t('calendar.atikkanta')}{'\n'}({t('calendar.elapsed')})
                 </span>
                 <EraCounter value={elapsed.atikkantaY} unit="Y" dimmed />
                 <EraCounter value={elapsed.atikkantaM} unit="M" dimmed />
@@ -624,7 +632,7 @@ export function CalendarScreen({
                   className="text-[9px] font-black uppercase tracking-[0.2em] text-center leading-tight"
                   style={{ color: 'var(--accent)' }}
                 >
-                  Buddhist Era
+                  {t('calendar.buddhistEra')}
                 </span>
                 <EraCounter value={elapsed.bYear} unit="Y" accent />
                 <EraCounter value={elapsed.bM} unit="M" accent />
@@ -640,7 +648,7 @@ export function CalendarScreen({
                   className="text-[9px] font-black uppercase tracking-[0.2em] text-center leading-tight"
                   style={{ color: 'var(--text-muted)' }}
                 >
-                  Avasiṭṭha{'\n'}(Remaining)
+                  {t('calendar.avasittha')}{'\n'}({t('calendar.remaining')})
                 </span>
                 <EraCounter value={elapsed.avasitthaY} unit="Y" />
                 <EraCounter value={elapsed.avasitthaM} unit="M" />
@@ -740,7 +748,7 @@ export function CalendarScreen({
                 <div className="flex items-center gap-3">
                   <span className="w-8 h-[1px] opacity-30" style={{ background: 'var(--accent)' }} />
                   <h3 className="text-xs font-black uppercase tracking-[0.2em]" style={{ color: 'var(--accent)' }}>
-                    Schedule & Events
+                    {t('calendar.scheduleAndEvents')}
                   </h3>
                   <span className="w-8 h-[1px] opacity-30" style={{ background: 'var(--accent)' }} />
                 </div>
@@ -771,46 +779,86 @@ export function CalendarScreen({
                         return toMinutes(a.time) - toMinutes(b.time);
                       });
 
+                      const hasLanguageEvents = events.some(e => e.language);
+                      const displayEvents = hasLanguageEvents
+                        ? sortedEvents.filter(e => e.language === activeIITTab)
+                        : sortedEvents;
+
                       return (
                         <div key={`event-group-${groupName}`} className="space-y-3">
-                          <div className="flex items-center gap-2">
-                            <div
-                              className="w-1.5 h-1.5 rounded-full"
-                              style={{ background: 'var(--accent)' }}
-                            />
-                            <span
-                              className="text-xs font-black uppercase tracking-widest leading-none opacity-60"
-                              style={{ color: 'var(--text-muted)' }}
-                            >
-                              {groupName}
-                            </span>
+                          <div className="flex justify-between items-center w-full">
+                            <div className="flex items-center gap-2">
+                              <div
+                                className="w-1.5 h-1.5 rounded-full"
+                                style={{ background: 'var(--accent)' }}
+                              />
+                              <span
+                                className="text-xs font-black uppercase tracking-widest leading-none opacity-60"
+                                style={{ color: 'var(--text-muted)' }}
+                              >
+                                {groupName}
+                              </span>
+                            </div>
+
+                            {hasLanguageEvents && (
+                              <div className="flex bg-[color-mix(in_srgb,var(--accent-subtle)_80%,transparent)] p-0.5 rounded-xl border border-white/20">
+                                <button
+                                  onClick={() => setActiveIITTab('si')}
+                                  className={cn(
+                                    "px-2.5 py-1 text-[10px] font-bold rounded-lg transition-all",
+                                    activeIITTab === 'si'
+                                      ? "shadow-sm bg-[var(--accent)] text-white"
+                                      : "opacity-60 text-[var(--text-primary)] hover:opacity-100"
+                                  )}
+                                >
+                                  {t('settings.languages.si') || 'Sinhala'}
+                                </button>
+                                <button
+                                  onClick={() => setActiveIITTab('en')}
+                                  className={cn(
+                                    "px-2.5 py-1 text-[10px] font-bold rounded-lg transition-all",
+                                    activeIITTab === 'en'
+                                      ? "shadow-sm bg-[var(--accent)] text-white"
+                                      : "opacity-60 text-[var(--text-primary)] hover:opacity-100"
+                                  )}
+                                >
+                                  {t('settings.languages.en') || 'English'}
+                                </button>
+                              </div>
+                            )}
                           </div>
 
                           <div className="space-y-2">
-                            {sortedEvents.map((evt, idx) => (
-                              <div
-                                key={`event-item-${groupName}-${evt.id || idx}`}
-                                className="flex justify-between items-center p-3 rounded-2xl bg-slate-50/50 dark:bg-slate-800/30 border border-slate-100 dark:border-slate-700/50"
-                              >
-                                <div className="flex flex-col gap-1">
-                                  <span
-                                    className="text-sm font-bold"
-                                    style={{ color: 'var(--accent)' }}
-                                  >
-                                    {evt.event_name || evt.subject || evt.category}
-                                  </span>
-                                </div>
-
-                                {evt.time && (
-                                  <span
-                                    className="text-xs font-mono font-bold px-2 py-0.5 rounded-lg bg-white dark:bg-slate-900 shadow-sm"
-                                    style={{ color: 'var(--accent)' }}
-                                  >
-                                    {evt.time}
-                                  </span>
-                                )}
+                            {displayEvents.length === 0 ? (
+                              <div className="text-xs italic opacity-55 py-2 pl-3" style={{ color: 'var(--text-muted)' }}>
+                                No scheduled items
                               </div>
-                            ))}
+                            ) : (
+                              displayEvents.map((evt, idx) => (
+                                <div
+                                  key={`event-item-${groupName}-${evt.id || idx}`}
+                                  className="flex justify-between items-center p-3 rounded-2xl bg-slate-50/50 dark:bg-slate-800/30 border border-slate-100 dark:border-slate-700/50"
+                                >
+                                  <div className="flex flex-col gap-1">
+                                    <span
+                                      className="text-sm font-bold"
+                                      style={{ color: 'var(--accent)' }}
+                                    >
+                                      {evt.event_name || evt.subject || evt.category}
+                                    </span>
+                                  </div>
+
+                                  {evt.time && (
+                                    <span
+                                      className="text-xs font-mono font-bold px-2 py-0.5 rounded-lg bg-white dark:bg-slate-900 shadow-sm"
+                                      style={{ color: 'var(--accent)' }}
+                                    >
+                                      {evt.time}
+                                    </span>
+                                  )}
+                                </div>
+                              ))
+                            )}
                           </div>
                         </div>
                       );
@@ -866,7 +914,7 @@ export function CalendarScreen({
                 style={{ background: 'var(--surface)', border: '1px solid var(--border)', color: 'var(--accent)' }}
               >
                 <Shuffle size={14} />
-                Random
+                {t('calendar.random')}
               </button>
 
               <button
@@ -950,18 +998,18 @@ function DetailRow({ label, value, script }: { label: string; value: string; scr
   );
 }
 
-function VassaItem({ label, entry, pavarana }: { label: string; entry: Date | null; pavarana: Date | null }) {
+function VassaItem({ label, entry, pavarana, t }: { label: string; entry: Date | null; pavarana: Date | null; t: any }) {
   if (!entry || !pavarana) return null;
   return (
     <div className="flex flex-col gap-2 p-3 rounded-2xl bg-slate-50/50 dark:bg-slate-800/30">
       <span className="text-[11px] font-black uppercase tracking-tighter" style={{ color: 'var(--accent)' }}>{label}</span>
       <div className="space-y-1">
         <div className="flex justify-between items-center">
-          <span className="text-sm" style={{ color: 'var(--text-muted)' }}>Entry</span>
+          <span className="text-sm" style={{ color: 'var(--text-muted)' }}>{t('calendar.entry')}</span>
           <span className="text-sm font-bold" style={{ color: 'var(--accent)' }}>{format(entry, 'MMM d')}</span>
         </div>
         <div className="flex justify-between items-center">
-          <span className="text-sm" style={{ color: 'var(--text-muted)' }}>Pavāraṇā</span>
+          <span className="text-sm" style={{ color: 'var(--text-muted)' }}>{t('calendar.pavarana')}</span>
           <span className="text-sm font-bold" style={{ color: 'var(--accent)' }}>{format(pavarana, 'MMM d')}</span>
         </div>
       </div>

@@ -2,6 +2,7 @@
   "name": "react-example",
   "private": true,
   "version": "1.0.0",
+  "license": "CC-BY-NC-4.0",
   "type": "module",
   "scripts": {
     "dev": "vite --port=3000 --host=0.0.0.0",
@@ -10,7 +11,7 @@
     "clean": "rm -rf dist",
     "lint": "tsc --noEmit",
     "static-copy": "mkdir -p dist && cp public/* dist/ 2>/dev/null || true",
-    "cap:sync": "npm run build && npx cap sync",
+    "cap:sync": "npm run build && node generate-icons.cjs && npx cap sync",
     "cap:open:android": "npx cap open android",
     "cap:open:ios": "npx cap open ios"
   },
@@ -31,7 +32,6 @@
     "@types/recharts": "^1.8.29",
     "@types/suncalc": "^1.9.2",
     "@vitejs/plugin-react": "^5.0.4",
-    "aksharamukha": "^2.3.0-22",
     "clsx": "^2.1.1",
     "date-fns": "^4.1.0",
     "dotenv": "^17.2.3",

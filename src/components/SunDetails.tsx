@@ -13,6 +13,7 @@ import { SunTimesCalculator } from '../lib/calendar/SunTimesCalculator';
 import { Settings } from '../types';
 import { useI18n } from '../hooks/useI18n';
 import { cn } from '../lib/utils';
+import { alarmService } from '../services/alarm/AlarmService';
 
 interface SunTimeItemProps {
   icon: React.ReactNode;
@@ -70,7 +71,6 @@ function DetailRow({ label, value }: { label: string, value: string }) {
   );
 }
 
-import { bellService } from '../lib/services/BellService';
 import { Bell, BellOff, Volume2 } from 'lucide-react';
 
 export function SunDetails({ 
@@ -95,24 +95,31 @@ export function SunDetails({
   const currentTime = new Date();
   const [selectedPhase, setSelectedPhase] = React.useState<number | null>(null);
 
-  // Update bell service when noon/dawn changes or settings change
-  React.useEffect(() => {
-    if (times.solarNoon) {
-      bellService.setSolarNoonBell(times.solarNoon, settings.solarNoonBell);
+  const playPreviewBeep = () => {
+    try {
+      const AudioContext = window.AudioContext || (window as any).webkitAudioContext;
+      if (AudioContext) {
+        const ctx = new AudioContext();
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        osc.connect(gain);
+        gain.connect(ctx.destination);
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(880, ctx.currentTime);
+        gain.gain.setValueAtTime(0.1, ctx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.5);
+        osc.start();
+        osc.stop(ctx.currentTime + 0.5);
+      }
+    } catch (e) {
+      console.warn("AudioContext preview failed", e);
     }
-  }, [times.solarNoon, settings.solarNoonBell]);
-
-  React.useEffect(() => {
-    if (activeDawn) {
-      bellService.setDawnBell(activeDawn, settings.dawnBell);
-    }
-  }, [activeDawn, settings.dawnBell]);
+  };
 
   const toggleNoonBell = async () => {
     const nextVal = !settings.solarNoonBell;
     if (nextVal) {
-      await bellService.requestPermission();
-      bellService.playBell('solar_noon');
+      playPreviewBeep();
     }
     onUpdateSettings({ ...settings, solarNoonBell: nextVal });
   };
@@ -120,10 +127,26 @@ export function SunDetails({
   const toggleDawnBell = async () => {
     const nextVal = !settings.dawnBell;
     if (nextVal) {
-      await bellService.requestPermission();
-      bellService.playBell('dawn');
+      playPreviewBeep();
     }
     onUpdateSettings({ ...settings, dawnBell: nextVal });
+  };
+
+  const handleTestAlarms = async () => {
+    const now = new Date();
+    const testItems = [10, 25, 40].map((sec, i) => ({
+      id: 9000 + i,
+      title: "Test Alarm",
+      body: `Notification test ${i+1} (${sec}s)`,
+      at: new Date(now.getTime() + sec * 1000),
+      sound: settings.noonVoiceAlert ? 'noon_5.wav' : 'bell.wav',
+      channelId: 'solar_noon_v2',
+      allowWhileIdle: true,
+      exact: true
+    }));
+    
+    alert(`Scheduling 3 test alarms in 10s, 25s, and 40s. Close the app or lock the phone to test!`);
+    await alarmService.scheduleTest(testItems);
   };
 
   const safeFormat = (d: Date | undefined | null, fmt: string) => {
@@ -288,7 +311,9 @@ export function SunDetails({
                 <div className="flex flex-col">
                   <span className="text-[11px] font-black uppercase tracking-wider text-slate-500">Solar Noon Alert</span>
                   <span className="text-xs font-bold text-slate-800 dark:text-slate-200">
-                    {settings.solarNoonBell ? 'Active (5m before)' : 'Inactive'}
+                    {settings.solarNoonBell ? (
+                      `${settings.noonMultiAlert ? '5-1m' : '5m'} ${settings.noonVoiceAlert ? 'Voice' : 'Bell'}${settings.noonSafeOffset ? ` +${settings.noonSafeOffset}m safe` : ''}`
+                    ) : 'Inactive'}
                   </span>
                 </div>
               </div>
@@ -334,6 +359,16 @@ export function SunDetails({
             <DetailRow label={t('sun.astroTwilight')} value={`${safeFormat(times.nightEnd, 'HH:mm')} - ${safeFormat(times.nauticalDawn, 'HH:mm')}`} />
             <DetailRow label={t('sun.dayLength')} value={times.sunset && times.sunrise ? `${Math.floor((times.sunset.getTime() - times.sunrise.getTime()) / 3600000)}h ${Math.floor(((times.sunset.getTime() - times.sunrise.getTime()) % 3600000) / 60000)}m` : '--:--'} />
             <DetailRow label={t('sun.nadirPoint')} value={safeFormat(times.nadir, 'hh:mm a')} />
+          </div>
+
+          {/* Test Button for Debugging */}
+          <div className="flex justify-center pb-4">
+            <button 
+              onClick={handleTestAlarms}
+              className="px-6 py-2 rounded-full border border-slate-300 dark:border-slate-600 text-[10px] font-black uppercase tracking-widest text-slate-400 hover:text-saffron transition-colors"
+            >
+              Test Alarms (10s, 25s, 40s)
+            </button>
           </div>
         </motion.div>
       )}

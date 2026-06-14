@@ -1,0 +1,129 @@
+import { LocalNotifications, Importance, Visibility } from '@capacitor/local-notifications';
+import { Capacitor } from '@capacitor/core';
+
+export interface AlarmItem {
+  id: number;
+  title: string;
+  body: string;
+  at: Date;
+  sound: string;
+  channelId: string;
+  allowWhileIdle: boolean;
+  exact: boolean;
+}
+
+class AlarmPlugin {
+  public async requestPermission(): Promise<void> {
+    if (Capacitor.isNativePlatform()) {
+      try {
+        const status = await LocalNotifications.checkPermissions();
+        if (status.display !== 'granted') {
+          // Request all needed permissions including sound and precise alerts
+          await LocalNotifications.requestPermissions();
+        }
+      } catch (e) {
+        console.error("AlarmPlugin: Permission error", e);
+      }
+    } else if ('Notification' in window) {
+      await Notification.requestPermission();
+    }
+  }
+
+  public async schedule(items: AlarmItem[]): Promise<void> {
+    if (Capacitor.isNativePlatform()) {
+      const platform = Capacitor.getPlatform();
+      try {
+        await LocalNotifications.schedule({
+          notifications: items.map(item => {
+            let sound = item.sound;
+            if (platform === 'android') {
+              sound = sound.replace(/\.[^/.]+$/, "");
+            }
+            
+            return {
+              id: item.id,
+              title: item.title,
+              body: item.body,
+              schedule: {
+                at: item.at,
+                allowWhileIdle: true,
+                // 'alarm' mode uses setAlarmClock which is the most exact on Android
+                androidScheduleMode: 'alarm'
+              },
+              sound: sound,
+              channelId: item.channelId,
+            };
+          })
+        });
+      } catch (e) {
+        console.error("AlarmPlugin: Schedule error", e);
+      }
+    } else {
+      items.forEach(item => {
+        const delay = item.at.getTime() - Date.now();
+        if (delay > 0) {
+          setTimeout(() => {
+            this.showWebNotification(item.title, item.body, item.sound);
+          }, delay);
+        }
+      });
+    }
+  }
+
+  private showWebNotification(title: string, body: string, soundFile: string) {
+    if ('Notification' in window && Notification.permission === 'granted') {
+      new Notification(title, { body });
+    }
+    try {
+      const audio = new Audio(`/sounds/${soundFile}`);
+      audio.play().catch(e => console.warn("Web audio playback failed", e));
+    } catch (e) {
+      console.warn("Web audio initialization failed", e);
+    }
+  }
+
+  public async cancel(ids: number[]): Promise<void> {
+    if (Capacitor.isNativePlatform()) {
+      try {
+        await LocalNotifications.cancel({ notifications: ids.map(id => ({ id })) });
+      } catch (e) {
+        console.error("AlarmPlugin: Cancel error", e);
+      }
+    }
+  }
+
+  public async createChannels(): Promise<void> {
+    if (Capacitor.isNativePlatform() && Capacitor.getPlatform() === 'android') {
+      try {
+        const baseChannels: { id: string, name: string, importance: Importance, sound: string, visibility: Visibility }[] = [
+          { id: 'meditation_v2', name: 'Meditation', importance: 5, sound: 'bell', visibility: 1 },
+          { id: 'solar_noon_v2', name: 'Solar Noon', importance: 5, sound: 'bell', visibility: 1 },
+          { id: 'dawn_v2',       name: 'Dawn',       importance: 5, sound: 'bell', visibility: 1 },
+          { id: 'study_v2',      name: 'Study',      importance: 5, sound: 'bell', visibility: 1 }
+        ];
+
+        // Create specific channels for solar noon countdown voices
+        const voiceChannels = [5, 4, 3, 2, 1, 0].map(m => ({
+          id: `solar_noon_${m}`,
+          name: `Solar Noon ${m}m`,
+          importance: 5 as Importance,
+          sound: `noon_${m}`,
+          visibility: 1 as Visibility
+        }));
+
+        const allChannels = [...baseChannels, ...voiceChannels];
+
+        for (const channel of allChannels) {
+          await LocalNotifications.createChannel({
+            ...channel,
+            description: `${channel.name} alerts`
+          });
+        }
+      } catch (e) {
+        console.error("AlarmPlugin: Channel creation error", e);
+      }
+    }
+  }
+}
+
+export const alarmPlugin = new AlarmPlugin();

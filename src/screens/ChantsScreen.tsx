@@ -12,6 +12,7 @@ import { useUI } from '../UIContext';
 import { convertPali, SCRIPTS } from '../services/conversionService';
 import { Script } from '../lib/pali-script';
 import { Settings } from '../types';
+import { useI18n } from '../hooks/useI18n';
 
 function ConvertedText({ text, script, className }: { text: string; script: string; className?: string }) {
   const [display, setDisplay] = useState(text);
@@ -28,6 +29,7 @@ function ConvertedText({ text, script, className }: { text: string; script: stri
 }
 
 export function ChantsScreen({ settings }: { settings: Settings }) {
+  const { t } = useI18n();
   const { setShowSettings } = useUI();
   const [chants, setChants] = useState<UserChant[]>([]);
   const [sessions, setSessions] = useState<ChantSession[]>([]);
@@ -120,20 +122,20 @@ export function ChantsScreen({ settings }: { settings: Settings }) {
     setShowAddModal(false);
   };
 
-  if (loading) return <div className="flex items-center justify-center py-20">Loading...</div>;
+  if (loading) return <div className="flex items-center justify-center py-20">{t('chant.loading')}</div>;
 
   return (
     <div className="max-w-2xl mx-auto space-y-6">
       <header className="text-center py-6">
-        <h2 className="font-serif text-4xl text-saffron dark:text-amber-500 mb-1">Chant Counter</h2>
-        <p className="text-[0.65rem] font-black uppercase tracking-[0.4em] text-primary-400 dark:text-primary-500">Focus your mind</p>
+        <h2 className="font-serif text-4xl text-saffron dark:text-amber-500 mb-1">{t('chant.chantCounter')}</h2>
+        <p className="text-[0.65rem] font-black uppercase tracking-[0.4em] text-primary-400 dark:text-primary-500">{t('chant.focusMind')}</p>
       </header>
 
       {/* Mode Switcher */}
       <div className="flex justify-center gap-2 p-1.5 rounded-full w-fit mx-auto border border-slate-100 dark:border-slate-800">
         {[
-          { id: 'counter', icon: List, label: 'Chant' },
-          { id: 'insights', icon: BarChart2, label: 'Insights' }
+          { id: 'counter', icon: List, label: t('chant.chant') },
+          { id: 'insights', icon: BarChart2, label: t('chant.insights') }
         ].map(m => (
           <button
             key={m.id}
@@ -167,8 +169,8 @@ export function ChantsScreen({ settings }: { settings: Settings }) {
                   <span className="font-bold text-lg">!</span>
                 </div>
                 <div>
-                  <p className="text-[0.6rem] font-black uppercase tracking-widest text-primary-300 dark:text-primary-700 mb-0.5">Consecutive Practice</p>
-                  <p className="text-lg font-bold text-primary-200 dark:text-primary-800">{stats.streakDays} Days</p>
+                  <p className="text-[0.6rem] font-black uppercase tracking-widest text-primary-300 dark:text-primary-700 mb-0.5">{t('chant.consecutivePractice')}</p>
+                  <p className="text-lg font-bold text-primary-200 dark:text-primary-800">{stats.streakDays} {t('chant.days')}</p>
                 </div>
               </div>                <button 
                 onClick={() => setView('insights')}
@@ -225,13 +227,13 @@ export function ChantsScreen({ settings }: { settings: Settings }) {
             className="w-full max-w-sm bg-white/90 dark:bg-slate-900/90 backdrop-blur-md rounded-[2.5rem] p-8 shadow-2xl space-y-6 border border-white/50 dark:border-slate-800"
           >
             <div className="flex justify-between items-start gap-4">
-              <h3 className="font-serif text-2xl text-stone-900 dark:text-stone-100 break-words min-w-0 pr-2">New Chant</h3>
+              <h3 className="font-serif text-2xl text-stone-900 dark:text-stone-100 break-words min-w-0 pr-2">{t('chant.newChant')}</h3>
               <button onClick={() => setShowAddModal(false)} className="text-primary-400 dark:text-primary-500 flex-shrink-0 mt-1"><X /></button>
             </div>
             
             <div className="space-y-4">
               <div>
-                <label className="text-[0.65rem] font-black uppercase tracking-widest text-primary-300 dark:text-primary-700 block mb-2 px-1">Chant Name</label>
+                <label className="text-[0.65rem] font-black uppercase tracking-widest text-primary-300 dark:text-primary-700 block mb-2 px-1">{t('chant.chantName')}</label>
                 <input 
                   type="text" 
                   value={newChant.title}
@@ -241,7 +243,7 @@ export function ChantsScreen({ settings }: { settings: Settings }) {
                 />
               </div>
               <div>
-                <label className="text-[0.65rem] font-black uppercase tracking-widest text-primary-300 dark:text-primary-700 block mb-2 px-1">MileStone (e.g. 108)</label>
+                <label className="text-[0.65rem] font-black uppercase tracking-widest text-primary-300 dark:text-primary-700 block mb-2 px-1">{t('chant.milestone')}</label>
                 <input 
                   type="number" 
                   value={newChant.milestone}
@@ -256,7 +258,7 @@ export function ChantsScreen({ settings }: { settings: Settings }) {
               disabled={!newChant.title}
               className="w-full py-5 bg-[#7f5700] text-white rounded-full font-black uppercase tracking-widest transition-all shadow-lg shadow-[#7f5700]/20 active:scale-95"
             >
-              Create Chant
+              {t('chant.createChant')}
             </button>
           </motion.div>
         </div>

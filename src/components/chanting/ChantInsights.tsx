@@ -5,6 +5,7 @@ import { Award, Zap, TrendingUp, Calendar } from 'lucide-react';
 import { UserChant, ChantSession, UserChantStats } from '../../types';
 import { cn } from '../../lib/utils';
 import { format, startOfDay, subDays, isSameDay } from 'date-fns';
+import { useI18n } from '../../hooks/useI18n';
 
 interface ChantInsightsProps {
   chants: UserChant[];
@@ -13,6 +14,7 @@ interface ChantInsightsProps {
 }
 
 export function ChantInsights({ chants, sessions, stats }: ChantInsightsProps) {
+  const { t } = useI18n();
   const totalChants = chants.reduce((sum, c) => sum + c.totalCount, 0);
   
   // Aggregate data for Pie Chart
@@ -43,21 +45,21 @@ export function ChantInsights({ chants, sessions, stats }: ChantInsightsProps) {
       <div className="grid grid-cols-1 gap-4">
         <div className="glass-card rounded-[2.5rem] p-8 relative overflow-hidden bg-white/50 dark:bg-slate-900 shadow-sm border border-white/60 dark:border-slate-800">
           <div className="flex justify-between items-start mb-4">
-            <h3 className="text-sm font-black uppercase tracking-[0.2em] text-slate-400">Total Chants</h3>
+            <h3 className="text-sm font-black uppercase tracking-[0.2em] text-slate-400">{t('chant.totalChants')}</h3>
             <div className="p-3 bg-[#7f5700]/10 rounded-2xl text-[#7f5700]">
               <TrendingUp size={20} />
             </div>
           </div>
           <div className="flex items-baseline gap-2">
             <span className="font-serif text-5xl font-medium text-[#7f5700]">{totalChants.toLocaleString()}</span>
-            <span className="text-slate-400 font-bold uppercase text-[0.65rem] tracking-widest">Completed</span>
+            <span className="text-slate-400 font-bold uppercase text-[0.65rem] tracking-widest">{t('chant.completed')}</span>
           </div>
         </div>
       </div>
 
       {/* Distribution Chart */}
       <div className="glass-card rounded-[2.5rem] p-8 bg-white/50 dark:bg-slate-900 border border-white/60 dark:border-slate-800">
-        <h3 className="text-sm font-black uppercase tracking-[0.2em] text-slate-400 mb-8">Chant Distribution</h3>
+        <h3 className="text-sm font-black uppercase tracking-[0.2em] text-slate-400 mb-8">{t('chant.chantDistribution')}</h3>
         <div className="flex flex-col md:flex-row items-center gap-10">
           <div className="w-48 h-48 relative">
             <ResponsiveContainer width="100%" height="100%">
@@ -97,10 +99,10 @@ export function ChantInsights({ chants, sessions, stats }: ChantInsightsProps) {
       {/* Consistency Grid */}
       <div className="glass-card rounded-[2.5rem] p-8 bg-white/50 dark:bg-slate-900 border border-white/60 dark:border-slate-800">
         <div className="flex justify-between items-center mb-8">
-          <h3 className="text-sm font-black uppercase tracking-[0.2em] text-slate-400">Practice Consistency</h3>
+          <h3 className="text-sm font-black uppercase tracking-[0.2em] text-slate-400">{t('chant.practiceConsistency')}</h3>
           <div className="flex items-center gap-2 px-3 py-1 bg-amber-50 dark:bg-amber-900/20 rounded-full border border-amber-100 dark:border-amber-900/40">
             <Zap size={14} className="text-amber-500 fill-amber-500" />
-            <span className="text-[0.65rem] font-black text-amber-700 dark:text-amber-500 uppercase tracking-widest">{stats.streakDays} Day Streak</span>
+            <span className="text-[0.65rem] font-black text-amber-700 dark:text-amber-500 uppercase tracking-widest">{stats.streakDays} {t('chant.dayStreak')}</span>
           </div>
         </div>
         
@@ -123,7 +125,7 @@ export function ChantInsights({ chants, sessions, stats }: ChantInsightsProps) {
           })}
         </div>
         <div className="flex justify-between mt-4 text-[0.6rem] font-black uppercase tracking-widest text-slate-400 px-1">
-          <span>Less</span>
+          <span>{t('chant.less')}</span>
           <div className="flex gap-1">
             <div className="w-2 h-2 rounded-sm bg-slate-100 dark:bg-slate-800" />
             <div className="w-2 h-2 rounded-sm bg-[#7f5700]/20" />
@@ -131,20 +133,20 @@ export function ChantInsights({ chants, sessions, stats }: ChantInsightsProps) {
             <div className="w-2 h-2 rounded-sm bg-[#7f5700]/80" />
             <div className="w-2 h-2 rounded-sm bg-[#7f5700]" />
           </div>
-          <span>More</span>
+          <span>{t('chant.more')}</span>
         </div>
       </div>
 
       {/* Milestones */}
       <div className="glass-card rounded-[2.5rem] p-8 bg-white/50 dark:bg-slate-900 border border-white/60 dark:border-slate-800">
-        <h3 className="font-serif text-2xl text-slate-800 dark:text-slate-100 mb-2">Milestones</h3>
+        <h3 className="font-serif text-2xl text-slate-800 dark:text-slate-100 mb-2">{t('chant.milestones')}</h3>
         <p className="text-xs text-slate-400 mb-8 italic">"Your spiritual journey is blossoming beautifully."</p>
 
         <div className="space-y-6">
           {chants.filter(c => c.milestone && c.milestone > 0).map(chant => (
             <div key={chant.id} className="space-y-2">
               <div className="flex justify-between items-center text-[0.65rem] font-black uppercase tracking-widest text-slate-500">
-                <span>{chant.title} Goal</span>
+                <span>{chant.title} {t('chant.goal')}</span>
                 <span className="text-[#d48820]">{chant.totalCount} / {chant.milestone}</span>
               </div>
               <div className="h-2.5 w-full bg-slate-100 dark:bg-slate-800 rounded-full overflow-hidden">
@@ -160,16 +162,16 @@ export function ChantInsights({ chants, sessions, stats }: ChantInsightsProps) {
         
         {/* Badges/Rankings */}
         <div className="mt-12 flex justify-center gap-6">
-          <Badge type="Novice" active={totalChants < 1000} />
-          <Badge type="Devotee" active={totalChants >= 1000 && totalChants < 5000} />
-          <Badge type="Master" active={totalChants >= 5000} />
+          <Badge type={t('chant.novice')} active={totalChants < 1000} t={t} />
+          <Badge type={t('chant.devotee')} active={totalChants >= 1000 && totalChants < 5000} t={t} />
+          <Badge type={t('chant.master')} active={totalChants >= 5000} t={t} />
         </div>
       </div>
     </div>
   );
 }
 
-function Badge({ type, active }: { type: string, active: boolean }) {
+function Badge({ type, active, t }: { type: string, active: boolean, t: any }) {
   return (
     <div className={cn(
       "flex flex-col items-center gap-3 transition-opacity",

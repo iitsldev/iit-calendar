@@ -5,6 +5,7 @@ import { cn } from '../lib/utils';
 import { useI18n } from '../hooks/useI18n';
 import { StudySettingsModal, StudySettings } from '../components/study/StudySettingsModal';
 import { StudyReportModal, StudySession } from '../components/study/StudyReportModal';
+import { alarmService } from '../services/alarm/AlarmService';
 
 type Mode = 'pomodoro' | 'shortBreak' | 'longBreak';
 
@@ -65,7 +66,6 @@ export function StudyScreen() {
   const [editingTaskId, setEditingTaskId] = useState<string | null>(null);
   const [taskForm, setTaskForm] = useState({ name: '', est: 1 });
 
-  const timerRef = useRef<number | null>(null);
   const audioCtxRef = useRef<AudioContext | null>(null);
 
   useEffect(() => {
@@ -119,30 +119,32 @@ export function StudyScreen() {
     setMode(newMode);
     setTimeLeft(settings[newMode]);
     setIsRunning(false);
+    alarmService.stopStudyTimer();
+    alarmService.stopForegroundTimer();
   };
 
   useEffect(() => {
     if (isRunning) {
-      timerRef.current = window.setInterval(() => {
-        setTimeLeft((prev) => {
-          if (prev <= 1) {
-            handleTimerComplete();
-            return 0;
-          }
-          return prev - 1;
-        });
-      }, 1000);
-    } else if (timerRef.current) {
-      clearInterval(timerRef.current);
+      alarmService.startStudyTimer(timeLeft * 1000, mode);
+      alarmService.startForegroundTimer(
+        timeLeft * 1000,
+        (rem) => setTimeLeft(Math.floor(rem / 1000)),
+        () => handleTimerComplete()
+      );
+    } else {
+      alarmService.stopStudyTimer();
+      alarmService.stopForegroundTimer();
     }
     return () => {
-      if (timerRef.current) clearInterval(timerRef.current);
+      alarmService.stopStudyTimer();
+      alarmService.stopForegroundTimer();
     };
   }, [isRunning, mode]);
 
   const handleTimerComplete = () => {
     setIsRunning(false);
     playBell();
+    alarmService.stopStudyTimer();
 
     if (mode === 'pomodoro') {
       const newCount = pomodoroCount + 1;
@@ -453,6 +455,11 @@ export function StudyScreen() {
           setSettings(newSettings);
           // If timer is NOT running, update current time left to match new setting
           if (!isRunning) {
+            setTimeLeft(newSettings[mode]);
+          } else {
+            // Mid-session update
+            const newDurationMs = newSettings[mode] * 1000;
+            alarmService.rescheduleStudyTimer(newDurationMs, mode);
             setTimeLeft(newSettings[mode]);
           }
         }} 

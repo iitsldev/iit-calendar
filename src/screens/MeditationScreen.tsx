@@ -3,8 +3,9 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Play, Square, RotateCcw, Volume2, Activity, Award, Clock, Settings2, X } from 'lucide-react';
 import { cn } from '../lib/utils';
 import { format, differenceInDays, startOfDay, subDays, isSameDay } from 'date-fns';
-import { notificationService, ActiveMeditation } from '../services/NotificationService';
+import { alarmService, ActiveMeditation } from '../services/alarm/AlarmService';
 import { meditationService } from '../services/MeditationService';
+import { useI18n } from '../hooks/useI18n';
 
 interface MeditationSession {
   id: string;
@@ -17,6 +18,7 @@ interface MeditationStats {
 }
 
 export function MeditationScreen() {
+  const { t } = useI18n();
   const loadStats = () => {
     if (typeof window !== 'undefined') {
       const saved = localStorage.getItem('zen_meditation_stats');
@@ -49,45 +51,27 @@ export function MeditationScreen() {
   const [countdown, setCountdown] = useState(0);
   const [showSettings, setShowSettings] = useState(false);
   
-  const timerRef = useRef<number | null>(null);
   const lastTickRef = useRef<number>(Date.now());
-  const lastIntervalBellRef = useRef<number>(0);
 
   const audioCtxRef = useRef<AudioContext | null>(null);
 
   useEffect(() => {
     const init = async () => {
-      await notificationService.requestPermissions();
+      await alarmService.requestPermission();
       
-      // Before checking our local state, let the service reconcile any sessions 
-      // that might have finished while the app was in the background or killed.
-      await notificationService.recheckMeditationSession();
+      // Reconcile sessions that finished in background
+      await alarmService.recheckMeditation();
       
       // Check for existing session
       const savedActive = localStorage.getItem('active_meditation');
-      const justFinished = localStorage.getItem('meditation_just_finished');
 
-      if (justFinished) {
-        const data = JSON.parse(justFinished);
-        // If it was finished recently (last 1 hour), show stats
-        if (Date.now() - data.at < 3600000) {
-          const savedStats = localStorage.getItem('zen_meditation_stats');
-          if (savedStats) setStats(JSON.parse(savedStats));
-          // Reset to initial state but don't auto-run
-          setRemainingMs(totalDurationMs);
-          setIsRunning(false);
-          setIsFinished(true); // Show finished state briefly
-        }
-        localStorage.removeItem('meditation_just_finished');
-      } else if (savedActive) {
+      if (savedActive) {
         const active: ActiveMeditation = JSON.parse(savedActive);
         const elapsed = Date.now() - active.startTime;
         if (elapsed < active.durationMs) {
           setRemainingMs(active.durationMs - elapsed);
           setIsRunning(true);
-          lastIntervalBellRef.current = Math.floor(elapsed / intervalMs);
         } else {
-          // Handled by recheckMeditationSession above, but fallback:
           const savedStats = localStorage.getItem('zen_meditation_stats');
           if (savedStats) setStats(JSON.parse(savedStats));
           setRemainingMs(totalDurationMs);
@@ -164,59 +148,59 @@ export function MeditationScreen() {
 
   // Main Timer Logic (Includes delay countdown)
   useEffect(() => {
-    if (isRunning) {
-      lastTickRef.current = Date.now();
-      timerRef.current = window.setInterval(() => {
-        const now = Date.now();
-        const delta = now - lastTickRef.current;
-        lastTickRef.current = now;
+    let countdownInterval: number | null = null;
 
-        if (countdown > 0) {
+    if (isRunning) {
+      if (countdown > 0) {
+        lastTickRef.current = Date.now();
+        countdownInterval = window.setInterval(() => {
+          const now = Date.now();
+          const delta = now - lastTickRef.current;
+          lastTickRef.current = now;
+
           setCountdown(prev => {
             const next = prev - (delta / 1000);
             if (next <= 0) {
+              if (countdownInterval) clearInterval(countdownInterval);
               playBell(); // Start session bell
-              lastIntervalBellRef.current = 0;
-              notificationService.startMeditation(remainingMs);
+              alarmService.startMeditation(remainingMs, intervalMs);
+              startActualTimer(remainingMs);
               return 0;
             }
             return next;
           });
-        } else {
-          setRemainingMs((prev) => {
-            const next = prev - delta;
-            if (next <= 0) {
-              handleComplete();
-              return 0;
-            }
-
-            const elapsedMs = totalDurationMs - next;
-            
-            if (intervalMs > 0 && elapsedMs > 0) {
-              const currentInterval = Math.floor(elapsedMs / intervalMs);
-              if (currentInterval > lastIntervalBellRef.current) {
-                lastIntervalBellRef.current = currentInterval;
-                playBell(); // Interval bell 
-              }
-            }
-            return next;
-          });
-        }
-      }, 100);
-    } else if (timerRef.current) {
-      clearInterval(timerRef.current);
+        }, 100);
+      } else {
+        // Start or resume actual timer
+        alarmService.startMeditation(remainingMs, intervalMs);
+        startActualTimer(remainingMs);
+      }
+    } else {
+      alarmService.stopForegroundTimer();
     }
+
     return () => {
-      if (timerRef.current) clearInterval(timerRef.current);
+      if (countdownInterval) clearInterval(countdownInterval);
+      alarmService.stopForegroundTimer();
     };
-  }, [isRunning, totalDurationMs, intervalMs, countdown, settings.soundEnabled, settings.bellType]);
+  }, [isRunning]);
+
+  const startActualTimer = (ms: number) => {
+    alarmService.startForegroundTimer(
+      ms,
+      (rem) => setRemainingMs(rem),
+      () => handleComplete(),
+      intervalMs,
+      () => playBell()
+    );
+  };
 
   const handleComplete = async () => {
     setIsRunning(false);
     setIsFinished(true);
     playBell(); // End bell
     
-    await notificationService.stopMeditation();
+    await alarmService.stopMeditation();
 
     // Save session
     const newSession: MeditationSession = {
@@ -234,7 +218,7 @@ export function MeditationScreen() {
 
   const handleStop = async () => {
     setIsRunning(false);
-    await notificationService.stopMeditation();
+    await alarmService.stopMeditation();
 
     const elapsedMs = totalDurationMs - remainingMs;
     const elapsedMin = Math.floor(elapsedMs / 60000);
@@ -263,25 +247,24 @@ export function MeditationScreen() {
         setCountdown(settings.delaySeconds);
       } else {
         playBell();
-        lastIntervalBellRef.current = 0;
-        notificationService.startMeditation(remainingMs);
+        alarmService.startMeditation(remainingMs, intervalMs);
       }
       setIsRunning(true);
     } else if (isRunning) {
       handleStop();
     } else {
-      // It's paused or finished? We removed pause, so this is just finished or stopped.
+      // Stopped or finished
       if (isFinished) {
         resetTimer();
         setIsRunning(true);
         if (settings.delaySeconds > 0) setCountdown(settings.delaySeconds);
         else {
           playBell();
-          notificationService.startMeditation(totalDurationMs);
+          alarmService.startMeditation(totalDurationMs, intervalMs);
         }
       } else {
         setIsRunning(true);
-        notificationService.startMeditation(remainingMs);
+        alarmService.startMeditation(remainingMs, intervalMs);
       }
     }
   };
@@ -291,9 +274,8 @@ export function MeditationScreen() {
     setIsFinished(false);
     setRemainingMs(totalDurationMs);
     setCountdown(0);
-    lastIntervalBellRef.current = 0;
     
-    await notificationService.stopMeditation();
+    await alarmService.stopMeditation();
   };
 
   const today = startOfDay(new Date());
@@ -371,7 +353,7 @@ export function MeditationScreen() {
             {countdown > 0 ? (
               <>
                 <span className="text-sm font-bold uppercase tracking-[0.3em] mb-2" style={{ color: 'var(--sm-text-muted)' }}>
-                  Starting In
+                  {t('meditation.startingIn')}
                 </span>
                 <div className="font-serif text-6xl font-medium tracking-tight" style={{ color: 'var(--sm-accent)'}}>
                   {Math.ceil(countdown)}
@@ -380,7 +362,7 @@ export function MeditationScreen() {
             ) : (
               <>
                 <span className="text-sm font-bold uppercase tracking-[0.3em] mb-2" style={{ color: 'var(--sm-text-muted)' }}>
-                  {isFinished ? 'Complete' : 'Remaining'}
+                  {isFinished ? t('meditation.complete') : t('meditation.remaining')}
                 </span>
                 <div className="font-serif text-6xl font-medium tracking-tight" style={{ color: 'var(--sm-text-primary)'}}>
                   {timeString}
@@ -398,7 +380,7 @@ export function MeditationScreen() {
                    color: 'var(--sm-text-secondary)',
                  }}
                >
-                 <Settings2 size={14} /> Configure
+                 <Settings2 size={14} /> {t('meditation.configure')}
                </button>
             )}
           </div>
@@ -424,9 +406,9 @@ export function MeditationScreen() {
             }}
           >
             {isRunning ? (
-              <><Square size={16} fill="currentColor" /> STOP SESSION</>
+              <><Square size={16} fill="currentColor" /> {t('meditation.stopSession')}</>
             ) : (
-              <><Play size={16} fill="currentColor" /> START MEDITATION</>
+              <><Play size={16} fill="currentColor" /> {t('meditation.startMeditation')}</>
             )}
           </button>
 
@@ -450,33 +432,33 @@ export function MeditationScreen() {
         
         <div className="rounded-[2rem] p-6 relative overflow-hidden" style={{ backgroundColor: 'var(--sm-card-bg)', border: '1px solid var(--sm-border)' }}>
           <div className="flex justify-between items-start mb-4">
-            <h3 className="font-serif text-xl" style={{ color: 'var(--sm-text-primary)' }}>Your Journey</h3>
+            <h3 className="font-serif text-xl" style={{ color: 'var(--sm-text-primary)' }}>{t('meditation.yourJourney')}</h3>
             <Activity size={20} style={{ color: 'var(--sm-text-muted)' }} />
           </div>
 
           {/* Prominent Streak */}
           <div className="flex justify-center items-center flex-col mb-8 py-6 rounded-3xl" style={{ border: '1px solid var(--sm-accent-muted)', backgroundColor: 'var(--sm-accent-subtle)' }}>
              <Award size={24} style={{ color: 'var(--sm-accent)' }} className="mb-2" />
-             <p className="text-sm font-black uppercase tracking-widest mb-1" style={{ color: 'var(--sm-text-muted)' }}>Current Streak</p>
-             <div className="font-serif text-5xl font-medium tracking-tight" style={{ color: 'var(--sm-accent)' }}>{currentStreak} <span className="text-2xl">Days</span></div>
+             <p className="text-sm font-black uppercase tracking-widest mb-1" style={{ color: 'var(--sm-text-muted)' }}>{t('meditation.currentStreak')}</p>
+             <div className="font-serif text-5xl font-medium tracking-tight" style={{ color: 'var(--sm-accent)' }}>{currentStreak} <span className="text-2xl">{t('meditation.days')}</span></div>
           </div>
 
           <div className="grid grid-cols-2 gap-4 mb-8">
             <div className="rounded-2xl p-4" style={{ backgroundColor: 'var(--sm-surface)' }}>
-              <div className="text-sm font-black uppercase tracking-widest mb-1" style={{ color: 'var(--sm-text-muted)' }}>Weekly Time</div>
+              <div className="text-sm font-black uppercase tracking-widest mb-1" style={{ color: 'var(--sm-text-muted)' }}>{t('meditation.weeklyTime')}</div>
               <div className="font-serif text-3xl" style={{ color: 'var(--sm-accent)' }}>
                 {Math.floor(weeklyMinutes / 60) > 0 ? `${Math.floor(weeklyMinutes / 60)}h ${weeklyMinutes % 60}m` : `${weeklyMinutes}m`}
               </div>
             </div>
             <div className="rounded-2xl p-4" style={{ backgroundColor: 'var(--sm-surface)' }}>
-              <div className="text-sm font-black uppercase tracking-widest mb-1" style={{ color: 'var(--sm-text-muted)' }}>Sessions</div>
+              <div className="text-sm font-black uppercase tracking-widest mb-1" style={{ color: 'var(--sm-text-muted)' }}>{t('meditation.sessions')}</div>
               <div className="font-serif text-3xl" style={{ color: 'var(--sm-accent)' }}>{stats.sessions.filter(s => differenceInDays(today, new Date(s.date)) < 7).length}</div>
             </div>
           </div>
 
           <div className="space-y-2">
             <div className="flex justify-between text-sm uppercase tracking-widest font-bold" style={{ color: 'var(--sm-text-muted)' }}>
-              <span>Next Milestone</span>
+              <span>{t('meditation.nextMilestone')}</span>
               <span style={{ color: 'var(--sm-accent)' }}>{Math.round(progressPercent)}%</span>
             </div>
             <div className="h-2 rounded-full w-full overflow-hidden" style={{ backgroundColor: 'var(--sm-surface)' }}>
@@ -490,7 +472,7 @@ export function MeditationScreen() {
 
         <div className="rounded-[2rem] p-6" style={{ backgroundColor: 'var(--sm-card-bg)', border: '1px solid var(--sm-border)' }}>
           <div className="flex justify-between items-center mb-6">
-            <h3 className="font-serif text-xl" style={{ color: 'var(--sm-text-primary)' }}>Meditation History</h3>
+            <h3 className="font-serif text-xl" style={{ color: 'var(--sm-text-primary)' }}>{t('meditation.meditationHistory')}</h3>
             <Activity size={20} style={{ color: 'var(--sm-text-muted)' }} />
           </div>
 
@@ -508,8 +490,8 @@ export function MeditationScreen() {
                       className="w-2 sm:w-3 rounded-full"
                       style={{ 
                         backgroundColor: day.minutes > 0 
-                          ? (isToday ? 'var(--sm-accent)' : 'var(--sm-text-disabled)') 
-                          : 'transparent',
+                      ? (isToday ? 'var(--sm-accent)' : 'var(--sm-text-disabled)') 
+                      : 'transparent',
                         minHeight: day.minutes > 0 ? '4px' : '0'
                       }}
                     />
@@ -523,8 +505,8 @@ export function MeditationScreen() {
           </div>
           
           <div className="flex justify-between items-center mt-4 text-xs font-medium" style={{ color: 'var(--sm-text-secondary)' }}>
-            <span>Daily Average</span>
-            <span style={{ color: 'var(--sm-accent)' }}>{(weeklyMinutes / 7).toFixed(1)} mins</span>
+            <span>{t('meditation.dailyAverage')}</span>
+            <span style={{ color: 'var(--sm-accent)' }}>{(weeklyMinutes / 7).toFixed(1)} {t('meditation.mins')}</span>
           </div>
         </div>
       </div>
@@ -548,12 +530,12 @@ export function MeditationScreen() {
               </button>
 
               <h2 className="font-serif text-2xl font-bold mb-8 text-stone-900 dark:text-stone-100">
-                Session Settings
+                {t('meditation.sessionSettings')}
               </h2>
 
               <div className="space-y-6">
                 <div>
-                  <label className="block text-xs font-black uppercase tracking-widest mb-2 text-stone-400 dark:text-amber-700/70">Duration (Hours & Minutes)</label>
+                  <label className="block text-xs font-black uppercase tracking-widest mb-2 text-stone-400 dark:text-amber-700/70">{t('meditation.durationLabel')}</label>
                   <div className="flex gap-2">
                     <div className="flex-1">
                       <input 
@@ -580,7 +562,7 @@ export function MeditationScreen() {
                 </div>
 
                 <div>
-                  <label className="block text-xs font-black uppercase tracking-widest mb-2 text-stone-400 dark:text-amber-700/70">Interval Bell (Minutes & Seconds)</label>
+                  <label className="block text-xs font-black uppercase tracking-widest mb-2 text-stone-400 dark:text-amber-700/70">{t('meditation.intervalBell')}</label>
                   <div className="flex gap-2">
                     <div className="flex-1">
                       <input 
@@ -607,20 +589,20 @@ export function MeditationScreen() {
                 </div>
 
                 <div>
-                  <label className="block text-xs font-black uppercase tracking-widest mb-2 text-stone-400 dark:text-amber-700/70">Preparation Check (sec)</label>
+                  <label className="block text-xs font-black uppercase tracking-widest mb-2 text-stone-400 dark:text-amber-700/70">{t('meditation.preparationCheck')}</label>
                   <select 
                     value={settings.delaySeconds}
                     onChange={(e) => setSettings({...settings, delaySeconds: parseInt(e.target.value)})}
                     className="w-full px-4 py-3 rounded-2xl outline-none font-serif text-lg border border-stone-300 dark:border-amber-900 text-stone-900 dark:text-stone-100 bg-amber-50 dark:bg-stone-950"
                   >
-                     <option value={0}>No delay</option>
-                     <option value={5}>5 seconds</option>
-                     <option value={10}>10 seconds</option>
+                     <option value={0}>{t('meditation.noDelay')}</option>
+                     <option value={5}>5 {t('meditation.seconds')}</option>
+                     <option value={10}>10 {t('meditation.seconds')}</option>
                   </select>
                 </div>
 
                 <div>
-                  <label className="block text-xs font-black uppercase tracking-widest mb-2 text-stone-400 dark:text-amber-700/70">Bell Type</label>
+                  <label className="block text-xs font-black uppercase tracking-widest mb-2 text-stone-400 dark:text-amber-700/70">{t('meditation.bellType')}</label>
                   <div className="flex gap-2 overflow-x-auto pb-2 snap-x scrollbar-hide" style={{ WebkitOverflowScrolling: 'touch' }}>
                     {['bowl', 'gong', 'chime', 'tibetan', 'woodblock', 'bell'].map(bell => (
                       <button
@@ -646,7 +628,7 @@ export function MeditationScreen() {
                   onClick={() => setShowSettings(false)}
                   className="w-full mt-4 py-4 rounded-2xl font-bold tracking-widest text-xs uppercase text-white shadow-lg transition-transform active:scale-95 bg-amber-700 dark:bg-amber-600"
                 >
-                  Save Settings
+                  {t('meditation.saveSettings')}
                 </button>
               </div>
             </motion.div>

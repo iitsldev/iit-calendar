@@ -27,7 +27,7 @@ import { ChantsScreen } from './screens/ChantsScreen';
 import { StudyScreen } from './screens/StudyScreen';
 import { BookScreen } from './screens/BookScreen';
 import { CSS_VARS } from './theme/index';
-import { notificationService } from './services/NotificationService';
+import { alarmService } from './services/alarm/AlarmService';
 import { useUI } from './UIContext';
 import { App as CapApp } from '@capacitor/app';
 
@@ -52,6 +52,7 @@ export default function App() {
         fontSize: 16,
         solarNoonBell: false,
         dawnBell: false,
+        isIITStudent: true,
         ...parsed
       };
     }
@@ -67,6 +68,7 @@ export default function App() {
       fontSize: 16,
       solarNoonBell: false,
       dawnBell: false,
+      isIITStudent: true,
     };
   });
 
@@ -92,17 +94,23 @@ export default function App() {
     root.style.setProperty('--accent', colors[settings.themeColor]);
 
     // Refresh notifications when settings change
-    notificationService.refreshAll(settings);
+    alarmService.refreshDawnAndNoon(settings);
   }, [settings]);
 
   useEffect(() => {
-    // Initial refresh
-    notificationService.refreshAll(settings);
+    // Initial refresh and permissions
+    const init = async () => {
+      await alarmService.requestPermission();
+      await alarmService.refreshDawnAndNoon(settings);
+      await alarmService.recheckMeditation();
+      await alarmService.recheckStudy();
+    };
+    init();
 
     // Listen for app state changes (resume)
     const listener = CapApp.addListener('appStateChange', ({ isActive }) => {
       if (isActive) {
-        notificationService.refreshAll(settings);
+        alarmService.refreshDawnAndNoon(settings);
       }
     });
 

@@ -4,60 +4,81 @@ const { execSync } = require('child_process');
 
 async function main() {
     const sourceLogo = path.join(__dirname, 'public', 'logo.png');
+    const hasAndroid = fs.existsSync(path.join(__dirname, 'android'));
+    const hasIos = fs.existsSync(path.join(__dirname, 'ios'));
     
+    // 1. Tauri Icons
     if (fs.existsSync(sourceLogo)) {
-        console.log('Generating icons from public/logo.png...');
-        
-        // Tauri icons
+        console.log('Generating Tauri icons...');
         try {
-            // Run tauri icon command.
-            // Tauri v2 CLI will find src-tauri automatically if run from root.
             execSync('npx tauri icon public/logo.png', { stdio: 'inherit' });
-            console.log('Tauri icons generated successfully.');
         } catch (e) {
             console.warn('Warning: Failed to generate Tauri icons:', e.message);
         }
-
-        // Capacitor icons (if platforms exist)
-        try {
-            const hasAndroid = fs.existsSync(path.join(__dirname, 'android'));
-            const hasIos = fs.existsSync(path.join(__dirname, 'ios'));
-            
-            if (hasAndroid || hasIos) {
-                let cmd = 'npx @capacitor/assets generate --icon public/logo.png';
-                if (hasAndroid) cmd += ' --android';
-                if (hasIos) cmd += ' --ios';
-                
-                console.log(`Running: ${cmd}`);
-                execSync(cmd, { stdio: 'inherit' });
-                console.log('Capacitor assets generated successfully.');
-
-                // Copy bell.wav to Android res/raw if it exists
-                if (hasAndroid) {
-                    const soundSrc = path.join(__dirname, 'public', 'bell.wav');
-                    const soundDestDir = path.join(__dirname, 'android', 'app', 'src', 'main', 'res', 'raw');
-                    
-                    if (fs.existsSync(soundSrc)) {
-                        if (!fs.existsSync(soundDestDir)) {
-                            fs.mkdirSync(soundDestDir, { recursive: true });
-                        }
-                        fs.copyFileSync(soundSrc, path.join(soundDestDir, 'bell.wav'));
-                        console.log('Copied bell.wav to Android res/raw for notifications.');
-                    } else {
-                        console.log('Note: public/bell.wav not found. Native notifications will use default sound.');
-                    }
-                }
-            } else {
-                console.log('Capacitor platforms not found, skipping asset generation.');
-            }
-        } catch (e) {
-            console.warn('Warning: Failed to generate Capacitor icons:', e.message);
-            // We don't exit(1) for Capacitor yet as it might be okay if platforms aren't fully staged.
-        }
-    } else {
-        console.error('CRITICAL: public/logo.png not found. Cannot generate icons.');
-        process.exit(1);
     }
+
+    // 2. Capacitor Assets (Icons/Splash)
+    if (hasAndroid || hasIos) {
+        console.log('Generating Capacitor assets...');
+        try {
+            // Newer capacitor-assets might not use --icon. 
+            // We try the standard generate command which looks for assets/icon.png
+            execSync('npx @capacitor/assets generate', { stdio: 'inherit' });
+        } catch (e) {
+            console.warn('Warning: Capacitor asset generation failed. Continuing to sound sync...');
+        }
+    }
+
+    // 3. Sound Synchronization (CRITICAL)
+    console.log('Synchronizing sound assets...');
+    
+    const soundsSrcDir = path.join(__dirname, 'public', 'sounds');
+    const bellSrc = path.join(__dirname, 'public', 'bell.wav');
+
+    // Android Sync
+    if (hasAndroid) {
+        const androidResRaw = path.join(__dirname, 'android', 'app', 'src', 'main', 'res', 'raw');
+        if (!fs.existsSync(androidResRaw)) {
+            fs.mkdirSync(androidResRaw, { recursive: true });
+        }
+
+        if (fs.existsSync(bellSrc)) {
+            fs.copyFileSync(bellSrc, path.join(androidResRaw, 'bell.wav'));
+            console.log('Copied bell.wav to Android.');
+        }
+
+        if (fs.existsSync(soundsSrcDir)) {
+            const soundFiles = fs.readdirSync(soundsSrcDir);
+            soundFiles.forEach(file => {
+                if (file.endsWith('.wav')) {
+                    fs.copyFileSync(path.join(soundsSrcDir, file), path.join(androidResRaw, file));
+                    console.log(`Copied ${file} to Android.`);
+                }
+            });
+        }
+    }
+
+    // iOS Sync
+    if (hasIos) {
+        const iosDestDir = path.join(__dirname, 'ios', 'App', 'App');
+        
+        if (fs.existsSync(bellSrc)) {
+            fs.copyFileSync(bellSrc, path.join(iosDestDir, 'bell.wav'));
+            console.log('Copied bell.wav to iOS.');
+        }
+
+        if (fs.existsSync(soundsSrcDir)) {
+            const soundFiles = fs.readdirSync(soundsSrcDir);
+            soundFiles.forEach(file => {
+                if (file.endsWith('.wav')) {
+                    fs.copyFileSync(path.join(soundsSrcDir, file), path.join(iosDestDir, file));
+                    console.log(`Copied ${file} to iOS.`);
+                }
+            });
+        }
+    }
+
+    console.log('Asset synchronization complete.');
 }
 
 main();

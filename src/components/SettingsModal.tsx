@@ -369,6 +369,54 @@ export function SettingsModal({
                       />
                     </div>
 
+                    {settings.solarNoonBell && (
+                      <motion.div 
+                        initial={{ height: 0, opacity: 0 }} 
+                        animate={{ height: 'auto', opacity: 1 }}
+                        className="space-y-4 pl-4 border-l-2 ml-1"
+                        style={{ borderColor: 'var(--accent)' }}
+                      >
+                        <div className="flex justify-between items-center w-full">
+                          <span className="text-xs font-bold" style={{ color: 'var(--text-secondary)' }}>
+                            Countdown alerts (5, 4, 3, 2, 1 min)
+                          </span>
+                          <Toggle
+                            value={settings.noonMultiAlert ?? false}
+                            onToggle={() => onUpdate({ ...settings, noonMultiAlert: !settings.noonMultiAlert })}
+                          />
+                        </div>
+                        <div className="flex justify-between items-center w-full">
+                          <span className="text-xs font-bold" style={{ color: 'var(--text-secondary)' }}>
+                            Voice announcements
+                          </span>
+                          <Toggle
+                            value={settings.noonVoiceAlert ?? false}
+                            onToggle={() => onUpdate({ ...settings, noonVoiceAlert: !settings.noonVoiceAlert })}
+                          />
+                        </div>
+                        <div className="space-y-2">
+                          <div className="flex justify-between items-center">
+                            <span className="text-xs font-bold" style={{ color: 'var(--text-secondary)' }}>
+                              Safe Offset
+                            </span>
+                            <span className="text-xs font-bold" style={{ color: 'var(--accent)' }}>
+                              {settings.noonSafeOffset || 0} min early
+                            </span>
+                          </div>
+                          <input
+                            type="range"
+                            min="0"
+                            max="5"
+                            step="1"
+                            value={settings.noonSafeOffset || 0}
+                            onChange={(e) => onUpdate({ ...settings, noonSafeOffset: parseInt(e.target.value) })}
+                            className="w-full h-1 rounded-lg appearance-none cursor-pointer"
+                            style={{ accentColor: 'var(--accent)', backgroundColor: 'var(--bg-muted)' }}
+                          />
+                        </div>
+                      </motion.div>
+                    )}
+
                     <div className="flex justify-between items-center w-full">
                       <span className="text-sm font-bold" style={{ color: 'var(--text-secondary)' }}>
                         Dawn Alert
@@ -376,6 +424,16 @@ export function SettingsModal({
                       <Toggle
                         value={settings.dawnBell}
                         onToggle={() => onUpdate({ ...settings, dawnBell: !settings.dawnBell })}
+                      />
+                    </div>
+
+                    <div className="flex justify-between items-center w-full">
+                      <span className="text-sm font-bold" style={{ color: 'var(--text-secondary)' }}>
+                        {t('settings.iitStudent')}
+                      </span>
+                      <Toggle
+                        value={settings.isIITStudent !== false}
+                        onToggle={() => onUpdate({ ...settings, isIITStudent: settings.isIITStudent === false ? true : false })}
                       />
                     </div>
 
