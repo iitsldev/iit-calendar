@@ -27,7 +27,6 @@ const cache: Record<string, string> = {};
 export async function convertPali(text: string, targetScript: string): Promise<string> {
   if (!text) return '';
   const target = SCRIPTS[targetScript] || Script.RO;
-  if (target === Script.RO) return text;
   
   const cacheKey = `${text}_${target}`;
   if (cache[cacheKey]) return cache[cacheKey];

@@ -194,6 +194,7 @@
     "createCustomChant": "สร้างบทสวดของคุณเอง",
     "newChant": "บทสวดใหม่",
     "chantName": "ชื่อบทสวด",
+    "chantContent": "ข้อความบทสวด (บาลี)",
     "milestone": "เป้าหมายการสวด",
     "createChant": "สร้างบทสวด",
     "loading": "กำลังโหลด...",

@@ -201,6 +201,7 @@
     "createCustomChant": "Create Custom Chant",
     "newChant": "New Chant",
     "chantName": "Chant Name",
+    "chantContent": "Chant Text (Pali)",
     "milestone": "Milestone",
     "createChant": "Create Chant",
     "loading": "Loading...",

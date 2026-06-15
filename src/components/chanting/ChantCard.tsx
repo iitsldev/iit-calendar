@@ -43,6 +43,7 @@ export function ChantCard({ chant, selected, onClick, onDelete, onView, paliScri
 
   return (
     <motion.div
+      layout
       whileHover={{ y: -2 }}
       whileTap={{ scale: 0.98 }}
       onClick={onClick}
@@ -87,7 +88,7 @@ export function ChantCard({ chant, selected, onClick, onDelete, onView, paliScri
         </div>
         <div className="text-right flex flex-col items-end">
           <div className="flex gap-2 mb-2">
-            {onView && chant.chant && (
+            {onView && (chant.content || chant.chant) && (
                <button 
                  onClick={(e) => { e.stopPropagation(); onView(); }} 
                  className="text-[var(--text-faint)] hover:text-[var(--accent)] p-1 active:scale-90 transition-transform"

@@ -1,17 +1,17 @@
 import SunCalc from "suncalc";
 
-export const ANIMALS =[
-  "Sappa", "Assa", "Aja", "Kapi", "Kukkuṭa", "Sona", 
+export const ANIMALS = [
+  "Sappa", "Assa", "Aja", "Kapi", "Kukkuṭa", "Sona",
   "Sūkara", "Musika", "Vasabha", "Vyaggha", "Sasa", "Nāga"
 ];
 export const SEASONS = { 1: "Hemanta", 2: "Gimhāna", 3: "Vassāna" };
-export const WEEK_DAYS =[
-  "Ravivāraṃ", "Candavāraṃ", "Bhummavāraṃ", "Budhavāraṃ", 
+export const WEEK_DAYS = [
+  "Ravivāraṃ", "Candavāraṃ", "Bhummavāraṃ", "Budhavāraṃ",
   "Guruvāraṃ", "Sukkavāraṃ", "Soravāraṃ"
 ];
-export const TITHI_PALI =[
-  "", "Paṭhamaṃ", "Dutiyaṃ", "Tatiyaṃ", "Catutthaṃ", "Pañcamaṃ", 
-  "Chaṭṭhamaṃ", "Sattamaṃ", "Aṭṭhamaṃ", "Navamaṃ", "Dasamaṃ", 
+export const TITHI_PALI = [
+  "", "Paṭhamaṃ", "Dutiyaṃ", "Tatiyaṃ", "Catutthaṃ", "Pañcamaṃ",
+  "Chaṭṭhamaṃ", "Sattamaṃ", "Aṭṭhamaṃ", "Navamaṃ", "Dasamaṃ",
   "Ekādasamaṃ", "Dvādasamaṃ", "Terasamaṃ", "Cuddasamaṃ", "Paṇṇarasamaṃ"
 ];
 
@@ -20,7 +20,26 @@ export class BuddhistCalendar {
     if (new.target === BuddhistCalendar) throw new TypeError("Abstract class cannot be instantiated directly.");
     this.lat = config.lat || 6.9271;
     this.lng = config.lng || 79.8612;
-    this.dawnOffset = config.dawnOffset || 30; 
+    this.dawnOffset = config.dawnOffset || 30;
+    this._uposathasCache = {};
+    this._vesakCache = {};
+
+    // Dynamically wrap subclass methods to memoize expensive computations
+    const originalGetUposathas = this.getUposathasForYear;
+    this.getUposathasForYear = (year) => {
+      if (year in this._uposathasCache) return this._uposathasCache[year];
+      const res = originalGetUposathas.call(this, year);
+      this._uposathasCache[year] = res;
+      return res;
+    };
+
+    const originalGetVesak = this.getVesakDate;
+    this.getVesakDate = (year) => {
+      if (year in this._vesakCache) return this._vesakCache[year];
+      const res = originalGetVesak.call(this, year);
+      this._vesakCache[year] = res;
+      return res;
+    };
   }
 
   getSunTimes(date) {
@@ -85,14 +104,20 @@ export class BuddhistCalendar {
     const time = d.getTime();
     const y = d.getFullYear();
 
-    // Buddhist Era year (Elapsed): before Vesak → y+543, on/after Vesak → y+544
-    // Note: The user wants bYear to represent the "Atikkanta" (fully passed) years.
-    const _vRaw = this.getVesakDate(y);
-    const vesakThisYear = new Date(_vRaw.getFullYear(), _vRaw.getMonth(), _vRaw.getDate());
-    const bYear = (time < vesakThisYear.getTime()) ? (y + 543) : (y + 544);
-
+    // Buddhist year changes on the day after Vesak.
+    // Before that boundary: CE + 543
+    // On/after that boundary: CE + 544
+    const vesakDate = this.getVesakDate(y);
+    const vesakThisYear = new Date(vesakDate.getFullYear(), vesakDate.getMonth(), vesakDate.getDate());
+    const vesakNextDay = new Date(vesakThisYear);
+    vesakNextDay.setDate(vesakNextDay.getDate() + 1);
+    const bYear = (time < vesakNextDay.getTime()) ? (y + 543) : (y + 544);
+    // Buddhist year changes on the day AFTER Vesak.
+    // Example: Vesak Day        -> last day of old Buddhist year
+    //          Day after Vesak  -> first day of new Buddhist year  
+    // Therefore vesakNextDay is used as the year boundary.
     // Vesak dates bracketing the current BE year
-    const lastCEYear = (time < vesakThisYear.getTime()) ? y - 1 : y;
+    const lastCEYear = (time < vesakNextDay.getTime()) ? y - 1 : y;
     const lastVD = this.getVesakDate(lastCEYear).getTime();
     const nextVD = this.getVesakDate(lastCEYear + 1).getTime();
 
@@ -109,40 +134,95 @@ export class BuddhistCalendar {
 
     const fullMoons = allUposathas.filter(u => (u.phase ?? u.type) === "full");
 
-    // lastFullMoon: the most recent full moon on or before today
+    // Most recent full moon uposatha on or before the queried date.
     const pastFullMoons = fullMoons.filter(u => u.time <= time);
     const lastFullMoon = pastFullMoons.length > 0 ? pastFullMoons[pastFullMoons.length - 1] : null;
 
-    // tithi (BE Day): days since the last full moon (1-based: 1 on full-moon day itself)
+    // Determine whether today is a full moon day.
+    // If the most recent full moon occurs on the same civil date
+    // being queried, then today is a full moon day.
+    const isFullMoonToday =
+      lastFullMoon !== null &&
+      lastFullMoon.time === time;
+
+    // True when the date is the final day of the Buddhist year (Vesak full moon).
+    // The following civil day starts Year + 1.
+    // Normalize nextVD to midnight to avoid time-of-day issues.
+    const nextVDDate = new Date(nextVD);
+    nextVDDate.setHours(0, 0, 0, 0);
+
+    const isClosingVesakDay =
+      time === nextVDDate.getTime();
+
+    // Lunar day count since the most recent full moon (0 on full-moon day).
     const tithi = lastFullMoon
-      ? Math.round((time - lastFullMoon.time) / 86400000) + 1
-      : 1;
+      ? Math.round((time - lastFullMoon.time) / 86400000)
+      : 0;
 
-    // bM (BE Month): count of full moons since the last Vesak (inclusive of Vesak itself)
-    // 1-based: on the month starting with Vesak, bM is 1.
-    const fullMoonsInYear = fullMoons.filter(u => u.time >= lastVD && u.time <= time);
-    const bM = Math.max(1, fullMoonsInYear.length);
+    // Full moon preceding the current lunar month.
+    const previousFullMoon =
+      pastFullMoons.length > 1
+        ? pastFullMoons[pastFullMoons.length - 2]
+        : null;
+    let monthLength = null;
+    let correctedTithi = tithi;
 
-    // avasitthaD: days from today to next full-moon uposatha (0 on that day)
+    if (isClosingVesakDay) {
+      correctedTithi = 30;
+    }
+    else if (isFullMoonToday && previousFullMoon) {
+
+      monthLength = Math.round(
+        (lastFullMoon.time - previousFullMoon.time) / 86400000
+      );
+
+      correctedTithi = Math.min(30, Math.max(29, monthLength));
+    }
+
+    // Buddhist month number within the current Buddhist year (1-based).
+    const fullMoonsInYear = fullMoons.filter(u => u.time >= lastVD && u.time < time);
+    const bM = Math.min(totM, Math.max(1, fullMoonsInYear.length));
+    // Do not apply modulo arithmetic here.
+    // Leap years may contain Month 13, which must remain 13.
+
+    // Days remaining until the next full moon.
+    // Always 0 on a full-moon day or the closing Vesak day.
     const nextFullMoon = fullMoons.find(u => u.time > time);
     let avasitthaD = 0;
+
     if (nextFullMoon) {
       const nfd = new Date(nextFullMoon.date);
       nfd.setHours(0, 0, 0, 0);
-      avasitthaD = Math.round((nfd.getTime() - time) / 86400000);
+
+      avasitthaD =
+        Math.round((nfd.getTime() - time) / 86400000);
     }
 
+    // On any month-ending full moon, no days remain in the month.
+    if (isFullMoonToday) {
+      avasitthaD = 0;
+    }
+
+    if (isClosingVesakDay) {
+      avasitthaD = 0;
+    }
+
+    // Return elapsed (Atikkanta) and remaining (Avasiṭṭha) counts.
     return {
-      bYear: bYear - 1, // Change to fully elapsed years
-      bM: bM % 13,
+      bYear,
+      bM,
       totM,
-      tithi: tithi - 1,
+
+      // Current lunar day number
+      tithi: correctedTithi,
+
+      // Elapsed years, months, and days
       atikkantaY: bYear - 1,
-      atikkantaM: bM % 13, // Months passed before the current month
-      atikkantaD: tithi-2, // Days passed before today
+      atikkantaM: bM - 1,
+      atikkantaD: correctedTithi - 1,
       avasitthaY: 5000 - bYear,
-      avasitthaM: Math.max(0, totM - bM ),
-      avasitthaD: avasitthaD,
+      avasitthaM: Math.max(0, totM - bM),
+      avasitthaD,
     };
 
   }

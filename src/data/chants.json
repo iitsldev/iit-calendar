@@ -1,102 +1,57 @@
 [
   {
     "id": 1,
-    "name": "Itipiso",
-    "chant": "Iti pi so bhagavā arahaṃ sammā-sambuddho vijjā-caraṇa-sampanno sugato lokavidū anuttaro purisa-damma-sārathi satthā deva-manussānaṃ buddho bhagavā ti."
+    "name": "Appamāda",
+    "chant": "appamādena bhikkhave sampādetha,<br/>dullabho buddhuppādo lokasmiṃ,<br/>dullabho manussatta paṭilābho,<br/>dullabhā khaṇa sampatti,<br/>dullabhā pabbajjā,<br/>dullabhaṃ saddhamma savanaṃ,<br/>dullabho sappurisa saṃsevo,<br/>ārabhatha nikkhamatha yuñjatha buddha sāsane,<br/>dhunātha maccuno senaṃ naḷāgāraṃva kuñjaro.<br/>Yo imasmiṃ dhamma vinaye appamatto vihessati,<br/>pahāya jāti saṃsāraṃ dukkhassantaṃ karissati."
   },
   {
     "id": 2,
-    "name": "Metta Sutta",
-    "chant": "Karaṇīyam attha-kusalena yaṃ taṃ santaṃ padaṃ abhisamecca.<br/>Sakko ujū ca sūjū ca suvaco c'assa mudu anatimānī.<br/>Santussako ca subharo ca appakicco ca sallahukavutti.<br/>Sant'indriyo ca nipako ca appagabbho kulesvananugiddho.<br/>Na ca khuddaṃ samācare kiñci yena viññū pare upavadeyyuṃ.<br/>Sukhino vā khemino hontu sabbe sattā bhavantu sukhitattā.<br/>Ye keci pāṇa-bhūt'atthi tasā vā thāvarā vā anavasesā.<br/>Dīghā vā ye mahantā vā majjhimā rassakā aṇukathūlā.<br/>Diṭṭhā vā ye ca adiṭṭhā ye ca dūre vasanti avidūre.<br/>Bhūtā vā sambhavesī vā sabbe sattā bhavantu sukhitattā.<br/>Na paro paraṃ nikubbetha nātimaññetha katthaci na kañci.<br/>Byārosanā paṭighasaññā nāññamaññassa dukkham iccheyya.<br/>Mātā yathā niyaṃ puttam āyusā ekaputtam anurakkhe.<br/>Evampi sabba-bhūtesu mānasaṃ bhāvaye aparimāṇaṃ.<br/>Mettañ ca sabba-lokasmiṃ mānasaṃ bhāvaye aparimāṇaṃ.<br/>Uddhaṃ adho ca tiriyañ ca asambādhaṃ averaṃ asapattaṃ.<br/>Tiṭṭhaṃ caraṃ nisinno vā sayāno vā yāvat'assa vigatamiddho.<br/>Etaṃ satiṃ adhiṭṭheyya brahmam etaṃ vihāram idha māhu.<br/>Diṭṭhiñ ca anupaggamma sīlavā dassanena sampanno.<br/>Kāmesu vineyya gedhaṃ na hi jātu gabbhaseyyaṃ punar etī ti."
+    "name": "Anekajāti",
+    "chant": "Anekajātisaṃsāraṃ, sandhāvissaṃ anibbisaṃ;<br/>Gahakāraṃ gavesanto, dukkhā jāti punappunaṃ.<br/>Gahakāraka diṭṭhosi, puna gehaṃ na kāhasi;<br/>Sabbā te phāsukā bhaggā, gahakūṭaṃ visaṅkhitaṃ;<br/>Visaṅkhāragataṃ cittaṃ, taṇhānaṃ khayamajjhagā”ti."
   },
   {
     "id": 3,
-    "name": "Ratana Sutta",
-    "chant": "Yānīdha bhūtāni samāgatāni bhummāni vā yāni va antalikkhe.<br/>Sabbe va bhūtā sumanā bhavantu atho pi sakkacca suṇantu bhāsitaṃ.<br/>Tasmā hi bhūtā nisāmetha sabbe mettaṃ karotha mānusiyā pajāya.<br/>Divā ca ratto ca haranti ye baliṃ tasmā hi ne rakkhatha appamattā.<br/>Yaṃ kiñci vittaṃ idha vā huraṃ vā saggesu vā yaṃ ratanaṃ paṇītaṃ.<br/>Na no samaṃ atthi tathāgatena idam pi buddhe ratanaṃ paṇītaṃ.<br/>Etena saccena suvatthi hotu.<br/>Khayaṃ virāgaṃ amataṃ paṇītaṃ yad ajjhagā sakyamunī samāhito.<br/>Na tena dhammena samatthi kiñci idam pi dhamme ratanaṃ paṇītaṃ.<br/>Etena saccena suvatthi hotu.<br/>Yam buddha-seṭṭho parivaṇṇayī suciṃ samādhim ānantarik'aññam āhu.<br/>Samādhinā tena samo na vijjati idam pi dhamme ratanaṃ paṇītaṃ.<br/>Etena saccena suvatthi hotu.<br/>Ye puggalā aṭṭha sataṃ pasatthā cattāri etāni yugāni honti.<br/>Te dakkhiṇeyyā sugatassa sāvakā etesu dinnāni mahapphalāni.<br/>Idam pi saṅghe ratanaṃ paṇītaṃ etena saccena suvatthi hotu.<br/>Ye suppayuttā manasā daḷhena nikkāmino gotama-sāsanamhi.<br/>Te pattipattā amataṃ vigayha laddhā mudhā nibbutiṃ bhuñjamānā.<br/>Idam pi saṅghe ratanaṃ paṇītaṃ etena saccena suvatthi hotu."
+    "name": "Paṭiccasamuppāda",
+    "chant": "Iti imasmiṃ sati idaṃ hoti, imassuppādā idaṃ uppajjati.<br/>imasmiṃ asati idaṃ na hoti, imassa nirodhā idaṃ nirujjhati.<br/>yadidaṃ Avijjāpaccayā saṅkhārā, saṅkhārapaccayā viññāṇaṃ, viññāṇapaccayā nāmarūpaṃ, nāmarūpapaccayā saḷāyatanaṃ, saḷāyatanapaccayā phasso, phassapaccayā vedanā, vedanāpaccayā taṇhā, taṇhāpaccayā upādānaṃ, upādānapaccayā bhavo, bhavapaccayā jāti, jātipaccayā jarāmaraṇaṃ sokaparidevadukkhadomanassupāyāsā sambhavanti.<br/>evametassa kevalassa dukkhakkhandhassa samudayo hoti.<br/>“Avijjāyatveva asesavirāganirodhā saṅkhāranirodho, saṅkhāranirodhā viññāṇanirodho, viññāṇanirodhā nāmarūpanirodho, nāmarūpanirodhā saḷāyatananirodho, saḷāyatananirodhā phassanirodho, phassanirodhā vedanānirodho, vedanānirodhā taṇhānirodho, taṇhānirodhā upādānanirodho, upādānanirodhā bhavanirodho, bhavanirodhā jātinirodho, jātinirodhā jarāmaraṇaṃ sokaparidevadukkhadomanassupāyāsā nirujjhanti – evametassa kevalassa dukkhakkhandhassa nirodho hotī’ti.<br/>Yadā have pātubhavanti dhammā;<br/>ātāpino jhāyato brāhmaṇassa;<br/>athassa kaṅkhā vapayanti sabbā;<br/>yato pajānāti sahetudhammaṃ.<br/>Yadā have pātubhavanti dhammā;<br/>ātāpino jhāyato brāhmaṇassa;<br/>athassa kaṅkhā vapayanti sabbā;<br/>yato khayaṃ paccayānaṃ avedī.<br/>Yadā have pātubhavanti dhammā;<br/>ātāpino jhāyato brāhmaṇassa;<br/>vidhūpayaṃ tiṭṭhati mārasenaṃ;<br/>suriyova obhāsayamantalikkhaṃ."
   },
   {
     "id": 4,
-    "name": "Maṅgala Sutta",
-    "chant": "Evaṃ me sutaṃ. Ekaṃ samayaṃ bhagavā sāvatthiyaṃ viharati jetavane anāthapiṇḍikassa ārāme.<br/>Atha kho aññatarā devatā abhikkantāya rattiyā abhikkantavaṇṇā kevalakappaṃ jetavanaṃ obhāsetvā yena bhagavā ten'upasaṅkami.<br/>Upasaṅkamitvā bhagavantaṃ abhivādetvā ekamantaṃ aṭṭhāsi. Ekamantaṃ ṭhitā kho sā devatā bhagavantaṃ gāthāya ajjhabhāsi:<br/>Bahū devā manussā ca maṅgalāni acintayuṃ.<br/>Ākaṅkhamānā sotthānaṃ brūhi maṅgalam uttamaṃ.<br/>Asevanā ca bālānaṃ paṇḍitānañ ca sevanā.<br/>Pūjā ca pūjanīyānaṃ etam maṅgalam uttamaṃ.<br/>Patirūpadesavāso ca pubbe ca katapuññatā.<br/>Attasammāpaṇidhi ca etam maṅgalam uttamaṃ.<br/>Bāhusaccañ ca sippañ ca vinayo ca susikkhito.<br/>Subhāsitā ca yā vācā etam maṅgalam uttamaṃ.<br/>Mātāpitu-upaṭṭhānaṃ puttadārassa saṅgaho.<br/>Anākulā ca kammantā etam maṅgalam uttamaṃ.<br/>Dānañ ca dhammacariyā ca ñātakānañ ca saṅgaho.<br/>Anavajjāni kammāni etam maṅgalam uttamaṃ.<br/>Āratī viratī pāpā majjapānā ca saññamo.<br/>Appamādo ca dhammesu etam maṅgalam uttamaṃ.<br/>Gāravo ca nivāto ca santuṭṭhī ca kataññutā.<br/>Kālena dhammasavanaṃ etam maṅgalam uttamaṃ.<br/>Khantī ca sovacassatā samaṇānañ ca dassanaṃ.<br/>Kālena dhammasākacchā etam maṅgalam uttamaṃ.<br/>Tapo ca brahmacariyañ ca ariyasaccāna dassanaṃ.<br/>Nibbānasacchikiriyā ca etam maṅgalam uttamaṃ.<br/>Phuṭṭhassa lokadhammehi cittaṃ yassa na kampati.<br/>Asokaṃ virajaṃ khemaṃ etam maṅgalam uttamaṃ.<br/>Etādisāni katvāna sabbattha-m-aparājitā.<br/>Sabbattha sotthiṃ gacchanti taṃ tesaṃ maṅgalam uttaman ti."
+    "name": "Buddha (itipiso)",
+    "chant": "itipi so bhagavā arahaṃ sammāsambuddho vijjācaraṇasampanno sugato lokavidū anuttaro purisadammasārathi satthā devamanussānaṃ buddho bhagavā’ti."
   },
   {
     "id": 5,
-    "name": "Dhammacakkappavattana Sutta",
-    "chant": "Evaṃ me sutaṃ. Ekaṃ samayaṃ bhagavā bārāṇasiyaṃ viharati isipatane migadāye.<br/>Tatra kho bhagavā pañcavaggiye bhikkhū āmantesi:<br/>Dve me bhikkhave antā pabbajitena na sevitabbā.<br/>Yo cāyaṃ kāmesu kāmasukhallikānuyogo hīno gammo pothujjaniko anariyo anatthasaṃhito.<br/>Yo cāyaṃ attakilamathānuyogo dukkho anariyo anatthasaṃhito.<br/>Ete kho bhikkhave ubho ante anupagamma majjhimā paṭipadā tathāgatena abhisambuddhā.<br/>Cakkhukaraṇī ñāṇakaraṇī upasamāya abhiññāya sambodhāya nibbānāya saṃvattati."
+    "name": "Dhamma (svākkhāto)",
+    "chant": "Svākkhāto bhagavatā dhammo sandiṭṭhiko akāliko ehipassiko opanayiko paccattaṃ veditabbo viññūhī’ti."
   },
   {
     "id": 6,
-    "name": "Namo Tassa",
-    "chant": "Namo tassa bhagavato arahato sammā-sambuddhassa.<br/>Namo tassa bhagavato arahato sammā-sambuddhassa.<br/>Namo tassa bhagavato arahato sammā-sambuddhassa."
+    "name": "Sangha (supaṭipanno)",
+    "chant": "Supaṭipanno bhagavato sāvakasaṅgho, ujupaṭipanno bhagavato sāvakasaṅgho, ñāyapaṭipanno bhagavato sāvakasaṅgho, sāmīcipaṭipanno bhagavato sāvakasaṅgho, yadidaṃ cattāri purisayugāni aṭṭha purisapuggalā esa bhagavato sāvakasaṅgho, āhuneyyo pāhuneyyo dakkhiṇeyyo añjalikaraṇīyo anuttaraṃ puññakkhettaṃ lokassā’ti."
   },
   {
     "id": 7,
-    "name": "Tisaraṇa",
-    "chant": "Buddhaṃ saraṇaṃ gacchāmi.<br/>Dhammaṃ saraṇaṃ gacchāmi.<br/>Saṅghaṃ saraṇaṃ gacchāmi.<br/>Dutiyampi buddhaṃ saraṇaṃ gacchāmi.<br/>Dutiyampi dhammaṃ saraṇaṃ gacchāmi.<br/>Dutiyampi saṅghaṃ saraṇaṃ gacchāmi.<br/>Tatiyampi buddhaṃ saraṇaṃ gacchāmi.<br/>Tatiyampi dhammaṃ saraṇaṃ gacchāmi.<br/>Tatiyampi saṅghaṃ saraṇaṃ gacchāmi."
+    "name": "73 Buddha (ñāna)",
+    "chant": "1. Sotāvadhāne paññā sutamaye ñāṇaṃ.<br/>2. Sutvāna saṃvare paññā sīlamaye ñāṇaṃ.<br/>3. Saṃvaritvā samādahane paññā samādhibhāvanāmaye ñāṇaṃ.<br/>4. Paccayapariggahe paññā dhammaṭṭhitiñāṇaṃ.<br/>5. Atītānāgatapaccuppannānaṃ dhammānaṃ saṅkhipitvā vavatthāne paññā sammasane ñāṇaṃ.<br/>6.paccuppannānaṃ dhammānaṃ vipariṇāmānupassane paññā udayabbayānupassane ñāṇaṃ.<br/>6. Ārammaṇaṃ paṭisaṅkhā bhaṅgānupassane paññā vipassane ñāṇaṃ.<br/>7. Bhayatupaṭṭhāne paññā ādīnave ñāṇaṃ.<br/>8. Muñcitukamyatāpaṭisaṅkhāsantiṭṭhanā paññā saṅkhārupekkhāsu ñāṇaṃ.<br/>9. Bahiddhā vuṭṭhānavivaṭṭane paññā gotrabhuñāṇaṃ.<br/>10. Dubhato vuṭṭhānavivaṭṭane paññā magge ñāṇaṃ.<br/>11. Payogappaṭippassaddhi paññā phale ñāṇaṃ.<br/>12. Chinnavaṭumānupassane, paññā vimuttiñāṇaṃ.<br/>13. Tadā samudāgate dhamme passane paññā paccavekkhaṇe ñāṇaṃ.<br/>14. Ajjhattavavatthāne paññā vatthunānatte ñāṇaṃ.<br/>15. Bahiddhāvavatthāne paññā gocaranānatte ñāṇaṃ.<br/>16. Cariyāvavatthāne paññā cariyānānatte ñāṇaṃ.<br/>17. Catudhammavavatthāne paññā bhūminānatte ñāṇaṃ.<br/>18. Navadhammavavatthāne paññā dhammanānatte ñāṇaṃ.<br/>19. Abhiññāpaññā ñātaṭṭhe ñāṇaṃ.<br/>20. Pariññāpaññā tīraṇaṭṭhe ñāṇaṃ.<br/>21. Pahāne paññā pariccāgaṭṭhe ñāṇaṃ.<br/>22. Bhāvanāpaññā ekarasaṭṭhe ñāṇaṃ.<br/>23. Sacchikiriyāpaññā phusanaṭṭhe ñāṇaṃ.<br/>24. Atthanānatte paññā atthapaṭisambhide ñāṇaṃ.<br/>25. Dhammanānatte paññā dhammapaṭisambhide ñāṇaṃ.<br/>26. Niruttinānatte paññā niruttipaṭisambhide ñāṇaṃ.<br/>27. Paṭibhānanānatte paññā paṭibhānapaṭisambhide ñāṇaṃ.<br/>28. Vihāranānatte paññā vihāraṭṭhe ñāṇaṃ.<br/>29. Samāpattinānatte paññā samāpattaṭṭhe ñāṇaṃ.<br/>30. Vihārasamāpattinānatte paññā vihārasamāpattaṭṭhe ñāṇaṃ.<br/>31. Avikkhepaparisuddhattā āsavasamucchede paññā ānantarikasamādhimhi ñāṇaṃ.<br/>32. Dassanādhipateyyaṃ santo ca vihārādhigamo paṇītādhimuttatāpaññā araṇavihāreñāṇaṃ.<br/>33. Dvīhibalehi samannāgatattā tayo ca saṅkhārānaṃ paṭippassaddhiyā soḷasahiñāṇacariyāhi navahi samādhicariyāhi vasibhāvatā paññā nirodhasamāpattiyā ñāṇaṃ.<br/>34. Sampajānassa pavattapariyādāne paññā parinibbāne ñāṇaṃ.<br/>35. Sabbadhammānaṃ sammā samucchede nirodhe ca anupaṭṭhānatā paññā samasīsaṭṭhe ñāṇaṃ.<br/>36. Puthunānattatejapariyodāne paññā sallekhaṭṭhe ñāṇaṃ.<br/>37. Asallīnattapahitattapaggahaṭṭhe paññā viriyārambhe ñāṇaṃ.<br/>38. Nānādhammepakāsanatā paññā atthasandassane ñāṇaṃ.<br/>40.sabbadhammānaṃ ekasaṅgahatānānattekattapaṭivedhe paññā dassanavisuddhiñāṇaṃ<br/>39. Viditattā paññā khantiñāṇaṃ.<br/>40. Phuṭṭhattā paññā pariyogāhane ñāṇaṃ.<br/>41. Samodahane paññā padesavihāre ñāṇaṃ.<br/>42. Adhipatattā paññā saññāvivaṭṭe ñāṇaṃ.<br/>43. Nānatte paññā cetovivaṭṭe ñāṇaṃ.<br/>44. Adhiṭṭhāne paññā cittavivaṭṭe ñāṇaṃ.<br/>45. Suññate paññā ñāṇavivaṭṭe ñāṇaṃ.<br/>46. Vossagge paññā vimokkhavivaṭṭe ñāṇaṃ.<br/>47. Tathaṭṭhe paññā saccavivaṭṭe ñāṇaṃ.<br/>48. Kāyampi cittampi ekavavatthānatā sukhasaññañca lahusaññañca adhiṭṭhānavasena ijjhanaṭṭhe paññā iddhividhe ñāṇaṃ.<br/>49. Vitakkavipphāravasena nānattekattasaddanimittānaṃ pariyogāhaṇe paññā sotadhātuvisuddhiñāṇaṃ.<br/>50. Tiṇṇaṃ cittānaṃ vipphārattā indriyānaṃ pasādavasena nānattekatta viññāṇacariyā pariyogāhaṇe paññā cetopariyañāṇaṃ.<br/>51. Paccayappavattānaṃ dhammānaṃ nānattekattakammavipphāravasena pariyogāhane paññā pubbenivāsānussatiñāṇaṃ.<br/>54.obhāsavasena nānattekattarūpanimittānaṃ dassanaṭṭhe paññā dibbacakkhuñāṇaṃ.<br/>52. Catusaṭṭhiyā ākārehi tiṇṇaṃ indriyānaṃ vasībhāvatā paññā āsavānaṃ khaye ñāṇaṃ.<br/>53. Pariññaṭṭhe paññā dukkhe ñāṇaṃ.<br/>54. Pahānaṭṭhe paññā samudaye ñāṇaṃ.<br/>55. Sacchikiriyaṭṭhe paññā nirodhe ñāṇaṃ.<br/>56. Bhāvanaṭṭhe paññā magge ñāṇaṃ.<br/>57. Dukkhe ñāṇaṃ.<br/>58. Dukkhasamudaye ñāṇaṃ.<br/>59. Dukkhanirodhe ñāṇaṃ.<br/>60. Dukkhanirodhagāminiyā paṭipadāya ñāṇaṃ.<br/>61. Atthapaṭisambhide ñāṇaṃ.<br/>62. Dhammapaṭisambhide ñāṇaṃ.<br/>63. Niruttipaṭisambhide ñāṇaṃ.<br/>64. Paṭibhānapaṭisambhide ñāṇaṃ.<br/>65. Indriyaparopariyatte ñāṇaṃ.<br/>66. Sattānaṃ āsayānusaye ñāṇaṃ.<br/>67. Yamakapāṭihīre ñāṇaṃ.<br/>68. Mahākaruṇāsamāpattiyā ñāṇaṃ.<br/>69. Sabbaññutañāṇaṃ.<br/>70. Anāvaraṇañāṇaṃ.<br/>Imāni tesattati ñāṇāni. Imesaṃ tesattatiyā ñāṇānaṃ sattasaṭṭhi ñāṇāni sāvakasādhāraṇāni; cha ñāṇāni asādhāraṇāni sāvakehi. Imehi tesattatiyā ñāṇehi samannāgataṃ sammāsambuddhaṃ bhagavantaṃ sirasā namāmi."
   },
   {
     "id": 8,
-    "name": "Pañcasīla",
-    "chant": "Pāṇātipātā veramaṇī sikkhāpadaṃ samādiyāmi.<br/>Adinnādānā veramaṇī sikkhāpadaṃ samādiyāmi.<br/>Kāmesumicchācārā veramaṇī sikkhāpadaṃ samādiyāmi.<br/>Musāvādā veramaṇī sikkhāpadaṃ samādiyāmi.<br/>Surāmeraya-majja-pamādaṭṭhānā veramaṇī sikkhāpadaṃ samādiyāmi."
+    "name": "Catu Saṃvejanīya ṭhāna",
+    "chant": "māyā suto sugata sākiya sīhanātho - jātakkhaṇe sapadasā vabhisaṃkamitvā;<br/>yasmiṃ udīrayi giraṃ varalumbiṇimhi - taṃ jāta cetiyamahaṃ sirasā namāmi.<br/>Yasmiṃ nisajja vajirāsana bandhanena - jetvā savāsana kilesa balaṃ munindo;<br/>sambodhi ñāṇamavagamma vihāsi sammā - taṃ bodhi cetiyamahaṃ sirasā namāmi.<br/>Saṅkampayaṃ dasasahassiya loka dhātuṃ - desesi yatra bhagavā vara dhamma cakkaṃ;<br/>barāṇasīpura samīpa vane migānaṃ - taṃ dhamma cetiyamahaṃ sirasā namāmi.<br/>Katvāna loka hitamatta hitañca nātho - āsītikova upavattana kānanamhi;<br/>yasmiṃ nipajja gatavā nirupādhisesaṃ - nibbāna cetiyamahaṃ sirasā namāmi."
   },
   {
     "id": 9,
-    "name": "Buddhābhigīti",
-    "chant": "Dūrepi santā manasā abhipūjayāmi.<br/>Saṃsāra-dukkhā parimocayantā.<br/>Ye cāpi nibbāna-gatā mahesi.<br/>Buddhā ca te vandāmi sadā sumedhe."
+    "name": "14 Buddha Ñānavihāri",
+    "chant": "1. Dukkhe ñāṇaṃ, buddha ñāṇaṃ.<br/>2. Dukkhasamudaye ñāṇaṃ, buddha ñāṇaṃ.<br/>3. Dukkhanirodhe ñāṇaṃ, buddha ñāṇaṃ.<br/>4. Dukkhanirodhagāminiyā paṭipadāya ñāṇaṃ, buddha ñāṇaṃ.<br/>5. Atthapaṭisambhide ñāṇaṃ, buddha ñāṇaṃ.<br/>6. Dhammapaṭisambhide ñāṇaṃ, buddha ñāṇaṃ.<br/>7. Niruttipaṭisambhide ñāṇaṃ, buddha ñāṇaṃ.<br/>8. Paṭibhānapaṭisambhide ñāṇaṃ, buddha ñāṇaṃ.<br/>9. Indriyaparopariyatte ñāṇaṃ, buddha ñāṇaṃ.<br/>10.Sattānaṃ āsayānusaye ñāṇaṃ, buddha ñāṇaṃ.<br/>11.Yamakapāṭihāriye ñāṇaṃ, buddha ñāṇaṃ.<br/>12.Mahākaruṇāsamāpattiyā ñāṇaṃ, buddha ñāṇaṃ.<br/>13.Sabbaññutañāṇaṃ, buddha ñāṇaṃ.<br/>14.Anāvaraṇañāṇaṃ, buddha ñāṇanti.<br/>Imāni cuddasa buddha ñāṇāni. Imesaṃ aṭṭhañāṇāni sāvaka sādhāraṇāni. Cha ñāṇāni asādhāraṇāni sāvakehi, imehi cuddasa buddha ñāṇehi samannāgataṃ sammāsambuddhaṃ bhagavantaṃ sirasā namāmi."
   },
   {
     "id": 10,
-    "name": "Aṭṭhanga Sīla",
-    "chant": "Pāṇātipātā veramaṇī sikkhāpadaṃ samādiyāmi.<br/>Adinnādānā veramaṇī sikkhāpadaṃ samādiyāmi.<br/>Abrahmacariyā veramaṇī sikkhāpadaṃ samādiyāmi.<br/>Musāvādā veramaṇī sikkhāpadaṃ samādiyāmi.<br/>Surāmeraya-majja-pamādaṭṭhānā veramaṇī sikkhāpadaṃ samādiyāmi.<br/>Vikālabhojanā veramaṇī sikkhāpadaṃ samādiyāmi.<br/>Naccagīta-vādita-visūkadassanā mālā-gandha-vilepana-dhāraṇa-maṇḍana-vibhūsanaṭṭhānā veramaṇī sikkhāpadaṃ samādiyāmi.<br/>Uccāsayana-mahāsayanā veramaṇī sikkhāpadaṃ samādiyāmi."
+    "name": "long contemplation of dependent origination",
+    "chant": "Iti imasmiṃ sati idaṃ hoti, imassuppādā idaṃ uppajjati.| <br/>imasmiṃ asati idaṃ na hoti, imassa nirodhā idaṃ nirujjhati.| <br/><br/>yadidaṃ Avijjāpaccayā saṅkhārā, saṅkhārapaccayā viññāṇaṃ, viññāṇapaccayā nāmarūpaṃ, nāmarūpapaccayā saḷāyatanaṃ, saḷāyatanapaccayā phasso, phassapaccayā vedanā, vedanāpaccayā taṇhā, taṇhāpaccayā upādānaṃ, upādānapaccayā bhavo, bhavapaccayā jāti, jātipaccayā jarāmaraṇaṃ sokaparidevadukkhadomanassupāyāsā sambhavanti. <br/>evametassa kevalassa dukkhakkhandhassa samudayo hoti.<br/><br/>“Avijjāyatveva asesavirāganirodhā saṅkhāranirodho, saṅkhāranirodhā viññāṇanirodho, viññāṇanirodhā nāmarūpanirodho, nāmarūpanirodhā saḷāyatananirodho, saḷāyatananirodhā phassanirodho, phassanirodhā vedanānirodho, vedanānirodhā taṇhānirodho, taṇhānirodhā upādānanirodho, upādānanirodhā bhavanirodho, bhavanirodhā jātinirodho, jātinirodhā jarāmaraṇaṃ sokaparidevadukkhadomanassupāyāsā nirujjhanti – evametassa kevalassa dukkhakkhandhassa nirodho hotī’ti.<br/><br/>Yadā have pātubhavanti dhammā; <br/>ātāpino jhāyato brāhmaṇassa; <br/>athassa kaṅkhā vapayanti sabbā;<br/>yato pajānāti sahetudhammaṃ.<br/>Yadā have pātubhavanti dhammā; <br/>ātāpino jhāyato brāhmaṇassa; <br/>athassa kaṅkhā vapayanti sabbā; <br/>yato khayaṃ paccayānaṃ avedī.<br/>Yadā have pātubhavanti dhammā; <br/>ātāpino jhāyato brāhmaṇassa; <br/>vidhūpayaṃ tiṭṭhati mārasenaṃ; <br/>suriyova obhāsayamantalikkhaṃ."
   },
   {
     "id": 11,
-    "name": "Khandha Paritta",
-    "chant": "Virūpakkhehi me mettaṃ mettaṃ erāpathehi me.<br/>Chabyā-puttehi me mettaṃ mettaṃ kaṇhāgotamakehi ca.<br/>Apādakehi me mettaṃ mettaṃ dvipādakehi me.<br/>Catuppadehi me mettaṃ mettaṃ bahuppadehi me.<br/>Mā maṃ apādako hiṃsi mā maṃ hiṃsi dvipādako.<br/>Mā maṃ catuppado hiṃsi mā maṃ hiṃsi bahuppado.<br/>Sabbe sattā sabbe pāṇā sabbe bhūtā ca kevalā.<br/>Sabbe bhadrāni passantu mā kiñci pāpam āgamā.<br/>Appamāṇo buddho appamāṇo dhammo appamāṇo saṅgho.<br/>Pamāṇavantāni siriṃsapāni.<br/>Ahi vicchikā satapadī uṇṇanābhī sarabū mūsikā.<br/>Katā me rakkhā katā me parittā paṭikkamantu bhūtāni.<br/>Sohaṃ namo bhagavato namo sattannaṃ sammā-sambuddhānan ti."
-  },
-  {
-    "id": 12,
-    "name": "Mora Paritta",
-    "chant": "Udetayañ-cakkhumā eka-rājā harissa-vaṇṇo paṭhavippabhāso.<br/>Taṃ taṃ namassāmi harissa-vaṇṇaṃ paṭhavippabhāsaṃ.<br/>Tayajja guttā viharāmi divasaṃ.<br/>Ye brāhmaṇā vedagu sabbadhamme te me namo te ca maṃ pālayantu.<br/>Namatthu buddhānaṃ namatthu bodhiyā.<br/>Namo vimuttānaṃ namo vimuttiyā.<br/>Imaṃ so parittaṃ katvā morocarati esanā."
-  },
-  {
-    "id": 13,
-    "name": "Dhajagga Sutta",
-    "chant": "Evaṃ me sutaṃ. Ekaṃ samayaṃ bhagavā sāvatthiyaṃ viharati jetavane anāthapiṇḍikassa ārāme.<br/>Tatra kho bhagavā bhikkhū āmantesi:<br/>Sace tumhākaṃ bhikkhave araññagatānaṃ vā rukkhamūlagatānaṃ vā suññāgāragatānaṃ vā uppajjeyya bhayaṃ chambhitattaṃ lomahaṃso.<br/>Mameva tasmiṃ samaye anussareyyātha: Iti pi so bhagavā arahaṃ sammā-sambuddho vijjā-caraṇa-sampanno sugato lokavidū anuttaro purisa-damma-sārathi satthā deva-manussānaṃ buddho bhagavā ti.<br/>Mamañhi vo bhikkhave anussarantānaṃ yaṃ bhavissati bhayaṃ vā chambhitattaṃ vā lomahaṃso vā so pahīyissati."
-  },
-  {
-    "id": 14,
-    "name": "Āṭānāṭiya Sutta",
-    "chant": "Vipassissa ca namatthu cakkhumantassa sirīmato.<br/>Sikhissapi ca namatthu sabba-bhūtānukampino.<br/>Vessabhussa ca namatthu nhātakassa tapassino.<br/>Namatthu kakusandhassa mārasenappamaddino.<br/>Koṇāgamanassa namatthu brāhmaṇassa vusīmato.<br/>Kassapassa ca namatthu vippamuttassa sabbadhi.<br/>Aṅgīrasassa namatthu sakyaputtassa sirīmato.<br/>Yo imaṃ dhammaṃ desesi sabbadukkhāpanūdanaṃ."
-  },
-  {
-    "id": 15,
-    "name": "Jinapañjara Gāthā",
-    "chant": "Huraṃ pure ca pacchā ca ādare uttarāsane.<br/>Jinā viharanti sabbattha ratanattayānubhāvena.<br/>Sabbe buddhā balappattā paccekānañca yaṃ balaṃ.<br/>Arahantānañca tejena rakkhaṃ bandhehi sabbadā.<br/>Puratthimasmiṃ disābhāge sūriyo ādicco yathā.<br/>Jinā viharanti sabbattha ratanattayānubhāvena.<br/>Dakkhiṇasmiṃ disābhāge candimasūriyā yathā.<br/>Jinā viharanti sabbattha ratanattayānubhāvena.<br/>Pacchimasmiṃ disābhāge vassanto devo yathā.<br/>Jinā viharanti sabbattha ratanattayānubhāvena.<br/>Uttarasmiṃ disābhāge dhruvatārā yathā.<br/>Jinā viharanti sabbattha ratanattayānubhāvena."
-  },
-  {
-    "id": 16,
-    "name": "Pubbaṇha Sutta",
-    "chant": "Yasassī c'eva nipako ca rājā sammā dhamma-kārī.<br/>Tattha pīti-sukhaṃ vipulaṃ vindati sabb'atthaṃ.<br/>Anekaṃ kappasahassaṃ punappunaṃ nibbattati.<br/>Buddhe dhamme ca saṅghe ca saddhā hoti dalhā assa.<br/>Sīlaṃ c'eva dānaṃ ceva bhāvanā ca vibhāvitā.<br/>So ca kho hoti sukhito deva-manussasampanno."
-  },
-  {
-    "id": 17,
-    "name": "Abhidhamma Mātikā",
-    "chant": "Namo tassa bhagavato arahato sammā-sambuddhassa.<br/>Kusalā dhammā, akusalā dhammā, abyākatā dhammā.<br/>Katame dhammā kusalā? Yasmiṃ samaye kāmāvacararaṃ kusalaṃ cittaṃ uppannaṃ hoti.<br/>Somanassasahagataṃ ñāṇasampayuttaṃ rūpārammaṇaṃ vā saddārammaṇaṃ vā gandhārammaṇaṃ vā rasārammaṇaṃ vā phoṭṭhabbārammaṇaṃ vā dhammārammaṇaṃ vā yaṃ yaṃ vā panārabbha."
-  },
-  {
-    "id": 18,
-    "name": "Bojjhaṅga Sutta",
-    "chant": "Bojjhaṅgo sati-saṅkhāto dhammānaṃ vicayo tathā.<br/>Vīriyaṃ pīti passaddhi bojjhaṅgā ca tathāpare.<br/>Samādh'upekkhā bojjhaṅgā satt'ete sabbadassinā.<br/>Desitā sammā-sambuddhenā bhāvitā bahulīkatā.<br/>Saṃvattanti abhiññāya nibbānāya ca bodhiyā.<br/>Etena saccavajjena sotthi te hotu sabbadā."
-  },
-  {
-    "id": 19,
-    "name": "Anattalakkhaṇa Sutta",
-    "chant": "Evaṃ me sutaṃ. Ekaṃ samayaṃ bhagavā bārāṇasiyaṃ viharati isipatane migadāye.<br/>Tatra kho bhagavā pañcavaggiye bhikkhū āmantesi:<br/>Rūpaṃ bhikkhave anattā. Rūpañca h'idaṃ bhikkhave attā abhavissa.<br/>nayidaṃ rūpaṃ ābādhāya saṃvatteyya.<br/>Labbhetha ca rūpe evaṃ me rūpaṃ hotu evaṃ me rūpaṃ mā ahosī ti.<br/>Yasmā ca kho bhikkhave rūpaṃ anattā.<br/>Tasmā rūpaṃ ābādhāya saṃvattati.<br/>Na ca labbhati rūpe evaṃ me rūpaṃ hotu evaṃ me rūpaṃ mā ahosī ti."
-  },
-  {
-    "id": 20,
-    "name": "Mahāparinibbāna Sutta",
-    "chant": "Handadāni bhikkhave āmantayāmi vo:<br/>vayadhammā saṅkhārā appamādena sampādethā ti.<br/>Ayaṃ tathāgatassa pacchimā vācā."
+    "name": "caturārakkhā",
+    "chant": "buddhānussati mettā ca - asubhaṃ maraṇassati iti imā caturārakkhā - bhikkhu bhāveyya sīlavā.<br/>Anantavitthāraguṇaṃ - guṇatonussaraṃ muniṃ, bhāveyya buddhimā bhikkhu - buddhānussatimādito.<br/><br/>[Buddhānussati]<br/>Savāsane kilese so - eko sabbe nighātiya, ahū susuddha santāno - pūjānañca sadāraho.<br/>Sabbakālagate dhamme - sabbe sammāsayaṃ muni, sabbākārena bujjhitvā - eko sabbaññutaṃ gato.<br/>Vipassanādi vijjāhi - sīlādi caraṇehi ca, susamiddhehi sampanno -gaganābhehi nāyako.<br/>Sammāgato subhaṃ ṭhānaṃ - amoghavacano ca so, tividhassāpi lokassa – ñātā niravasesato.<br/>Anekehi guṇoghehi - sabbasattuttamo ahū, anekehi upāyehi - naradamme damesi ca.<br/>Eko sabbassa lokassa- sabbasattānusāsako, bhāgya issariyādīnaṃ - guṇānaṃ paramo nidhi.<br/>Paññāssa sabbadhammesu - karuṇā sabbajantusu, attatthānaṃ paratthānaṃ - sādhikā guṇajeṭṭhikā.<br/>Dayāya paramī citvā - paññāyattānamuddhari, uddharī sabbadhamme ca - dayāyaññe ca uddhari.<br/>dissamānopi tāvassa -rūpakāyo acintiyo, asādhāraṇañāṇaḍḍhe - dhammakāye kathāva kā’ti.<br/><br/>[Mettā bhāvanā]<br/>Attūpamāya sabbesaṃ - sattānaṃ sukha kāmataṃ, passitvā kamato mettaṃ - sabbasattesu bhāvaye.<br/>Sukhī bhaveyyaṃ niddukkho - ahaṃ niccaṃ ahaṃ viya, hitā ca me sukhī hontu – majjhattātha ca verino.<br/>Imamhi gāmakkhettamhi - sattā hontu sukhī sadā, ato parañca rajjesu – cakkavāḷesu jantuno.<br/>Samantā cakkavāḷesu – sattā’nantesu pāṇino, sukhino puggalā bhūtā - attabhāvagatā siyuṃ.<br/>Tathā itthī pumā ceva – ariyā anariyāpi ca, devā narā apāyaṭṭhā - tathā dasadisāsu cāti.<br/><br/>[Asubha bhāvanā]<br/>Aviññāṇāsubhanibhaṃ - saviññāṇāsubhaṃ imaṃ, kāyaṃ asubhato passaṃ - asubhaṃ bhāvaye satiṃ.<br/>Vaṇṇa saṇṭhānagandhehi - āsayokāsato tathā, paṭikkūlāni kāye me - kuṇapāni dvisoḷasa.<br/>Patitamhāpi kuṇapā - jegucchaṃ kāya nissitaṃ, ādhāro hi sucī tassa - kāye tu kuṇape ṭhitaṃ.<br/>Mīḷhe kimiva kāyoyaṃ - asucimhi samuṭṭhito, anto asuci sampuṇṇo - puṇṇavaccakuṭī viya.<br/>Asuci sandate niccaṃ - yathā medakathālikā, nānākimi kulāvāso - pakkacandanikā viya.<br/>Gaṇḍabhūto roga bhūto - vaṇabhūto samussayo, Atekiccho’tijeguccho - pabhinna kuṇapūpamo.<br/><br/>[Maraṇānussati]<br/>pavātadīpa tulyāya - sāyusantatiyākkhayaṃ, parūpamāya sampassaṃ - bhāvaye maraṇassatiṃ.<br/>Mahā sampatti sampattā - yathā sattā matā idha, tathā ahaṃ marissāmi - maraṇaṃ mama hessati.<br/>Uppattiyā sahevedaṃ - maraṇaṃ āgataṃ sadā, maraṇatthāya okāsaṃ - vadhako viya esati.<br/>Īsakaṃ anivattantaṃ - satataṃ gamanussukaṃ, jīvitaṃ udayā atthaṃ - suriyo viya dhāvati.<br/>Vijju bubbula ussāva - jalarājī parikkhayaṃ, ghātakova ripū tassa - sabbatthāpi avāriyo.<br/>Suyasatthāma puññiddhi - buddhi vuddhi jinadvayaṃ, ghātesi maraṇaṃ khippaṃ - kā tu mādisake kathā.<br/>Paccayānañca vekalyā - bāhirajjhattupaddavā, Marāmoraṃ nimesāpi - maramano anukkhaṇaṃ."
   }
 ]

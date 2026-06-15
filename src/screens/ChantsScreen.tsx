@@ -114,8 +114,16 @@ export function ChantsScreen({ settings }: { settings: Settings }) {
 
   const handleAddChant = async () => {
     if (!newChant.title) return;
+    
+    // Convert content to Roman script if it's not empty
+    let convertedContent = newChant.content;
+    if (convertedContent) {
+      convertedContent = await convertPali(convertedContent, 'roman');
+    }
+
     await chantService.addChant({
       ...newChant,
+      content: convertedContent,
       isCustom: true
     });
     setNewChant({ title: '', content: '', milestone: 108 });
@@ -240,6 +248,16 @@ export function ChantsScreen({ settings }: { settings: Settings }) {
                   onChange={e => setNewChant({...newChant, title: e.target.value})}
                   placeholder="e.g. Itipiso"
                   className="w-full px-5 py-4 rounded-2xl bg-slate-50 dark:bg-slate-800 text-stone-900 dark:text-stone-100 border-none focus:ring-2 focus:ring-saffron/20"
+                />
+              </div>
+              <div>
+                <label className="text-[0.65rem] font-black uppercase tracking-widest text-primary-300 dark:text-primary-700 block mb-2 px-1">{t('chant.chantContent')}</label>
+                <textarea 
+                  value={newChant.content}
+                  onChange={e => setNewChant({...newChant, content: e.target.value})}
+                  placeholder="Enter Pali text..."
+                  rows={4}
+                  className="w-full px-5 py-4 rounded-2xl bg-slate-50 dark:bg-slate-800 text-stone-900 dark:text-stone-100 border-none focus:ring-2 focus:ring-saffron/20 resize-none"
                 />
               </div>
               <div>
