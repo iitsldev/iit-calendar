@@ -23,6 +23,7 @@ export interface Settings {
   dawnBell: boolean;
   syncToFirebase: boolean;
   isIITStudent?: boolean;
+  calendarCardOrder?: string[];
 }
 
 export interface Chant {

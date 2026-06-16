@@ -9,6 +9,7 @@
     "chantingBook": "Chanting Book",
     "memorization": "Memorization",
     "search": "Search",
+    "edit": "Edit",
     "confirm": "Confirm Bliss",
     "today": "Today",
     "language": "Language",
@@ -48,6 +49,16 @@
     "remaining": "Remaining",
     "scheduleAndEvents": "Schedule & Events",
     "random": "Random",
+    "reorderCards": "Reorder Cards",
+    "cards": {
+      "uposatha": "Uposatha Alert",
+      "sun": "Solar Details",
+      "pali_vassa": "Pali & Vassa",
+      "atikkanta": "Era Progress",
+      "recitation": "Pali Recitation",
+      "events": "Schedule & Events",
+      "reflection": "Daily Reflection"
+    },
     "days": {
       "sun": "SUN",
       "mon": "MON",
