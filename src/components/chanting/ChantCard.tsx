@@ -1,5 +1,5 @@
 import React from 'react';
-import { motion } from 'framer-motion';
+import { motion } from 'motion/react';
 import { Check, Trash2, Eye } from 'lucide-react';
 import { cn } from '../../lib/utils';
 import { UserChant } from '../../types';

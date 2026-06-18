@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion, AnimatePresence } from 'motion/react';
 import { Play, Square, RotateCcw, Volume2, Activity, Award, Clock, Settings2, X, Minus, Plus, Pause, Sun } from 'lucide-react';
 import { cn } from '../lib/utils';
 import { format, differenceInDays, startOfDay, subDays, isSameDay } from 'date-fns';

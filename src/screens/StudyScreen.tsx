@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion, AnimatePresence } from 'motion/react';
 import { Settings2, PlusCircle, CheckCircle2, Circle, MoreVertical, Trash2, BarChart2 } from 'lucide-react';
 import { cn } from '../lib/utils';
 import { useI18n } from '../hooks/useI18n';

@@ -1,5 +1,5 @@
 import React from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion, AnimatePresence } from 'motion/react';
 import { X, MapPin, Search, Loader2, Download, Upload, Info } from 'lucide-react';
 import { Settings } from '../types';
 import { useI18n } from '../hooks/useI18n';

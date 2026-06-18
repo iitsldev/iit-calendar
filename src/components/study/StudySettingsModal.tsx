@@ -1,5 +1,5 @@
 import React from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion, AnimatePresence } from 'motion/react';
 import { X, Clock, CheckSquare } from 'lucide-react';
 import { useI18n } from '../../hooks/useI18n';
 

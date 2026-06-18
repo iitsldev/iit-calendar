@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef, useMemo } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion, AnimatePresence } from 'motion/react';
 import { BookOpen, List, X, ChevronRight, Search, ChevronUp, ChevronDown, Library } from 'lucide-react';
 import { cn } from '../lib/utils';
 import chantBookHtml from '../data/chantingbook.html?raw';

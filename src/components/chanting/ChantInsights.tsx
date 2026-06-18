@@ -1,5 +1,5 @@
 import React from 'react';
-import { motion } from 'framer-motion';
+import { motion } from 'motion/react';
 import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip } from 'recharts';
 import { Award, Zap, TrendingUp, Calendar } from 'lucide-react';
 import { UserChant, ChantSession, UserChantStats } from '../../types';

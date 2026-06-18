@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion, AnimatePresence } from 'motion/react';
 import { X, Clock, Calendar as CalIcon, Flame, BarChart2 } from 'lucide-react';
 import { useI18n } from '../../hooks/useI18n';
 import { format, differenceInDays, startOfDay, subDays, isSameDay } from 'date-fns';
