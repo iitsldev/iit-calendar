@@ -20,6 +20,7 @@ import { cn } from './lib/utils';
 // New specialized components and hooks
 import { Settings, CalendarType } from './types';
 import { useI18n } from './hooks/useI18n';
+import { useWidgetSync } from './hooks/useWidgetSync';
 import { SettingsModal } from './components/SettingsModal';
 import { CalendarScreen } from './screens/CalendarScreen';
 import { MeditationScreen } from './screens/MeditationScreen';
@@ -33,6 +34,7 @@ import { App as CapApp } from '@capacitor/app';
 
 export default function App() {
   const { t } = useI18n();
+  useWidgetSync();
   
   // Persistence
   const [settings, setSettings] = useState<Settings>(() => {

@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#FFFFFF"
+    android:orientation="vertical"
+    android:padding="12dp">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="My Stats"
+        android:textStyle="bold"
+        android:textColor="#212121"
+        android:textSize="16sp"
+        android:layout_marginBottom="8dp"/>
+
+    <!-- Meditation -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_marginBottom="8dp">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Meditation"
+            android:textColor="#1976D2"
+            android:textStyle="bold"
+            android:textSize="12sp"/>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+            <TextView
+                android:id="@+id/tvMedStreak"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="wrap_content"
+                android:text="0 days streak"
+                android:textColor="#424242"
+                android:textSize="12sp"/>
+            <TextView
+                android:id="@+id/tvMedMonth"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="0 min month"
+                android:textColor="#424242"
+                android:textSize="12sp"/>
+        </LinearLayout>
+    </LinearLayout>
+
+    <!-- Chanting -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_marginBottom="8dp">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Chanting"
+            android:textColor="#388E3C"
+            android:textStyle="bold"
+            android:textSize="12sp"/>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+            <TextView
+                android:id="@+id/tvChantStreak"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="wrap_content"
+                android:text="0 days streak"
+                android:textColor="#424242"
+                android:textSize="12sp"/>
+            <TextView
+                android:id="@+id/tvChantMonth"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="0 sessions month"
+                android:textColor="#424242"
+                android:textSize="12sp"/>
+        </LinearLayout>
+    </LinearLayout>
+
+    <!-- Study -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Studying"
+            android:textColor="#F57C00"
+            android:textStyle="bold"
+            android:textSize="12sp"/>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+            <TextView
+                android:id="@+id/tvStudyStreak"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="wrap_content"
+                android:text="0 days streak"
+                android:textColor="#424242"
+                android:textSize="12sp"/>
+            <TextView
+                android:id="@+id/tvStudyMonth"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="0 min month"
+                android:textColor="#424242"
+                android:textSize="12sp"/>
+        </LinearLayout>
+    </LinearLayout>
+
+</LinearLayout>

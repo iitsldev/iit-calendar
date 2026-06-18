@@ -56,6 +56,9 @@ importers:
       '@vitejs/plugin-react':
         specifier: ^5.0.4
         version: 5.2.0(vite@6.4.3(@types/node@22.19.20)(jiti@2.7.0)(lightningcss@1.32.0)(terser@5.48.0)(tsx@4.22.4)(yaml@2.9.0))
+      capacitor-widget-bridge:
+        specifier: ^8.1.0
+        version: 8.1.0(@capacitor/core@8.4.0)
       clsx:
         specifier: ^2.1.1
         version: 2.1.1
@@ -2386,6 +2389,11 @@ packages:
 
   caniuse-lite@1.0.30001797:
     resolution: {integrity: sha512-l8xKG+gwAIExZGl9FrF7KUwuOmk6wbEPC9Xoy/RtnWv1XG0Q4LFlagaLpUv3Kiza3W/wm27zy0yWJEieYKAP6w==}
+
+  capacitor-widget-bridge@8.1.0:
+    resolution: {integrity: sha512-I0UKGrNtq59MNFIX7VuTCeyHx05H66y0hWwr3BQEKapgm2TjUBbGXhY4R0vGEMWGkW0JanoOXBhKUis8DgxrwQ==}
+    peerDependencies:
+      '@capacitor/core': '>=8.0.0'
 
   ccount@2.0.1:
     resolution: {integrity: sha512-eyrF0jiFpY+3drT6383f1qhkbGsLSifNAjA61IUjZjmLCWjItY6LB9ft9YhoDgwfmclB2zhu51Lc7+95b8NRAg==}
@@ -8606,6 +8614,10 @@ snapshots:
   camelcase@6.3.0: {}
 
   caniuse-lite@1.0.30001797: {}
+
+  capacitor-widget-bridge@8.1.0(@capacitor/core@8.4.0):
+    dependencies:
+      '@capacitor/core': 8.4.0
 
   ccount@2.0.1: {}
 

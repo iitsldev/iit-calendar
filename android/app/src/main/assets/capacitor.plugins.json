@@ -22,5 +22,9 @@
 	{
 		"pkg": "@capacitor/share",
 		"classpath": "com.capacitorjs.plugins.share.SharePlugin"
+	},
+	{
+		"pkg": "capacitor-widget-bridge",
+		"classpath": "de.kisimedia.plugins.widgetbridgeplugin.WidgetBridgePlugin"
 	}
 ]
