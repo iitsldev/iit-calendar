@@ -16,6 +16,9 @@ interface ChantInsightsProps {
 export function ChantInsights({ chants, sessions, stats }: ChantInsightsProps) {
   const { t } = useI18n();
   const totalChants = chants.reduce((sum, c) => sum + c.totalCount, 0);
+  const totalTimeMin = sessions.reduce((sum, s) => sum + (s.durationMin || 0), 0);
+  const totalTimeHours = Math.floor(totalTimeMin / 60);
+  const totalTimeRemainderMin = totalTimeMin % 60;
   
   // Aggregate data for Pie Chart
   const pieData = chants
@@ -42,7 +45,7 @@ export function ChantInsights({ chants, sessions, stats }: ChantInsightsProps) {
   return (
     <div className="space-y-8 pb-10">
       {/* Overview Cards */}
-      <div className="grid grid-cols-1 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div className="glass-card rounded-[2.5rem] p-8 relative overflow-hidden bg-white/50 dark:bg-slate-900 shadow-sm border border-white/60 dark:border-slate-800">
           <div className="flex justify-between items-start mb-4">
             <h3 className="text-sm font-black uppercase tracking-[0.2em] text-slate-400">{t('chant.totalChants')}</h3>
@@ -53,6 +56,21 @@ export function ChantInsights({ chants, sessions, stats }: ChantInsightsProps) {
           <div className="flex items-baseline gap-2">
             <span className="font-serif text-5xl font-medium text-[#7f5700]">{totalChants.toLocaleString()}</span>
             <span className="text-slate-400 font-bold uppercase text-[0.65rem] tracking-widest">{t('chant.completed')}</span>
+          </div>
+        </div>
+
+        <div className="glass-card rounded-[2.5rem] p-8 relative overflow-hidden bg-white/50 dark:bg-slate-900 shadow-sm border border-white/60 dark:border-slate-800">
+          <div className="flex justify-between items-start mb-4">
+            <h3 className="text-sm font-black uppercase tracking-[0.2em] text-slate-400">{t('chant.totalTime', 'Total Time')}</h3>
+            <div className="p-3 bg-[#7f5700]/10 rounded-2xl text-[#7f5700]">
+              <Calendar size={20} />
+            </div>
+          </div>
+          <div className="flex items-baseline gap-2">
+            <span className="font-serif text-5xl font-medium text-[#7f5700]">
+              {totalTimeHours > 0 ? `${totalTimeHours}h ${totalTimeRemainderMin}m` : `${totalTimeRemainderMin}m`}
+            </span>
+            <span className="text-slate-400 font-bold uppercase text-[0.65rem] tracking-widest">{t('chant.chanted', 'Chanted')}</span>
           </div>
         </div>
       </div>

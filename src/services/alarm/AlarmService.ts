@@ -68,7 +68,7 @@ class AlarmService {
             
             if (bellTime > now) {
               const soundFile = settings.noonVoiceAlert ? `noon_${m}.wav` : 'bell.wav';
-              const channelId = settings.noonVoiceAlert ? `solar_noon_${m}` : 'solar_noon_v2';
+              const channelId = settings.noonVoiceAlert ? `solar_noon_v7_${m}` : 'solar_noon_v7';
               const body = safeOffset > 0 
                 ? `Solar noon is in ${m} minutes (+${safeOffset}m safe).`
                 : `Solar noon is in ${m} minutes.`;
@@ -98,7 +98,7 @@ class AlarmService {
             body: "Dawn has arrived.",
             at: dawn,
             sound: 'bell.wav',
-            channelId: 'dawn_v2',
+            channelId: 'dawn_v7',
             allowWhileIdle: true,
             exact: true
           });
@@ -137,7 +137,7 @@ class AlarmService {
       body: "Your session has ended. May you be peaceful.",
       at: endTime,
       sound: 'bell.wav',
-      channelId: 'meditation_v2',
+      channelId: 'meditation_v7',
       allowWhileIdle: true,
       exact: true
     });
@@ -153,7 +153,7 @@ class AlarmService {
           body: "Interval mark reached.",
           at: new Date(nextInterval),
           sound: 'bell.wav',
-          channelId: 'meditation_v2',
+          channelId: 'meditation_v7',
           allowWhileIdle: true,
           exact: true
         });
@@ -194,7 +194,7 @@ class AlarmService {
         body: "Your session has ended. May you be peaceful.",
         at: endTime,
         sound: 'bell.wav',
-        channelId: 'meditation_v2',
+        channelId: 'meditation_v7',
         allowWhileIdle: true,
         exact: true
       });
@@ -210,7 +210,7 @@ class AlarmService {
               body: "Interval mark reached.",
               at: new Date(nextInterval),
               sound: 'bell.wav',
-              channelId: 'meditation_v2',
+              channelId: 'meditation_v7',
               allowWhileIdle: true,
               exact: true
             });
@@ -241,7 +241,7 @@ class AlarmService {
       body: `${label} finished.`,
       at: new Date(active.startTime + durationMs),
       sound: 'bell.wav',
-      channelId: 'study_v2',
+      channelId: 'study_v7',
       allowWhileIdle: true,
       exact: true
     }]);
@@ -276,7 +276,7 @@ class AlarmService {
         body: `${active.label} finished.`,
         at: new Date(now + remaining),
         sound: 'bell.wav',
-        channelId: 'study_v2',
+        channelId: 'study_v7',
         allowWhileIdle: true,
         exact: true
       }]);

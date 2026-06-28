@@ -1,6 +1,6 @@
 import React from 'react';
 import { motion } from 'motion/react';
-import { Check, Trash2, Eye } from 'lucide-react';
+import { Check, Trash2 } from 'lucide-react';
 import { cn } from '../../lib/utils';
 import { UserChant } from '../../types';
 import { formatDistanceToNow } from 'date-fns';
@@ -24,11 +24,10 @@ interface ChantCardProps {
   selected: boolean;
   onClick: () => void;
   onDelete?: () => void;
-  onView?: () => void;
   paliScript: string;
 }
 
-export function ChantCard({ chant, selected, onClick, onDelete, onView, paliScript }: ChantCardProps) {
+export function ChantCard({ chant, selected, onClick, onDelete, paliScript }: ChantCardProps) {
   const lastUsedText = chant.lastUsed 
     ? formatDistanceToNow(chant.lastUsed, { addSuffix: true })
     : 'Never used';
@@ -88,14 +87,6 @@ export function ChantCard({ chant, selected, onClick, onDelete, onView, paliScri
         </div>
         <div className="text-right flex flex-col items-end">
           <div className="flex gap-2 mb-2">
-            {onView && (chant.content || chant.chant) && (
-               <button 
-                 onClick={(e) => { e.stopPropagation(); onView(); }} 
-                 className="text-[var(--text-faint)] hover:text-[var(--accent)] p-1 active:scale-90 transition-transform"
-               >
-                 <Eye size={16} />
-               </button>
-            )}
             {onDelete && (
                <button 
                  onClick={(e) => { e.stopPropagation(); onDelete(); }} 

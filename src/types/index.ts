@@ -46,6 +46,7 @@ export interface ChantSession {
   chantId: string;
   count: number;
   timestamp: number;
+  durationMin?: number;
 }
 
 export interface UserChantStats {

@@ -14,6 +14,8 @@ import { Settings } from '../types';
 import { useI18n } from '../hooks/useI18n';
 import { cn } from '../lib/utils';
 import { alarmService } from '../services/alarm/AlarmService';
+import { LocalNotifications } from '@capacitor/local-notifications';
+import { Capacitor } from '@capacitor/core';
 
 interface SunTimeItemProps {
   icon: React.ReactNode;
@@ -133,20 +135,60 @@ export function SunDetails({
   };
 
   const handleTestAlarms = async () => {
-    const now = new Date();
-    const testItems = [10, 25, 40].map((sec, i) => ({
-      id: 9000 + i,
-      title: "Test Alarm",
-      body: `Notification test ${i+1} (${sec}s)`,
-      at: new Date(now.getTime() + sec * 1000),
-      sound: settings.noonVoiceAlert ? 'noon_5.wav' : 'bell.wav',
-      channelId: 'solar_noon_v2',
-      allowWhileIdle: true,
-      exact: true
-    }));
-    
-    alert(`Scheduling 3 test alarms in 10s, 25s, and 40s. Close the app or lock the phone to test!`);
-    await alarmService.scheduleTest(testItems);
+    let debugLog: string[] = [];
+    try {
+      if (Capacitor.isNativePlatform()) {
+        const perms = await LocalNotifications.checkPermissions();
+        debugLog.push(`Perms: ${JSON.stringify(perms)}`);
+        
+        if (Capacitor.getPlatform() === 'android') {
+           const exactStatus = await LocalNotifications.checkExactNotificationSetting();
+           debugLog.push(`Exact Alarm: ${JSON.stringify(exactStatus)}`);
+           
+           const channels = await LocalNotifications.listChannels();
+           debugLog.push(`Channels count: ${channels.channels?.length || 0}`);
+           const noonChannels = channels.channels?.filter(c => c.id.includes('noon')) || [];
+           debugLog.push(`Noon channels (limit 3 shown):`);
+           noonChannels.slice(0, 3).forEach(c => {
+             debugLog.push(` - ${c.id}: snd=${c.sound}, imp=${c.importance}`);
+           });
+        }
+      } else {
+        debugLog.push("Platform: Web");
+      }
+
+      try {
+        const testAudio = new Audio(`/sounds/${settings.noonVoiceAlert ? 'noon_5.wav' : 'bell.wav'}`);
+        testAudio.play().catch(e => console.warn("HTML Audio preview failed", e));
+      } catch (e) {}
+
+      const now = new Date();
+      const testItems = [10, 25, 40].map((sec, i) => {
+        // Use different voice prompts if voice alert is enabled
+        const m = [5, 3, 0][i]; 
+        const soundFile = settings.noonVoiceAlert ? `noon_${m}.wav` : 'bell.wav';
+        const channelId = settings.noonVoiceAlert ? `solar_noon_v7_${m}` : 'solar_noon_v7';
+
+        debugLog.push(`[Test ${i+1}] ${sec}s | chan: ${channelId} | snd: ${soundFile}`);
+
+        return {
+          id: 9000 + i,
+          title: "Test Alarm",
+          body: `Notification test ${i+1} (${sec}s) - ${settings.noonVoiceAlert ? `Voice ${m}m` : 'Bell'}`,
+          at: new Date(now.getTime() + sec * 1000),
+          sound: soundFile,
+          channelId: channelId,
+          allowWhileIdle: true,
+          exact: true
+        };
+      });
+      
+      alert(`Debug Log:\n${debugLog.join('\n')}\n\nScheduling 3 test alarms... Close app to test!`);
+      await alarmService.scheduleTest(testItems);
+    } catch (e: any) {
+      debugLog.push(`Error: ${e.message || e}`);
+      alert(`Debug Log Error:\n${debugLog.join('\n')}`);
+    }
   };
 
   const safeFormat = (d: Date | undefined | null, fmt: string) => {

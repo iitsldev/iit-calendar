@@ -65,6 +65,24 @@ export function useWidgetSync() {
       await WidgetBridgePlugin.setItem({ key: 'study_stats', value: JSON.stringify({ streak: studyStreak, monthMinutes: studyMonthMin }), group: APP_GROUP });
 
       // Tell Native Widgets to reload UI
+      try {
+        await WidgetBridgePlugin.setRegisteredWidgets({
+          widgets: [
+            'com.iitcalendar.applet.StatsWidgetProvider',
+            'com.iitcalendar.applet.DailyTimesWidgetProvider'
+          ]
+        });
+      } catch (e) {
+        // Ignored on non-Android platforms
+      }
+      
+      console.log('Widget Sync - Sending data:', {
+        meditation: { streak: medStreak, monthMinutes: medMonth },
+        chanting: { streak: chantStreak, monthSessions: chantMonth },
+        study: { streak: studyStreak, monthMinutes: studyMonthMin },
+        sunTimes: timesArray
+      });
+
       await WidgetBridgePlugin.reloadAllTimelines();
     } catch (e) {
       console.error('Widget Sync Error:', e);

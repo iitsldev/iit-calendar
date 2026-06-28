@@ -61,13 +61,14 @@ class ChantService {
     this.notifyListeners();
   }
 
-  async logSession(chantId: string, count: number): Promise<void> {
+  async logSession(chantId: string, count: number, durationMin?: number): Promise<void> {
     const sessions = getLocal<ChantSession[]>('app_chant_sessions', []);
     const session: ChantSession = {
       id: Date.now().toString() + Math.random().toString(36).substr(2, 9),
       chantId,
       count,
-      timestamp: Date.now()
+      timestamp: Date.now(),
+      durationMin
     };
     sessions.push(session);
     setLocal('app_chant_sessions', sessions);

@@ -38,9 +38,17 @@ export const useI18n = () => {
     };
   }, [lang]);
 
-  const t = (path: string) => {
+  const t = (path: string, params?: Record<string, any>) => {
     const dict = translations[lang] || en;
-    return path.split('.').reduce((obj, key) => obj?.[key], dict) || path.split('.').reduce((obj, key) => obj?.[key], en) || path;
+    let result = path.split('.').reduce((obj, key) => obj?.[key], dict) || path.split('.').reduce((obj, key) => obj?.[key], en) || path;
+    
+    if (params && typeof result === 'string') {
+      Object.entries(params).forEach(([key, value]) => {
+        result = result.replace(new RegExp(`{{${key}}}`, 'g'), String(value));
+      });
+    }
+    
+    return result;
   };
 
   return { t, language: lang };

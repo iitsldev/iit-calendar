@@ -5,7 +5,7 @@ import { UserChant, ChantSession, UserChantStats } from '../types';
 import { ChantCounter } from '../components/chanting/ChantCounter';
 import { ChantList } from '../components/chanting/ChantList';
 import { ChantInsights } from '../components/chanting/ChantInsights';
-import { Plus, X, BarChart2, List, Trash2, Edit3, Lock, LogIn } from 'lucide-react';
+import { Plus, X, BarChart2, List, Trash2, Edit3, Lock, LogIn, ChevronDown, ChevronUp } from 'lucide-react';
 import { isSameDay, subDays } from 'date-fns';
 import { cn } from '../lib/utils';
 import { useUI } from '../UIContext';
@@ -37,7 +37,7 @@ export function ChantsScreen({ settings }: { settings: Settings }) {
   const [activeSessionCount, setActiveSessionCount] = useState(0);
   const [view, setView] = useState<'counter' | 'list' | 'insights'>('counter');
   const [showAddModal, setShowAddModal] = useState(false);
-  const [viewChant, setViewChant] = useState<UserChant | null>(null);
+  const [expandedPali, setExpandedPali] = useState(false);
   const [loading, setLoading] = useState(true);
 
   // New chant form
@@ -63,7 +63,7 @@ export function ChantsScreen({ settings }: { settings: Settings }) {
   }, [selectedChantId]);
 
   useEffect(() => {
-    if (showAddModal || viewChant) {
+    if (showAddModal) {
       document.body.style.overflow = 'hidden';
     } else {
       document.body.style.overflow = '';
@@ -71,7 +71,7 @@ export function ChantsScreen({ settings }: { settings: Settings }) {
     return () => {
       document.body.style.overflow = '';
     };
-  }, [showAddModal, viewChant]);
+  }, [showAddModal]);
 
   const stats = useMemo<UserChantStats>(() => {
     const distribution: Record<string, number> = {};
@@ -102,10 +102,10 @@ export function ChantsScreen({ settings }: { settings: Settings }) {
 
   const selectedChant = chants.find(c => c.id === selectedChantId);
 
-  const handleCommitSession = async () => {
+  const handleCommitSession = async (durationMin?: number) => {
     if (!selectedChantId || activeSessionCount === 0) return;
     
-    await chantService.logSession(selectedChantId, activeSessionCount);
+    await chantService.logSession(selectedChantId, activeSessionCount, durationMin);
     setActiveSessionCount(0);
     // Refresh history
     const history = await chantService.getSessionHistory();
@@ -188,15 +188,37 @@ export function ChantsScreen({ settings }: { settings: Settings }) {
               </button>
             </div>
 
-            {/* List and Counter Integration */}
-            <ChantList 
-              chants={chants} 
-              selectedChantId={selectedChantId} 
-              onSelect={setSelectedChantId} 
-              onAddChant={() => setShowAddModal(true)}
-              onViewChant={(id) => setViewChant(chants.find(c => c.id === id) || null)}
-              paliScript={settings.paliScript}
-            />
+            {/* Selected Chant Display */}
+            {selectedChant && (
+              <div className="glass-card rounded-[2.5rem] p-6 bg-white/40 dark:bg-slate-900/40 border border-white/60 dark:border-slate-800">
+                <div 
+                  className="flex justify-between items-center cursor-pointer select-none" 
+                  onClick={() => setExpandedPali(!expandedPali)}
+                >
+                  <h3 className="font-serif text-2xl text-stone-900 dark:text-stone-100 pr-4">
+                    <ConvertedText text={selectedChant.title} script={settings.paliScript} />
+                  </h3>
+                  <button className="w-10 h-10 flex-shrink-0 flex items-center justify-center rounded-full bg-white dark:bg-slate-800 shadow-sm border border-slate-100 dark:border-slate-700">
+                    {expandedPali ? <ChevronUp size={20} className="text-primary-400 dark:text-primary-500" /> : <ChevronDown size={20} className="text-primary-400 dark:text-primary-500" />}
+                  </button>
+                </div>
+                
+                <AnimatePresence>
+                  {expandedPali && (selectedChant.content || (selectedChant as any).chant) && (
+                    <motion.div 
+                      initial={{ height: 0, opacity: 0 }} 
+                      animate={{ height: 'auto', opacity: 1 }} 
+                      exit={{ height: 0, opacity: 0 }}
+                      className="overflow-hidden"
+                    >
+                      <div className="pt-6 mt-4 border-t border-slate-200 dark:border-slate-700 text-[var(--text-secondary)] whitespace-pre-wrap leading-relaxed text-lg">
+                        <ConvertedText text={selectedChant.content || (selectedChant as any).chant || ''} script={settings.paliScript} />
+                      </div>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              </div>
+            )}
 
             {selectedChant && (
               <ChantCounter
@@ -206,6 +228,17 @@ export function ChantsScreen({ settings }: { settings: Settings }) {
                 onCommit={handleCommitSession}
               />
             )}
+
+            <div className="pt-8 border-t border-slate-200 dark:border-slate-800">
+              <h4 className="font-serif text-xl mb-4 text-stone-900 dark:text-stone-100">{t('chant.selectChant')}</h4>
+              <ChantList 
+                chants={chants} 
+                selectedChantId={selectedChantId} 
+                onSelect={setSelectedChantId} 
+                onAddChant={() => setShowAddModal(true)}
+                paliScript={settings.paliScript}
+              />
+            </div>
           </motion.div>
         )}
 
@@ -282,32 +315,6 @@ export function ChantsScreen({ settings }: { settings: Settings }) {
         </div>
       )}
 
-      {/* View Chant Modal */}
-      {viewChant && (
-        <div 
-          className="fixed inset-0 z-[100] flex items-center justify-center p-6 bg-slate-900/60 dark:bg-black/70 backdrop-blur-sm"
-          onClick={(e) => {
-            if (e.target === e.currentTarget) setViewChant(null);
-          }}
-        >
-          <motion.div
-            initial={{ opacity: 0, scale: 0.9 }}
-            animate={{ opacity: 1, scale: 1 }}
-            className="w-full max-w-lg max-h-[80vh] flex flex-col bg-white/90 dark:bg-slate-900/90 backdrop-blur-md rounded-[2.5rem] p-8 shadow-2xl border border-white/50 dark:border-slate-800 overflow-hidden"
-          >
-            <div className="flex justify-between items-start gap-4 mb-6">
-              <h3 className="font-serif text-2xl text-stone-900 dark:text-stone-100 break-words min-w-0 pr-2">
-                <ConvertedText text={viewChant.title} script={settings.paliScript} />
-              </h3>
-              <button onClick={() => setViewChant(null)} className="text-primary-400 dark:text-primary-500 flex-shrink-0 mt-1"><X /></button>
-            </div>
-            
-            <div className="overflow-y-auto pr-4 scrollbar-hide text-[var(--text-secondary)] whitespace-pre-wrap leading-relaxed text-lg" style={{ overscrollBehavior: 'contain' }}>
-               <ConvertedText text={viewChant.content || (viewChant as any).chant || ''} script={settings.paliScript} />
-            </div>
-          </motion.div>
-        </div>
-      )}
     </div>
   );
 }

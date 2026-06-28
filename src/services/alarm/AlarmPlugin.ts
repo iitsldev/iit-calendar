@@ -21,6 +21,17 @@ class AlarmPlugin {
           // Request all needed permissions including sound and precise alerts
           await LocalNotifications.requestPermissions();
         }
+
+        // On Android 12+, we may need to check for exact alarm permission
+        if (Capacitor.getPlatform() === 'android') {
+          const exactStatus = await LocalNotifications.checkExactNotificationSetting();
+          if (exactStatus.exact_alarm !== 'granted') {
+            console.warn("AlarmPlugin: Exact alarm permission not granted. Alarms may be delayed.");
+            // We could call changeExactNotificationSetting() here, but it's better
+            // to do it when the user explicitly enables an alarm or via a UI hint.
+            // For now, let's just log it.
+          }
+        }
       } catch (e) {
         console.error("AlarmPlugin: Permission error", e);
       }
@@ -36,9 +47,6 @@ class AlarmPlugin {
         await LocalNotifications.schedule({
           notifications: items.map(item => {
             let sound = item.sound;
-            if (platform === 'android') {
-              sound = sound.replace(/\.[^/.]+$/, "");
-            }
             
             return {
               id: item.id,
@@ -47,11 +55,11 @@ class AlarmPlugin {
               schedule: {
                 at: item.at,
                 allowWhileIdle: true,
-                // 'alarm' mode uses setAlarmClock which is the most exact on Android
-                androidScheduleMode: 'alarm'
               },
               sound: sound,
               channelId: item.channelId,
+              // Use timeSensitive for iOS to ensure delivery in Focus modes
+              interruptionLevel: 'timeSensitive'
             };
           })
         });
@@ -96,18 +104,18 @@ class AlarmPlugin {
     if (Capacitor.isNativePlatform() && Capacitor.getPlatform() === 'android') {
       try {
         const baseChannels: { id: string, name: string, importance: Importance, sound: string, visibility: Visibility }[] = [
-          { id: 'meditation_v2', name: 'Meditation', importance: 5, sound: 'bell', visibility: 1 },
-          { id: 'solar_noon_v2', name: 'Solar Noon', importance: 5, sound: 'bell', visibility: 1 },
-          { id: 'dawn_v2',       name: 'Dawn',       importance: 5, sound: 'bell', visibility: 1 },
-          { id: 'study_v2',      name: 'Study',      importance: 5, sound: 'bell', visibility: 1 }
+          { id: 'meditation_v7', name: 'Meditation', importance: 4, sound: 'bell.wav', visibility: 1 },
+          { id: 'solar_noon_v7', name: 'Solar Noon', importance: 4, sound: 'bell.wav', visibility: 1 },
+          { id: 'dawn_v7',       name: 'Dawn',       importance: 4, sound: 'bell.wav', visibility: 1 },
+          { id: 'study_v7',      name: 'Study',      importance: 4, sound: 'bell.wav', visibility: 1 }
         ];
 
         // Create specific channels for solar noon countdown voices
         const voiceChannels = [5, 4, 3, 2, 1, 0].map(m => ({
-          id: `solar_noon_${m}`,
+          id: `solar_noon_v7_${m}`,
           name: `Solar Noon ${m}m`,
-          importance: 5 as Importance,
-          sound: `noon_${m}`,
+          importance: 4 as Importance,
+          sound: `noon_${m}.wav`,
           visibility: 1 as Visibility
         }));
 

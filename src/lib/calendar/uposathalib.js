@@ -139,16 +139,31 @@ export function getUposathasForYear(ce) {
   return results;
 }
 
-function ordinalSuffix(n) {
-  const v = n % 100;
-  // 11th, 12th, 13th are exceptions to the 1st/2nd/3rd rule
-  if (v >= 11 && v <= 13) return "th";
-  switch (n % 10) {
-    case 1: return _t("st");
-    case 2: return "nd";
-    case 3: return "rd";
-    default: return "th";
-  }
+function ordinalPali(n) {
+  const paliOrdinals = {
+    1:  "paṭhama",
+    2:  "dutiya",
+    3:  "tatiya",
+    4:  "catuttha",
+    5:  "pañcama",
+    6:  "chaṭṭha",
+    7:  "sattama",
+    8:  "aṭṭhama",
+    9:  "navama",
+    10: "dasama",
+    11: "ekādasama",
+    12: "dvādasama",
+    13: "terasama",
+    14: "cuddasama",
+    15: "pannarasama",
+    16: "soḷasama",
+    17: "sattarasama",
+    18: "aṭṭhārasama",
+    19: "ekūnavīsatima",
+  };
+
+  if (n >= 1 && n <= 19) return paliOrdinals[n];
+  throw new RangeError(`Pāli ordinal not defined for n=${n} (supported: 1–19)`);
 }
 
 export function uposathaPositionInSeason(uposatha) {
@@ -156,8 +171,8 @@ export function uposathaPositionInSeason(uposatha) {
   const phase   = (uposatha.uDays === 15 || uposatha.phase === "full")
     ? "paṇṇarasī"
     : "cātuddasī";
-  const suffix  = ordinalSuffix(ordinal);
-  return { ordinal, phase, label: `${ordinal}${suffix} <br/> ${phase}` };
+  const paliNumber  = ordinalPali(ordinal);
+  return { ordinal, phase, label: `${paliNumber} <br/> ${phase}` };
 }
 
 export function uposathasRemainingInSeason(uposatha) {

@@ -1,8 +1,8 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { Play, Square, RotateCcw, Volume2, Activity, Award, Clock, Settings2, X, Minus, Plus, Pause, Sun } from 'lucide-react';
+import { Play, Square, RotateCcw, Volume2, Activity, Award, Clock, Settings2, X, Minus, Plus, Pause, Sun, ChevronLeft, ChevronRight } from 'lucide-react';
 import { cn } from '../lib/utils';
-import { format, differenceInDays, startOfDay, subDays, isSameDay } from 'date-fns';
+import { format, differenceInDays, startOfDay, subDays, isSameDay, subWeeks, subMonths, startOfWeek, endOfWeek, startOfMonth, endOfMonth } from 'date-fns';
 import { alarmService, ActiveMeditation } from '../services/alarm/AlarmService';
 import { meditationService } from '../services/MeditationService';
 import { useI18n } from '../hooks/useI18n';
@@ -30,6 +30,9 @@ export function MeditationScreen() {
   const [stats, setStats] = useState<MeditationStats>(loadStats);
   const [isPaused, setIsPaused] = useState(false);
   const [wakeLock, setWakeLock] = useState<any>(null);
+
+  const [chartView, setChartView] = useState<'day' | 'week' | 'month'>('day');
+  const [chartOffset, setChartOffset] = useState(0);
 
   const toggleWakeLock = async () => {
     if (!('wakeLock' in navigator)) return;
@@ -313,25 +316,83 @@ export function MeditationScreen() {
 
   const today = startOfDay(new Date());
   
-  const chartDays = Array.from({ length: 7 }).map((_, i) => {
-    const d = subDays(today, 6 - i);
-    return {
-      date: d,
-      label: format(d, 'E')[0],
-      minutes: 0
-    };
-  });
+  // Calculate chart data dynamically based on view and offset
+  let chartData: { label: string; minutes: number; isCurrent: boolean; _start?: Date; _end?: Date; _date?: Date }[] = [];
+  
+  if (chartView === 'day') {
+    const endDay = subDays(today, chartOffset * 7);
+    chartData = Array.from({ length: 7 }).map((_, i) => {
+      const d = subDays(endDay, 6 - i);
+      return {
+        label: format(d, 'E')[0],
+        minutes: 0,
+        isCurrent: chartOffset === 0 && isSameDay(d, today),
+        _date: d,
+      };
+    });
+    
+    stats.sessions.forEach(s => {
+      const sDate = startOfDay(new Date(s.date));
+      const dayData = chartData.find(d => isSameDay(d._date!, sDate));
+      if (dayData) {
+        dayData.minutes += s.durationMin;
+      }
+    });
+  } else if (chartView === 'week') {
+    const endWeekDate = subWeeks(today, chartOffset * 7);
+    chartData = Array.from({ length: 7 }).map((_, i) => {
+      const d = subWeeks(endWeekDate, 6 - i);
+      const start = startOfWeek(d, { weekStartsOn: 1 });
+      const end = endOfWeek(d, { weekStartsOn: 1 });
+      return {
+        label: format(start, 'dd/MM'),
+        minutes: 0,
+        isCurrent: chartOffset === 0 && i === 6,
+        _start: start,
+        _end: end,
+      };
+    });
+    
+    stats.sessions.forEach(s => {
+      const sDate = startOfDay(new Date(s.date));
+      const weekData = chartData.find(d => sDate >= d._start! && sDate <= d._end!);
+      if (weekData) {
+        weekData.minutes += s.durationMin;
+      }
+    });
+  } else if (chartView === 'month') {
+    const endMonthDate = subMonths(today, chartOffset * 6);
+    chartData = Array.from({ length: 6 }).map((_, i) => {
+      const d = subMonths(endMonthDate, 5 - i);
+      const start = startOfMonth(d);
+      const end = endOfMonth(d);
+      return {
+        label: format(start, 'MMM'),
+        minutes: 0,
+        isCurrent: chartOffset === 0 && i === 5,
+        _start: start,
+        _end: end,
+      };
+    });
+    
+    stats.sessions.forEach(s => {
+      const sDate = startOfDay(new Date(s.date));
+      const monthData = chartData.find(d => sDate >= d._start! && sDate <= d._end!);
+      if (monthData) {
+        monthData.minutes += s.durationMin;
+      }
+    });
+  }
 
-  stats.sessions.forEach(s => {
+  const maxMinutesInChart = Math.max(...chartData.map(d => d.minutes), 20);
+  
+  // Keep original weeklyMinutes calculation for the stats cards (always last 7 days)
+  const last7Days = Array.from({ length: 7 }).map((_, i) => subDays(today, 6 - i));
+  const weeklyMinutes = stats.sessions.reduce((acc, s) => {
     const sDate = startOfDay(new Date(s.date));
-    const dayData = chartDays.find(d => isSameDay(d.date, sDate));
-    if (dayData) {
-      dayData.minutes += s.durationMin;
-    }
-  });
-
-  const maxMinutesInChart = Math.max(...chartDays.map(d => d.minutes), 20);
-  const weeklyMinutes = chartDays.reduce((acc, curr) => acc + curr.minutes, 0);
+    if (last7Days.some(d => isSameDay(d, sDate))) return acc + s.durationMin;
+    return acc;
+  }, 0);
   
   const totalMinutes = stats.sessions.reduce((acc, curr) => acc + curr.durationMin, 0);
   const totalHours = Math.floor(totalMinutes / 60);
@@ -554,28 +615,70 @@ export function MeditationScreen() {
             <Activity size={20} style={{ color: 'var(--sm-text-muted)' }} />
           </div>
 
+          {/* Chart Controls */}
+          <div className="flex justify-between items-center mb-6">
+            <div className="flex bg-stone-100 dark:bg-stone-900 rounded-full p-1" style={{ backgroundColor: 'var(--sm-surface)' }}>
+              {(['day', 'week', 'month'] as const).map(view => (
+                <button
+                  key={view}
+                  onClick={() => { setChartView(view); setChartOffset(0); }}
+                  className={cn(
+                    "px-3 sm:px-4 py-1.5 text-[10px] font-bold uppercase tracking-wider rounded-full transition-all",
+                    chartView === view 
+                      ? "shadow-sm" 
+                      : "opacity-60 hover:opacity-100"
+                  )}
+                  style={chartView === view ? { backgroundColor: 'var(--sm-card-bg)', color: 'var(--sm-accent)' } : { color: 'var(--sm-text-secondary)' }}
+                >
+                  {view === 'day' ? 'Day' : view === 'week' ? 'Week' : 'Month'}
+                </button>
+              ))}
+            </div>
+
+            <div className="flex items-center gap-1">
+              <button 
+                onClick={() => setChartOffset(prev => prev + 1)}
+                className="p-1.5 rounded-full transition-colors opacity-60 hover:opacity-100"
+                style={{ backgroundColor: 'var(--sm-surface)', color: 'var(--sm-text-primary)' }}
+              >
+                <ChevronLeft size={16} />
+              </button>
+              <button 
+                onClick={() => setChartOffset(prev => Math.max(0, prev - 1))}
+                disabled={chartOffset === 0}
+                className={cn(
+                  "p-1.5 rounded-full transition-colors",
+                  chartOffset === 0 ? "opacity-30 cursor-not-allowed" : "opacity-60 hover:opacity-100"
+                )}
+                style={{ backgroundColor: 'var(--sm-surface)', color: 'var(--sm-text-primary)' }}
+              >
+                <ChevronRight size={16} />
+              </button>
+            </div>
+          </div>
+
           <div className="flex items-end justify-between h-32 pt-4 pb-2 border-b" style={{ borderColor: 'var(--sm-border)' }}>
-            {chartDays.map((day, i) => {
-              const h = day.minutes > 0 ? (day.minutes / maxMinutesInChart) * 100 : 0;
-              const isToday = i === chartDays.length - 1;
+            {chartData.map((item, i) => {
+              const h = item.minutes > 0 ? (item.minutes / maxMinutesInChart) * 100 : 0;
               return (
-                <div key={`chart-col-${i}`} className="flex flex-col items-center gap-3 w-1/7">
+                <div key={`chart-col-${chartView}-${chartOffset}-${i}`} className="flex flex-col items-center gap-3" style={{ width: `${100 / chartData.length}%` }}>
                   <div className="w-full flex justify-center h-20 items-end">
                     <motion.div 
+                      key={`bar-${chartView}-${chartOffset}-${i}`}
                       initial={{ height: 0 }}
                       animate={{ height: `${h}%` }}
                       transition={{ duration: 1, delay: i * 0.1 }}
                       className="w-2 sm:w-3 rounded-full"
                       style={{ 
-                        backgroundColor: day.minutes > 0 
-                      ? (isToday ? 'var(--sm-accent)' : 'var(--sm-text-disabled)') 
+                        backgroundColor: item.minutes > 0 
+                      ? (item.isCurrent ? 'var(--sm-accent)' : 'var(--sm-text-disabled)') 
                       : 'transparent',
-                        minHeight: day.minutes > 0 ? '4px' : '0'
+                        minHeight: item.minutes > 0 ? '4px' : '0'
                       }}
                     />
                   </div>
-                  <span className="text-xs font-bold uppercase" style={{ color: isToday ? 'var(--sm-accent)' : 'var(--sm-text-muted)' }}>
-                    {day.label}
+                  <span className="text-[10px] sm:text-xs font-bold uppercase whitespace-nowrap" style={{ color: item.isCurrent ? 'var(--sm-accent)' : 'var(--sm-text-muted)' }}>
+                    {item.label}
                   </span>
                 </div>
               );
@@ -583,8 +686,12 @@ export function MeditationScreen() {
           </div>
           
             <div className="flex justify-between items-center mt-4 text-xs font-medium" style={{ color: 'var(--sm-text-secondary)' }}>
-              <span>{t('meditation.dailyAverage')}</span>
-              <span style={{ color: 'var(--sm-accent)' }}>{(weeklyMinutes / 7).toFixed(1)} {t('meditation.mins')}</span>
+              <span>
+                {chartView === 'day' ? t('meditation.dailyAverage') : chartView === 'week' ? 'Weekly Average' : 'Monthly Average'}
+              </span>
+              <span style={{ color: 'var(--sm-accent)' }}>
+                {(chartData.reduce((acc, curr) => acc + curr.minutes, 0) / chartData.length).toFixed(1)} {t('meditation.mins')}
+              </span>
             </div>
           </div>
         </motion.div>
