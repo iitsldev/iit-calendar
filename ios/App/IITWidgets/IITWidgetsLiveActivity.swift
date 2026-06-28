@@ -9,6 +9,7 @@ import ActivityKit
 import WidgetKit
 import SwiftUI
 
+@available(iOS 16.1, *)
 struct IITWidgetsAttributes: ActivityAttributes {
     public struct ContentState: Codable, Hashable {
         // Dynamic stateful properties about your activity go here!
@@ -19,6 +20,7 @@ struct IITWidgetsAttributes: ActivityAttributes {
     var name: String
 }
 
+@available(iOS 16.1, *)
 struct IITWidgetsLiveActivity: Widget {
     var body: some WidgetConfiguration {
         ActivityConfiguration(for: IITWidgetsAttributes.self) { context in
@@ -56,12 +58,14 @@ struct IITWidgetsLiveActivity: Widget {
     }
 }
 
+@available(iOS 16.1, *)
 extension IITWidgetsAttributes {
     fileprivate static var preview: IITWidgetsAttributes {
         IITWidgetsAttributes(name: "World")
     }
 }
 
+@available(iOS 16.1, *)
 extension IITWidgetsAttributes.ContentState {
     fileprivate static var smiley: IITWidgetsAttributes.ContentState {
         IITWidgetsAttributes.ContentState(emoji: "😀")
@@ -70,11 +74,4 @@ extension IITWidgetsAttributes.ContentState {
      fileprivate static var starEyes: IITWidgetsAttributes.ContentState {
          IITWidgetsAttributes.ContentState(emoji: "🤩")
      }
-}
-
-#Preview("Notification", as: .content, using: IITWidgetsAttributes.preview) {
-   IITWidgetsLiveActivity()
-} contentStates: {
-    IITWidgetsAttributes.ContentState.smiley
-    IITWidgetsAttributes.ContentState.starEyes
 }
