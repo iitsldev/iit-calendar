@@ -5,10 +5,12 @@
 //  Created by totden on 16/6/26.
 //
 
+#if compiler(>=6.0)
 import AppIntents
 import SwiftUI
 import WidgetKit
 
+@available(iOS 18.0, *)
 struct IITWidgetsControl: ControlWidget {
     static let kind: String = "com.iitcalendar.applet.IITWidgets"
 
@@ -30,6 +32,7 @@ struct IITWidgetsControl: ControlWidget {
     }
 }
 
+@available(iOS 18.0, *)
 extension IITWidgetsControl {
     struct Value {
         var isRunning: Bool
@@ -48,6 +51,7 @@ extension IITWidgetsControl {
     }
 }
 
+@available(iOS 18.0, *)
 struct TimerConfiguration: ControlConfigurationIntent {
     static let title: LocalizedStringResource = "Timer Name Configuration"
 
@@ -55,6 +59,7 @@ struct TimerConfiguration: ControlConfigurationIntent {
     var timerName: String
 }
 
+@available(iOS 18.0, *)
 struct StartTimerIntent: SetValueIntent {
     static let title: LocalizedStringResource = "Start a timer"
 
@@ -75,3 +80,4 @@ struct StartTimerIntent: SetValueIntent {
         return .result()
     }
 }
+#endif
