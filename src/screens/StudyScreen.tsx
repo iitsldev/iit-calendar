@@ -279,11 +279,11 @@ export function StudyScreen() {
     <div className={cn("space-y-6 animate-in fade-in duration-700 p-2 min-h-[70vh] rounded-[2.5rem] transition-colors relative", getModeBg())}>
       
       {/* Top Bar for Study Screen */}
-      <div className="flex justify-between items-center px-4 pt-2">
+      <div className="flex flex-wrap justify-between items-center px-4 pt-2 gap-y-3">
         <h2 className="font-serif text-xl font-bold text-slate-800 dark:text-slate-200">
           Pomodoro
         </h2>
-        <div className="flex gap-2">
+        <div className="flex flex-wrap gap-2">
           <button 
             onClick={() => setShowReport(true)}
             className="flex items-center gap-1.5 px-3 py-1.5 bg-white/40 dark:bg-black/20 rounded-full text-xs font-bold uppercase tracking-widest backdrop-blur-md hover:bg-white/60 dark:hover:bg-black/40 transition-colors"

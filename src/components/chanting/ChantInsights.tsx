@@ -61,7 +61,7 @@ export function ChantInsights({ chants, sessions, stats }: ChantInsightsProps) {
 
         <div className="glass-card rounded-[2.5rem] p-8 relative overflow-hidden bg-white/50 dark:bg-slate-900 shadow-sm border border-white/60 dark:border-slate-800">
           <div className="flex justify-between items-start mb-4">
-            <h3 className="text-sm font-black uppercase tracking-[0.2em] text-slate-400">{t('chant.totalTime', 'Total Time')}</h3>
+            <h3 className="text-sm font-black uppercase tracking-[0.2em] text-slate-400">{t('chant.totalTime')}</h3>
             <div className="p-3 bg-[#7f5700]/10 rounded-2xl text-[#7f5700]">
               <Calendar size={20} />
             </div>
@@ -70,7 +70,7 @@ export function ChantInsights({ chants, sessions, stats }: ChantInsightsProps) {
             <span className="font-serif text-5xl font-medium text-[#7f5700]">
               {totalTimeHours > 0 ? `${totalTimeHours}h ${totalTimeRemainderMin}m` : `${totalTimeRemainderMin}m`}
             </span>
-            <span className="text-slate-400 font-bold uppercase text-[0.65rem] tracking-widest">{t('chant.chanted', 'Chanted')}</span>
+            <span className="text-slate-400 font-bold uppercase text-[0.65rem] tracking-widest">{t('chant.chanted')}</span>
           </div>
         </div>
       </div>

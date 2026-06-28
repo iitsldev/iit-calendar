@@ -32,6 +32,8 @@ import { alarmService } from './services/alarm/AlarmService';
 import { useUI } from './UIContext';
 import { App as CapApp } from '@capacitor/app';
 
+const TABS = ['calendar', 'meditation', 'chants', 'book', 'study'] as const;
+
 export default function App() {
   const { t } = useI18n();
   useWidgetSync();
@@ -125,6 +127,47 @@ export default function App() {
   const [selectedDate, setSelectedDate] = React.useState(new Date());
   const [activeTab, setActiveTab] = React.useState('calendar');
   const { showSettings, setShowSettings } = useUI();
+
+  useEffect(() => {
+    const main = document.getElementById('main-tabs');
+    if (!main) return;
+    
+    if (!('onscrollsnapchange' in window)) {
+      const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            const tabId = entry.target.id.replace('tab-', '');
+            setActiveTab(tabId);
+          }
+        });
+      }, { root: main, threshold: 0.5 });
+      
+      TABS.forEach(tab => {
+        const el = document.getElementById(`tab-${tab}`);
+        if (el) observer.observe(el);
+      });
+      
+      return () => observer.disconnect();
+    } else {
+      const handleSnapChange = (e: any) => {
+        const target = e.snapTargetInline || e.snapTargetBlock;
+        if (target) {
+          const tabId = target.id.replace('tab-', '');
+          setActiveTab(tabId);
+        }
+      };
+      main.addEventListener('scrollsnapchange', handleSnapChange as any);
+      return () => main.removeEventListener('scrollsnapchange', handleSnapChange as any);
+    }
+  }, []);
+
+  const handleTabClick = (tab: string) => {
+    setActiveTab(tab);
+    const el = document.getElementById(`tab-${tab}`);
+    if (el) {
+      el.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+    }
+  };
   
   // Choose engine based on settings
   const calendarEngine = useMemo(() => {
@@ -155,7 +198,7 @@ export default function App() {
 
   return (
     <div 
-      className="flex flex-col min-h-screen font-sans transition-colors duration-500 UT" 
+      className="flex flex-col h-[100dvh] overflow-hidden font-sans transition-colors duration-500 UT" 
       lang={settings.language}
       style={{ backgroundColor: 'var(--bg-main)' }}
     >
@@ -212,8 +255,12 @@ export default function App() {
         </button>
       </header>
 
-      <main className="flex-1 px-3 pb-32">
-        {activeTab === 'calendar' && (
+      <main 
+        id="main-tabs"
+        className="flex-1 flex overflow-x-auto overflow-y-hidden snap-x snap-mandatory hide-scrollbar"
+        style={{ scrollBehavior: 'smooth' }}
+      >
+        <div id="tab-calendar" className="min-w-full w-full h-full flex-shrink-0 snap-center px-3 overflow-y-auto pb-32">
           <CalendarScreen 
             settings={settings}
             onUpdateSettings={setSettings}
@@ -224,15 +271,23 @@ export default function App() {
             calendarEngine={calendarEngine}
             sunCalc={sunCalc}
           />
-        )}
+        </div>
         
-        <div className={cn(activeTab !== 'meditation' && "hidden")}>
+        <div id="tab-meditation" className="min-w-full w-full h-full flex-shrink-0 snap-center px-3 overflow-y-auto pb-32">
           <MeditationScreen />
         </div>
 
-        {activeTab === 'chants' && <ChantsScreen settings={settings} />}
-        {activeTab === 'study' && <StudyScreen />}
-        {activeTab === 'book' && <BookScreen settings={settings} />}
+        <div id="tab-chants" className="min-w-full w-full h-full flex-shrink-0 snap-center px-3 overflow-y-auto pb-32">
+          <ChantsScreen settings={settings} />
+        </div>
+
+        <div id="tab-book" className="min-w-full w-full h-full flex-shrink-0 snap-center px-3 overflow-y-auto pb-32">
+          <BookScreen settings={settings} />
+        </div>
+
+        <div id="tab-study" className="min-w-full w-full h-full flex-shrink-0 snap-center px-3 overflow-y-auto pb-32">
+          <StudyScreen />
+        </div>
       </main>
 
       <SettingsModal 
@@ -245,11 +300,11 @@ export default function App() {
 
       {/* Bottom Nav */}
       <nav className="fixed bottom-0 left-0 right-0 z-50 glass-card px-6 py-5 rounded-t-[2.5rem] flex justify-around items-center border-t border-white/80 dark:border-slate-800/80 bg-white/70 dark:bg-slate-900/70 shadow-[0_-10px_40px_rgba(0,0,0,0.03)] dark:shadow-[0_-10px_40px_rgba(0,0,0,0.3)] backdrop-blur-3xl overflow-x-auto">
-        <NavButton active={activeTab === 'calendar'} onClick={() => setActiveTab('calendar')} icon={<CalendarIcon size={22}/>} label={t('common.calendar') || 'Calendar'} />
-        <NavButton active={activeTab === 'meditation'} onClick={() => setActiveTab('meditation')} icon={<Timer size={22}/>} label={t('common.stillness') || 'Stillness'} />
-        <NavButton active={activeTab === 'chants'} onClick={() => setActiveTab('chants')} icon={<Wind size={22}/>} label={t('common.chants') || 'Chants'} />
-        <NavButton active={activeTab === 'book'} onClick={() => setActiveTab('book')} icon={<Book size={22}/>} label={t('common.book') || 'Book'} />
-        <NavButton active={activeTab === 'study'} onClick={() => setActiveTab('study')} icon={<BookOpen size={22}/>} label={t('common.study') || 'Study'} />
+        <NavButton active={activeTab === 'calendar'} onClick={() => handleTabClick('calendar')} icon={<CalendarIcon size={22}/>} label={t('common.calendar') || 'Calendar'} />
+        <NavButton active={activeTab === 'meditation'} onClick={() => handleTabClick('meditation')} icon={<Timer size={22}/>} label={t('common.stillness') || 'Stillness'} />
+        <NavButton active={activeTab === 'chants'} onClick={() => handleTabClick('chants')} icon={<Wind size={22}/>} label={t('common.chants') || 'Chants'} />
+        <NavButton active={activeTab === 'book'} onClick={() => handleTabClick('book')} icon={<Book size={22}/>} label={t('common.book') || 'Book'} />
+        <NavButton active={activeTab === 'study'} onClick={() => handleTabClick('study')} icon={<BookOpen size={22}/>} label={t('common.study') || 'Study'} />
       </nav>
     </div>
   );

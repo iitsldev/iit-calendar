@@ -6,6 +6,16 @@ import { DataProvider } from './DataContext';
 import { UIProvider } from './UIContext';
 import { PrivacyScreen } from './screens/PrivacyScreen';
 
+import { registerSW } from 'virtual:pwa-register';
+
+const updateSW = registerSW({
+  onNeedRefresh() {
+    if (confirm('New content available. Reload?')) {
+      updateSW(true);
+    }
+  }
+});
+
 const path = window.location.pathname;
 
 createRoot(document.getElementById('root')!).render(
