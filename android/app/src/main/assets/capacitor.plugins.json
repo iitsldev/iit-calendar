@@ -24,6 +24,10 @@
 		"classpath": "com.capacitorjs.plugins.share.SharePlugin"
 	},
 	{
+		"pkg": "@capgo/capacitor-updater",
+		"classpath": "ee.forgr.capacitor_updater.CapacitorUpdaterPlugin"
+	},
+	{
 		"pkg": "capacitor-widget-bridge",
 		"classpath": "de.kisimedia.plugins.widgetbridgeplugin.WidgetBridgePlugin"
 	}

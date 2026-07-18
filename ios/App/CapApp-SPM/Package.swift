@@ -18,6 +18,7 @@ let package = Package(
         .package(name: "CapacitorHaptics", path: "../../../node_modules/.pnpm/@capacitor+haptics@8.0.2_@capacitor+core@8.4.0/node_modules/@capacitor/haptics"),
         .package(name: "CapacitorLocalNotifications", path: "../../../node_modules/.pnpm/@capacitor+local-notifications@8.2.0_@capacitor+core@8.4.0/node_modules/@capacitor/local-notifications"),
         .package(name: "CapacitorShare", path: "../../../node_modules/.pnpm/@capacitor+share@8.0.1_@capacitor+core@8.4.0/node_modules/@capacitor/share"),
+        .package(name: "CapgoCapacitorUpdater", path: "../../../node_modules/.pnpm/@capgo+capacitor-updater@8.51.2_@capacitor+core@8.4.0/node_modules/@capgo/capacitor-updater"),
         .package(name: "CapacitorWidgetBridge", path: "../../../node_modules/.pnpm/capacitor-widget-bridge@8.1.0_@capacitor+core@8.4.0/node_modules/capacitor-widget-bridge")
     ],
     targets: [
@@ -32,6 +33,7 @@ let package = Package(
                 .product(name: "CapacitorHaptics", package: "CapacitorHaptics"),
                 .product(name: "CapacitorLocalNotifications", package: "CapacitorLocalNotifications"),
                 .product(name: "CapacitorShare", package: "CapacitorShare"),
+                .product(name: "CapgoCapacitorUpdater", package: "CapgoCapacitorUpdater"),
                 .product(name: "CapacitorWidgetBridge", package: "CapacitorWidgetBridge")
             ]
         )

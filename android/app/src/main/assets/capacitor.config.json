@@ -1,5 +1,12 @@
 {
 	"appId": "com.iitcalendar.applet",
 	"appName": "IIT Calendar",
-	"webDir": "dist"
+	"webDir": "dist",
+	"plugins": {
+		"CapacitorUpdater": {
+			"autoUpdate": true,
+			"updateUrl": "https://calendar.iit.lk/api/update",
+			"statsUrl": ""
+		}
+	}
 }
