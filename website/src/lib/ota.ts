@@ -12,6 +12,8 @@ export interface ReleaseAsset {
 
 export interface GitHubRelease {
   tag_name: string;
+  name?: string;
+  published_at?: string;
   assets: ReleaseAsset[];
 }
 
