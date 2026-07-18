@@ -75,6 +75,7 @@ export default function App() {
       solarNoonBell: false,
       dawnBell: false,
       isIITStudent: true,
+    };
   });
 
   useEffect(() => {
