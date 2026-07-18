@@ -2,25 +2,31 @@ apply plugin: 'com.android.application'
 // Apply the Google Services plugin cleanly at the top scope so it registers dependencies before evaluation
 apply plugin: 'com.google.gms.google-services'
 
-def versionPropsFile = file('version.properties')
-def versionProps = new Properties()
+import groovy.json.JsonSlurper
 
-if (versionPropsFile.canRead()) {
-    versionProps.load(new FileInputStream(versionPropsFile))
+def getAppVersion() {
+    def jsonFile = file('../../package.json')
+    if (jsonFile.exists()) {
+        def parsedJson = new JsonSlurper().parseText(jsonFile.text)
+        return parsedJson.version ?: "1.0.0"
+    }
+    return "1.0.0"
 }
 
-def buildNumber = (versionProps['buildNumber'] ?: "5").toInteger()
-
-// Increment buildNumber only during actual build tasks to avoid accidental increments
-def isBuilding = gradle.startParameter.taskNames.any { it.toLowerCase().contains('assemble') || it.toLowerCase().contains('bundle') }
-
-if (!System.getenv("CI") && isBuilding) {
-    buildNumber++
-    versionProps['buildNumber'] = buildNumber.toString()
-    versionProps.store(versionPropsFile.newWriter(), null)
-} else if (System.getenv("CI_BUILD_NUMBER")) {
-    buildNumber = System.getenv("CI_BUILD_NUMBER").toInteger()
+def getAppVersionCode(String versionStr) {
+    try {
+        def parts = versionStr.split('\\.')
+        def major = parts[0].toInteger()
+        def minor = parts[1].toInteger()
+        def patch = parts[2].split('-')[0].toInteger()
+        return major * 1000000 + minor * 1000 + patch
+    } catch (Exception e) {
+        return 1
+    }
 }
+
+def appVersionName = getAppVersion()
+def appVersionCode = getAppVersionCode(appVersionName)
 
 android {
     namespace = "com.iitcalendar.applet"
@@ -30,8 +36,8 @@ android {
         applicationId "com.iitcalendar.applet"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode buildNumber
-        versionName "1.0." + buildNumber
+        versionCode appVersionCode
+        versionName appVersionName
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         
         aaptOptions {
