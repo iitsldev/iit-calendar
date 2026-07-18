@@ -1,5 +1,7 @@
 packages:
   - '.'
+  - 'website'
+
 
 allowBuilds:
   '@google/genai': true
