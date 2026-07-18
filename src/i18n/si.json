@@ -198,6 +198,7 @@
     "milestone": "කඩඉම",
     "createChant": "සජ්ඣායනාව සාදන්න",
     "loading": "පූරණය වෙමින් පවතී...",
+    "selectChant": "සජ්ඣායනාව තෝරන්න",
     "ofChants": "සජ්ඣායනා {{count}} කින්",
     "tapToChant": "ගණනය කිරීමට තට්ටු කරන්න",
     "logSession": "වාරය සටහන් කරන්න",

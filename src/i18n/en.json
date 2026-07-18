@@ -216,6 +216,7 @@
     "milestone": "Milestone",
     "createChant": "Create Chant",
     "loading": "Loading...",
+    "selectChant": "Select Chant",
     "ofChants": "of {{count}} chants",
     "tapToChant": "Tap to Chant",
     "logSession": "Log Session",

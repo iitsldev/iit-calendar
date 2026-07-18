@@ -11,6 +11,7 @@ export async function POST(request: NextRequest) {
     }
 
     const { version_build, version_name } = body;
+    console.log('👉 Capgo Update Request:', { version_build, version_name });
 
     if (!version_build) {
       return NextResponse.json({ error: 'Missing version_build parameter' }, { status: 400 });
@@ -74,14 +75,17 @@ export async function POST(request: NextRequest) {
         checksum = bundle.sha256;
       }
 
-      return NextResponse.json({
+      const responsePayload = {
         version: latestMatch.parsedRel.clean,
         url: downloadUrl,
         checksum: checksum,
-      });
+      };
+      console.log('👈 Capgo Update Response:', responsePayload);
+      return NextResponse.json(responsePayload);
     }
 
     // Already on the latest version or no newer matching version
+    console.log('👈 Capgo Update Response: {} (Up to date)');
     return NextResponse.json({});
   } catch (error: any) {
     console.error('Update API error:', error);
