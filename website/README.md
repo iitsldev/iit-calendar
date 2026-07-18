@@ -58,6 +58,24 @@ To ensure high performance and prevent hitting GitHub API rate limits, the serve
 - **Endpoint**: `GET /api/download?version=<version>`
 - **Response**: Streams the `web-build.zip` bundle for the specified version.
 
+### 3. List Available Versions
+- **Endpoint**: `GET /api/versions`
+- **Query Parameters (Optional)**:
+  - `major`: Filter by major version (e.g. `?major=1`).
+  - `minor`: Filter by minor version (e.g. `?minor=0`).
+- **Response**:
+  ```json
+  [
+    {
+      "version": "1.0.15",
+      "name": "Release v1.0.15",
+      "tag_name": "v1.0.15",
+      "published_at": "2026-06-05T05:54:07Z",
+      "download_url": "https://yourwebsite.com/api/download?version=1.0.15"
+    }
+  ]
+  ```
+
 ---
 
 ## Development & Testing
