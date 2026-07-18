@@ -31,6 +31,8 @@ import { CSS_VARS } from './theme/index';
 import { alarmService } from './services/alarm/AlarmService';
 import { useUI } from './UIContext';
 import { App as CapApp } from '@capacitor/app';
+import { Capacitor } from '@capacitor/core';
+import { CapacitorUpdater } from '@capgo/capacitor-updater';
 
 const TABS = ['calendar', 'meditation', 'chants', 'book', 'study'] as const;
 
@@ -73,8 +75,15 @@ export default function App() {
       solarNoonBell: false,
       dawnBell: false,
       isIITStudent: true,
-    };
   });
+
+  useEffect(() => {
+    if (Capacitor.isNativePlatform()) {
+      CapacitorUpdater.notifyAppReady()
+        .then(() => console.log('Capgo: App ready notified successfully'))
+        .catch(err => console.error('Capgo: Failed to notify app ready', err));
+    }
+  }, []);
 
   useEffect(() => {
     localStorage.setItem('iit_settings', JSON.stringify(settings));
