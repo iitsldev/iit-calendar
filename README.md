@@ -77,6 +77,16 @@ npm run cap:open:android
 npm run cap:open:ios
 ```
 
+## Live Updates & Versioning
+
+This project uses **Capgo OTA (Over-The-Air) live updates** for the mobile applications to instantly deploy UI changes and bug fixes to users without going through App Store review. 
+
+Because of this, we follow a strict versioning architecture:
+- **Patch versions** (`1.0.x`) are deployed instantly via OTA.
+- **Minor/Major versions** (`1.x.0`) require a new binary update via the App Store.
+
+For detailed guidelines on how to bump versions and release updates, read the [Versioning & Update Guide](file:///Users/chathura/code/iit-calendar/VERSIONING.md).
+
 ## License
 
 This project is licensed under the **Creative Commons Attribution-NonCommercial 4.0 International (CC BY-NC 4.0)** license.
