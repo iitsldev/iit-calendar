@@ -64,7 +64,7 @@ export async function fetchReleases(): Promise<GitHubRelease[]> {
 
   const response = await fetch('https://api.github.com/repos/iitsldev/iit-calendar/releases', {
     headers,
-    next: { revalidate: 300 }
+    cache: 'no-store'
   });
 
   if (!response.ok) {

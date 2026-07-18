@@ -5,7 +5,7 @@
 	"plugins": {
 		"CapacitorUpdater": {
 			"autoUpdate": true,
-			"updateUrl": "https://calendar.iit.lk/api/update",
+			"updateUrl": "https://iit.damsak.org/api/update",
 			"statsUrl": ""
 		}
 	}

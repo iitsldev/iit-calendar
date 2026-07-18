@@ -60,8 +60,10 @@ export async function POST(request: NextRequest) {
 
     // Check if the latest matching release is strictly newer than the client's current OTA bundle version
     if (isNewer(latestMatch.parsedRel.clean, currentVersion)) {
-      // Generate the download proxy URL pointing to our Next.js download endpoint
-      const baseUrl = request.nextUrl.origin;
+      // Generate the download proxy URL dynamically using request headers for emulator/proxy compatibility
+      const host = request.headers.get('host') || request.nextUrl.host;
+      const proto = request.headers.get('x-forwarded-proto') || 'http';
+      const baseUrl = `${proto}://${host}`;
       const downloadUrl = `${baseUrl}/api/download?version=${latestMatch.parsedRel.clean}`;
 
       // Extract sha256 checksum from the digest field, or compute it on the fly if missing!
