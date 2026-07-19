@@ -2,7 +2,7 @@ import React from 'react';
 
 export function PrivacyScreen() {
   return (
-    <div className="min-h-screen p-8 bg-white dark:bg-slate-900 text-slate-800 dark:text-slate-200">
+    <div className="h-screen overflow-y-auto scrollbar-hide p-8 bg-white dark:bg-slate-900 text-slate-800 dark:text-slate-200">
       <div className="max-w-2xl mx-auto prose dark:prose-invert">
         <h1 className="text-3xl font-bold mb-6">Privacy Policy</h1>
         <p className="mb-4">Last updated: {new Date().toLocaleDateString()}</p>
