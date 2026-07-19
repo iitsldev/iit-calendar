@@ -45,12 +45,12 @@ function parseTocFromHtml(html: string, paliScript: PaliScript): TocItem[] {
     const id = match[2];
     // Strip any inner HTML tags to get plain text
     let title = match[3].replace(/<[^>]+>/g, '').trim();
-    
+
     if (scriptKey !== Script.RO) {
       const sinhala = TextProcessor.convertFrom(title, Script.RO);
       title = TextProcessor.convert(sinhala, scriptKey);
     }
-    
+
     items.push({ id, title, level });
   }
   return items;
@@ -64,7 +64,7 @@ export function BookScreen({ settings }: { settings: Settings }) {
   const [searchTerm, setSearchTerm] = useState('');
   const [currentMatchIndex, setCurrentMatchIndex] = useState(-1);
   const [totalMatches, setTotalMatches] = useState(0);
-  
+
   const currentHtml = BOOKS[activeBook].html;
   const toc = useMemo(() => parseTocFromHtml(currentHtml, settings.paliScript), [currentHtml, settings.paliScript]);
   const contentRef = useRef<HTMLDivElement>(null);
@@ -80,7 +80,7 @@ export function BookScreen({ settings }: { settings: Settings }) {
         if (index % 2 === 0 && part.trim()) {
           // Special case: don't convert if it looks like an HTML entity or is just punctuation
           if (part.length === 1 && /[\s,.;:!?]/.test(part)) return part;
-          
+
           try {
             const sinhala = TextProcessor.convertFrom(part, Script.RO);
             return TextProcessor.convert(sinhala, scriptKey);
@@ -145,11 +145,11 @@ export function BookScreen({ settings }: { settings: Settings }) {
     const marks = contentRef.current.querySelectorAll('mark');
     // Remove previous active highlight
     if (currentMatchIndex >= 0 && marks[currentMatchIndex]) {
-       marks[currentMatchIndex].classList.remove('ring-2', 'ring-amber-600', 'dark:ring-amber-300', 'scale-110');
+      marks[currentMatchIndex].classList.remove('ring-2', 'ring-amber-600', 'dark:ring-amber-300', 'scale-110');
     }
 
     let nextIndex = direction === 'next' ? currentMatchIndex + 1 : currentMatchIndex - 1;
-    
+
     // Cycle logic
     if (nextIndex >= totalMatches) nextIndex = 0;
     if (nextIndex < 0) nextIndex = totalMatches - 1;
@@ -179,36 +179,73 @@ export function BookScreen({ settings }: { settings: Settings }) {
 
   return (
     <div className="flex flex-col min-h-screen relative bg-[var(--bg-main)] animate-in fade-in duration-500">
-      
-      {/* Dynamic/Notch-compatible Vector Illustration Header (Library: stack of scrolls theme) */}
-      <div 
-        className="w-full h-[18vh] min-h-[140px] bg-gradient-to-tr from-yellow-600/20 via-gold/20 to-stone-500/10 sticky top-0 z-10 flex items-center justify-center overflow-hidden"
+
+      {/* Dynamic/Notch-compatible Vector Illustration Header (Library: ripple/scripture theme) */}
+      <div
+        className="w-full h-[18vh] min-h-[140px] sm:min-h-[160px] md:min-h-[180px] lg:min-h-[200px] bg-gradient-to-tr from-yellow-600/20 via-gold/20 to-stone-500/10 sticky top-0 z-10 flex items-center justify-center overflow-hidden"
       >
-        {/* Styled CSS/SVG scrolls */}
-        <svg className="absolute w-[180px] h-[180px] text-amber-700/30 dark:text-amber-500/20" viewBox="0 0 100 100">
-          <path d="M 30 35 C 30 25, 45 25, 45 35 C 45 45, 30 45, 30 35 Z" fill="none" stroke="currentColor" strokeWidth="1" />
-          <path d="M 30 30 H 70 C 70 20, 85 20, 85 30 C 85 40, 70 40, 70 30 Z" fill="none" stroke="currentColor" strokeWidth="1" />
-          <path d="M 37.5 35 H 77.5" stroke="currentColor" strokeWidth="1.5" />
-          <path d="M 30 65 C 30 55, 45 55, 45 65 C 45 75, 30 75, 30 65 Z" fill="none" stroke="currentColor" strokeWidth="1" />
-          <path d="M 30 60 H 70 C 70 50, 85 50, 85 60 C 85 70, 70 70, 70 60 Z" fill="none" stroke="currentColor" strokeWidth="1" />
-          <path d="M 37.5 65 H 77.5" stroke="currentColor" strokeWidth="1.5" />
-          <path d="M 45 35 V 55" stroke="currentColor" strokeWidth="0.5" strokeDasharray="2 2" />
-          <path d="M 70 30 V 50" stroke="currentColor" strokeWidth="0.5" strokeDasharray="2 2" />
+        {/* Styled CSS/SVG Zen Concentric Rings Art */}
+        <svg className="absolute w-[160px] h-[160px] sm:w-[190px] sm:h-[190px] md:w-[220px] md:h-[220px] lg:w-[240px] lg:h-[240px] -translate-y-5" viewBox="0 0 100 100">
+          <defs>
+            {/* Soft shadow filter for the circular pill container */}
+            <filter id="book-pill-shadow" x="-30%" y="-30%" width="160%" height="160%">
+              <feDropShadow dx="0" dy="2.5" stdDeviation="3" floodColor="#78350f" floodOpacity="0.07" />
+            </filter>
+
+            {/* Gradient for the circular pill container: soft desaturated warm amber */}
+            <linearGradient id="book-pill-bg" x1="0%" y1="0%" x2="0%" y2="100%">
+              <stop offset="0%" stopColor="#ffffff" />
+              <stop offset="100%" stopColor="#fef3c7" />
+            </linearGradient>
+          </defs>
+
+          <style dangerouslySetInnerHTML={{
+            __html: `
+            @keyframes book-wave-pulse {
+              0%   { r: 0px; opacity: 0.6; }
+              100% { r: 46px; opacity: 0; }
+            }
+            .book-ripple {
+              animation: book-wave-pulse 8s cubic-bezier(0.25, 0, 0.2, 1) infinite;
+              transform-origin: 50px 50px;
+            }
+          ` }} />
+
+          {/* Ripple waves pulsing outwards from the pill edge (r=18) - 5 waves total */}
+          <circle cx="50" cy="50" r="0" stroke="currentColor" strokeWidth="0.8" fill="none" opacity="0" className="book-ripple text-yellow-600/25 dark:text-amber-500/15" style={{ animationDelay: '0s' }} />
+          <circle cx="50" cy="50" r="0" stroke="currentColor" strokeWidth="0.8" fill="none" opacity="0" className="book-ripple text-yellow-600/25 dark:text-amber-500/15" style={{ animationDelay: '1.6s' }} />
+          <circle cx="50" cy="50" r="0" stroke="currentColor" strokeWidth="0.8" fill="none" opacity="0" className="book-ripple text-yellow-600/25 dark:text-amber-500/15" style={{ animationDelay: '3.2s' }} />
+          <circle cx="50" cy="50" r="0" stroke="currentColor" strokeWidth="0.8" fill="none" opacity="0" className="book-ripple text-yellow-600/25 dark:text-amber-500/15" style={{ animationDelay: '4.8s' }} />
+          <circle cx="50" cy="50" r="0" stroke="currentColor" strokeWidth="0.8" fill="none" opacity="0" className="book-ripple text-yellow-600/25 dark:text-amber-500/15" style={{ animationDelay: '6.4s' }} />
+
+          {/* Pill Container (Circle) with Soft Shadow and Warm Gradient Fill */}
+          <circle
+            cx="50"
+            cy="50"
+            r="18"
+            fill="url(#book-pill-bg)"
+            stroke="rgba(255, 255, 255, 0.8)"
+            strokeWidth="0.4"
+            filter="url(#book-pill-shadow)"
+          />
+
+          {/* Scripture image inside the pill */}
+          <image
+            href="/scripture.png"
+            x="36"
+            y="36"
+            width="28"
+            height="28"
+            style={{
+              filter: 'brightness(0) saturate(100%) invert(31%) sepia(98%) saturate(1039%) hue-rotate(24deg) brightness(91%) contrast(101%)'
+            }}
+          />
         </svg>
-        
-        {/* Settings gear overlays on top right of header */}
-        <button
-          onClick={() => setShowSettings(true)}
-          className="absolute top-[calc(0.75rem+env(safe-area-inset-top))] right-4 z-30 w-9 h-9 rounded-full flex items-center justify-center bg-white/20 dark:bg-black/20 backdrop-blur-md text-white border border-white/10 active:scale-95 transition-all"
-          aria-label="Settings"
-        >
-          <SettingsIcon size={18} />
-        </button>
       </div>
 
       {/* Card Overlay container (Oval at the top overlapping the header) */}
       <div className="relative z-20 mt-[-2.5rem] bg-[var(--bg-main)] rounded-t-[3rem] px-4 pt-6 pb-24 shadow-[0_-10px_40px_rgba(0,0,0,0.03)] dark:shadow-[0_-10px_40px_rgba(0,0,0,0.25)] flex flex-col gap-6">
-        
+
         {/* Title & Tagline info inside the card */}
         <div className="px-2 text-center">
           <h1 className="font-serif text-3xl font-bold text-slate-800 dark:text-slate-100 leading-none mb-1.5">
@@ -220,82 +257,82 @@ export function BookScreen({ settings }: { settings: Settings }) {
         </div>
 
         {/* ── Sticky Control Header (now relative to content container) ── */}
-        <header 
+        <header
           className="sticky top-0 z-40 bg-white/80 dark:bg-slate-900/80 backdrop-blur-md border-b border-slate-200/50 dark:border-slate-800/50 px-4 sm:px-6 flex justify-between items-center rounded-b-3xl shadow-[0_4px_30px_rgba(0,0,0,0.03)] dark:shadow-[0_4px_30px_rgba(0,0,0,0.2)]"
           style={{
             paddingTop: 'calc(0.75rem + env(safe-area-inset-top))',
             paddingBottom: '0.75rem',
           }}
         >
-        <div className="flex flex-col">
-          <h2 className="hidden sm:flex font-serif text-2xl font-bold text-saffron dark:text-amber-500 items-center gap-2">
-            <BookOpen size={24} /> {t(BOOKS[activeBook].titleKey as any)}
-          </h2>
-          {searchTerm && (
-            <span className="text-[10px] font-black uppercase tracking-widest text-slate-400 ml-0 sm:ml-8">
-              {totalMatches > 0 ? `${currentMatchIndex + 1} / ${totalMatches}` : t('settings.searching')}
-            </span>
-          )}
-        </div>
-        
-        <div className="flex items-center gap-2 flex-1 sm:flex-initial justify-end">
-          <div className="relative group flex-1 sm:flex-initial">
-            <Search size={18} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-saffron transition-colors" />
-            <input
-              type="text"
-              placeholder={`${t('common.search')}...`}
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              className="w-full sm:w-48 pl-10 pr-8 py-2 bg-slate-100 dark:bg-slate-800 rounded-full text-sm focus:outline-none focus:ring-2 focus:ring-saffron/50 transition-all sm:focus:w-64"
-            />
+          <div className="flex flex-col">
+            <h2 className="hidden sm:flex font-serif text-2xl font-bold text-saffron dark:text-amber-500 items-center gap-2">
+              <BookOpen size={24} /> {t(BOOKS[activeBook].titleKey as any)}
+            </h2>
             {searchTerm && (
-              <div className="absolute right-2 top-1/2 -translate-y-1/2 flex items-center gap-0.5">
-                <button 
-                  onClick={() => navigateMatch('prev')}
-                  className="p-1 hover:bg-slate-200 dark:hover:bg-slate-700 rounded-full text-slate-500 transition-colors"
-                >
-                  <ChevronUp size={14} />
-                </button>
-                <button 
-                  onClick={() => navigateMatch('next')}
-                  className="p-1 hover:bg-slate-200 dark:hover:bg-slate-700 rounded-full text-slate-500 transition-colors"
-                >
-                  <ChevronDown size={14} />
-                </button>
-                <button 
-                  onClick={() => setSearchTerm('')}
-                  className="p-1 text-slate-400 hover:text-rose-500 transition-colors ml-1"
-                >
-                  <X size={14} />
-                </button>
-              </div>
+              <span className="text-[10px] font-black uppercase tracking-widest text-slate-400 ml-0 sm:ml-8">
+                {totalMatches > 0 ? `${currentMatchIndex + 1} / ${totalMatches}` : t('settings.searching')}
+              </span>
             )}
           </div>
-          <button 
-            onClick={toggleBook}
-            title={t(activeBook === 'chanting' ? 'common.memorization' : 'common.chantingBook' as any)}
-            className="p-2.5 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors shadow-sm active:scale-95 flex-shrink-0"
-          >
-            <Library size={20} />
-          </button>
-          <button 
-            onClick={() => setShowToc(true)}
-            className="p-2.5 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors shadow-sm active:scale-95 flex-shrink-0"
-          >
-            <List size={20} />
-          </button>
-          <button
-            onClick={() => setShowSettings(true)}
-            className="w-9 h-9 rounded-full flex items-center justify-center text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-100 hover:bg-slate-100/50 dark:hover:bg-slate-800/50 transition-all active:scale-95 ml-1"
-            aria-label="Settings"
-          >
-            <SettingsIcon size={18} />
-          </button>
-        </div>
-      </header>
 
-      <div className="book-content px-4 sm:px-8 mt-8 overflow-wrap-anywhere">
-        <style>{`
+          <div className="flex items-center gap-2 flex-1 sm:flex-initial justify-end">
+            <div className="relative group flex-1 sm:flex-initial">
+              <Search size={18} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-saffron transition-colors" />
+              <input
+                type="text"
+                placeholder={`${t('common.search')}...`}
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="w-full sm:w-48 pl-10 pr-8 py-2 bg-slate-100 dark:bg-slate-800 rounded-full text-sm focus:outline-none focus:ring-2 focus:ring-saffron/50 transition-all sm:focus:w-64"
+              />
+              {searchTerm && (
+                <div className="absolute right-2 top-1/2 -translate-y-1/2 flex items-center gap-0.5">
+                  <button
+                    onClick={() => navigateMatch('prev')}
+                    className="p-1 hover:bg-slate-200 dark:hover:bg-slate-700 rounded-full text-slate-500 transition-colors"
+                  >
+                    <ChevronUp size={14} />
+                  </button>
+                  <button
+                    onClick={() => navigateMatch('next')}
+                    className="p-1 hover:bg-slate-200 dark:hover:bg-slate-700 rounded-full text-slate-500 transition-colors"
+                  >
+                    <ChevronDown size={14} />
+                  </button>
+                  <button
+                    onClick={() => setSearchTerm('')}
+                    className="p-1 text-slate-400 hover:text-rose-500 transition-colors ml-1"
+                  >
+                    <X size={14} />
+                  </button>
+                </div>
+              )}
+            </div>
+            <button
+              onClick={toggleBook}
+              title={t(activeBook === 'chanting' ? 'common.memorization' : 'common.chantingBook' as any)}
+              className="p-2.5 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors shadow-sm active:scale-95 flex-shrink-0"
+            >
+              <Library size={20} />
+            </button>
+            <button
+              onClick={() => setShowToc(true)}
+              className="p-2.5 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors shadow-sm active:scale-95 flex-shrink-0"
+            >
+              <List size={20} />
+            </button>
+            <button
+              onClick={() => setShowSettings(true)}
+              className="w-9 h-9 rounded-full flex items-center justify-center text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-100 hover:bg-slate-100/50 dark:hover:bg-slate-800/50 transition-all active:scale-95 ml-1"
+              aria-label="Settings"
+            >
+              <SettingsIcon size={18} />
+            </button>
+          </div>
+        </header>
+
+        <div className="book-content px-4 sm:px-8 mt-8 overflow-wrap-anywhere">
+          <style>{`
           .overflow-wrap-anywhere {
             overflow-wrap: anywhere;
             word-break: break-word;
@@ -328,54 +365,54 @@ export function BookScreen({ settings }: { settings: Settings }) {
             scroll-margin-top: 100px;
           }
         `}</style>
-        <div
-          ref={contentRef}
-          className="book-container prose prose-stone dark:prose-invert prose-p:leading-relaxed prose-headings:font-serif prose-headings:text-saffron dark:prose-headings:text-amber-500 max-w-none prose-a:text-saffron prose-strong:text-slate-900 dark:prose-strong:text-slate-100"
-          script={getScriptKey(settings.paliScript)}
-          dangerouslySetInnerHTML={{ __html: processedHtml }}
-        />
-      </div>
+          <div
+            ref={contentRef}
+            className="book-container prose prose-stone dark:prose-invert prose-p:leading-relaxed prose-headings:font-serif prose-headings:text-saffron dark:prose-headings:text-amber-500 max-w-none prose-a:text-saffron prose-strong:text-slate-900 dark:prose-strong:text-slate-100"
+            script={getScriptKey(settings.paliScript)}
+            dangerouslySetInnerHTML={{ __html: processedHtml }}
+          />
+        </div>
 
-      <AnimatePresence>
-        {showToc && (
-          <>
-            <motion.div 
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              onClick={() => setShowToc(false)}
-              className="fixed inset-0 z-50 bg-slate-900/60 dark:bg-black/70 backdrop-blur-sm"
-            />
-            <motion.div
-              initial={{ x: '100%' }}
-              animate={{ x: 0 }}
-              exit={{ x: '100%' }}
-              transition={{ type: 'spring', damping: 25, stiffness: 200 }}
-              className="fixed top-0 right-0 bottom-0 w-[85%] max-w-sm bg-white/95 dark:bg-slate-900/95 backdrop-blur-xl z-[60] shadow-2xl border-l border-slate-200 dark:border-slate-800 flex flex-col rounded-l-3xl"
-            >
-              <div className="flex justify-between items-center p-6 border-b border-slate-200 dark:border-slate-800">
-                <h3 className="font-serif text-xl font-bold text-slate-800 dark:text-slate-200">Table of Contents</h3>
-                <button onClick={() => setShowToc(false)} className="p-2 text-slate-500 hover:text-slate-800 dark:hover:text-slate-200 bg-slate-100 dark:bg-slate-800 rounded-full active:scale-95 transition-all"><X size={20}/></button>
-              </div>
-              <div className="flex-1 overflow-y-auto p-4 space-y-1 pb-10 scrollbar-hide">
-                {toc.map((item, idx) => (
-                  <button
-                    key={idx}
-                    onClick={() => scrollToId(item.id)}
-                    className={cn(
-                      "w-full text-left py-2.5 px-3 rounded-xl transition-colors hover:bg-saffron/10 dark:hover:bg-saffron/20 group flex items-start gap-2",
-                      item.level === 1 ? "font-bold text-slate-800 dark:text-slate-200 mt-4 mb-2 text-lg border-b border-slate-100 dark:border-slate-800/50 pb-2" : "text-sm text-slate-600 dark:text-slate-400 pl-4"
-                    )}
-                  >
-                    {item.level > 1 && <ChevronRight size={16} className="opacity-0 group-hover:opacity-100 transition-opacity text-saffron mt-0.5 flex-shrink-0" />}
-                    <span className="leading-snug">{item.title}</span>
-                  </button>
-                ))}
-              </div>
-            </motion.div>
-          </>
-        )}
-      </AnimatePresence>
+        <AnimatePresence>
+          {showToc && (
+            <>
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                onClick={() => setShowToc(false)}
+                className="fixed inset-0 z-50 bg-slate-900/60 dark:bg-black/70 backdrop-blur-sm"
+              />
+              <motion.div
+                initial={{ x: '100%' }}
+                animate={{ x: 0 }}
+                exit={{ x: '100%' }}
+                transition={{ type: 'spring', damping: 25, stiffness: 200 }}
+                className="fixed top-0 right-0 bottom-0 w-[85%] max-w-sm bg-white/95 dark:bg-slate-900/95 backdrop-blur-xl z-[60] shadow-2xl border-l border-slate-200 dark:border-slate-800 flex flex-col rounded-l-3xl"
+              >
+                <div className="flex justify-between items-center p-6 border-b border-slate-200 dark:border-slate-800">
+                  <h3 className="font-serif text-xl font-bold text-slate-800 dark:text-slate-200">Table of Contents</h3>
+                  <button onClick={() => setShowToc(false)} className="p-2 text-slate-500 hover:text-slate-800 dark:hover:text-slate-200 bg-slate-100 dark:bg-slate-800 rounded-full active:scale-95 transition-all"><X size={20} /></button>
+                </div>
+                <div className="flex-1 overflow-y-auto p-4 space-y-1 pb-10 scrollbar-hide">
+                  {toc.map((item, idx) => (
+                    <button
+                      key={idx}
+                      onClick={() => scrollToId(item.id)}
+                      className={cn(
+                        "w-full text-left py-2.5 px-3 rounded-xl transition-colors hover:bg-saffron/10 dark:hover:bg-saffron/20 group flex items-start gap-2",
+                        item.level === 1 ? "font-bold text-slate-800 dark:text-slate-200 mt-4 mb-2 text-lg border-b border-slate-100 dark:border-slate-800/50 pb-2" : "text-sm text-slate-600 dark:text-slate-400 pl-4"
+                      )}
+                    >
+                      {item.level > 1 && <ChevronRight size={16} className="opacity-0 group-hover:opacity-100 transition-opacity text-saffron mt-0.5 flex-shrink-0" />}
+                      <span className="leading-snug">{item.title}</span>
+                    </button>
+                  ))}
+                </div>
+              </motion.div>
+            </>
+          )}
+        </AnimatePresence>
       </div>
     </div>
   );

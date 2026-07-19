@@ -277,22 +277,66 @@ export function StudyScreen() {
   return (
     <div className="flex flex-col min-h-screen relative bg-[var(--bg-main)]">
 
-      {/* Dynamic/Notch-compatible Vector Illustration Header (Study: hourglass/timer theme) */}
+      {/* Dynamic/Notch-compatible Vector Illustration Header (Study: ripple/hourglass theme) */}
       <div
-        className="w-full h-[18vh] min-h-[140px] bg-gradient-to-tr from-indigo-500/20 via-blue-500/25 to-red-500/10 sticky top-0 z-10 flex items-center justify-center overflow-hidden"
+        className="w-full h-[18vh] min-h-[140px] sm:min-h-[160px] md:min-h-[180px] lg:min-h-[200px] bg-gradient-to-tr from-indigo-500/20 via-blue-500/25 to-red-500/10 sticky top-0 z-10 flex items-center justify-center overflow-hidden"
       >
-        {/* Styled CSS/SVG Timer Illustration */}
-        <svg className="absolute w-[180px] h-[180px] text-blue-600/30 dark:text-blue-400/20" viewBox="0 0 100 100">
-          <circle cx="50" cy="50" r="35" stroke="currentColor" strokeWidth="0.5" fill="none" />
-          {/* Hourglass */}
-          <path d="M 35 30 H 65 L 50 50 L 35 70 H 65" fill="none" stroke="currentColor" strokeWidth="1" strokeLinejoin="round" />
-          <path d="M 38 33 H 62 L 50 49 Z" fill="currentColor" opacity="0.6" />
-          <circle cx="50" cy="62" r="2" fill="currentColor" />
-          {/* Timer ticks */}
-          <line x1="50" y1="10" x2="50" y2="15" stroke="currentColor" strokeWidth="1.5" />
-          <line x1="50" y1="85" x2="50" y2="90" stroke="currentColor" strokeWidth="1.5" />
-          <line x1="15" y1="50" x2="20" y2="50" stroke="currentColor" strokeWidth="1.5" />
-          <line x1="80" y1="50" x2="85" y2="50" stroke="currentColor" strokeWidth="1.5" />
+        {/* Styled CSS/SVG Zen Concentric Rings Art */}
+        <svg className="absolute w-[160px] h-[160px] sm:w-[190px] sm:h-[190px] md:w-[220px] md:h-[220px] lg:w-[240px] lg:h-[240px] -translate-y-5" viewBox="0 0 100 100">
+          <defs>
+            {/* Soft shadow filter for the circular pill container */}
+            <filter id="study-pill-shadow" x="-30%" y="-30%" width="160%" height="160%">
+              <feDropShadow dx="0" dy="2.5" stdDeviation="3" floodColor="#1e1b4b" floodOpacity="0.07" />
+            </filter>
+
+            {/* Gradient for the circular pill container: soft desaturated warm indigo */}
+            <linearGradient id="study-pill-bg" x1="0%" y1="0%" x2="0%" y2="100%">
+              <stop offset="0%" stopColor="#ffffff" />
+              <stop offset="100%" stopColor="#e0e7ff" />
+            </linearGradient>
+          </defs>
+
+          <style dangerouslySetInnerHTML={{
+            __html: `
+            @keyframes study-wave-pulse {
+              0%   { r: 0px; opacity: 0.6; }
+              100% { r: 46px; opacity: 0; }
+            }
+            .study-ripple {
+              animation: study-wave-pulse 8s cubic-bezier(0.25, 0, 0.2, 1) infinite;
+              transform-origin: 50px 50px;
+            }
+          ` }} />
+
+          {/* Ripple waves pulsing outwards from the pill edge (r=18) - 5 waves total */}
+          <circle cx="50" cy="50" r="0" stroke="currentColor" strokeWidth="0.8" fill="none" opacity="0" className="study-ripple text-indigo-500/25 dark:text-indigo-400/15" style={{ animationDelay: '0s' }} />
+          <circle cx="50" cy="50" r="0" stroke="currentColor" strokeWidth="0.8" fill="none" opacity="0" className="study-ripple text-indigo-500/25 dark:text-indigo-400/15" style={{ animationDelay: '1.6s' }} />
+          <circle cx="50" cy="50" r="0" stroke="currentColor" strokeWidth="0.8" fill="none" opacity="0" className="study-ripple text-indigo-500/25 dark:text-indigo-400/15" style={{ animationDelay: '3.2s' }} />
+          <circle cx="50" cy="50" r="0" stroke="currentColor" strokeWidth="0.8" fill="none" opacity="0" className="study-ripple text-indigo-500/25 dark:text-indigo-400/15" style={{ animationDelay: '4.8s' }} />
+          <circle cx="50" cy="50" r="0" stroke="currentColor" strokeWidth="0.8" fill="none" opacity="0" className="study-ripple text-indigo-500/25 dark:text-indigo-400/15" style={{ animationDelay: '6.4s' }} />
+
+          {/* Pill Container (Circle) with Soft Shadow and Indigo Gradient Fill */}
+          <circle
+            cx="50"
+            cy="50"
+            r="18"
+            fill="url(#study-pill-bg)"
+            stroke="rgba(255, 255, 255, 0.8)"
+            strokeWidth="0.4"
+            filter="url(#study-pill-shadow)"
+          />
+
+          {/* Hourglass image inside the pill */}
+          <image
+            href="/hourglass.png"
+            x="38"
+            y="38"
+            width="24"
+            height="24"
+            style={{
+              filter: 'brightness(0) saturate(100%) invert(18%) sepia(35%) saturate(5796%) hue-rotate(238deg) brightness(88%) contrast(92%)'
+            }}
+          />
         </svg>
 
         {/* Reports Trigger overlays on top left of header */}
@@ -304,7 +348,7 @@ export function StudyScreen() {
         </button>
 
         {/* Pomodoro Settings & Global Settings gear overlays on top right of header */}
-        <div className="absolute top-[calc(0.75rem+env-safe-area-inset-top)] right-4 z-30 flex items-center gap-1.5" style={{ top: 'calc(0.75rem + env(safe-area-inset-top))' }}>
+        <div className="absolute top-[calc(0.75rem+env(safe-area-inset-top))] right-4 z-30 flex items-center gap-1.5" style={{ top: 'calc(0.75rem + env(safe-area-inset-top))' }}>
           <button
             onClick={() => setShowSettings(true)}
             className="w-9 h-9 rounded-full flex items-center justify-center bg-white/20 dark:bg-black/20 backdrop-blur-md text-white border border-white/10 active:scale-95 transition-all"
@@ -312,14 +356,6 @@ export function StudyScreen() {
             title={t('study.settings') || 'Settings'}
           >
             <Settings2 size={16} />
-          </button>
-
-          <button
-            onClick={() => setShowGlobalSettings(true)}
-            className="w-9 h-9 rounded-full flex items-center justify-center bg-white/20 dark:bg-black/20 backdrop-blur-md text-white border border-white/10 active:scale-95 transition-all"
-            aria-label="Global Settings"
-          >
-            <SettingsIcon size={18} />
           </button>
         </div>
       </div>

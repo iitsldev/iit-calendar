@@ -252,108 +252,98 @@ export function CalendarScreen({
       <div
         className="w-full h-[32vh] min-h-[220px] bg-gradient-to-b from-[#f8f2e4] via-[#ede0c0] to-[#ddc898] dark:from-[#0d0905] dark:via-[#1a1005] dark:to-[#0d0905] sticky top-0 z-10 flex items-center justify-center overflow-hidden"
       >
-        {/* Styled CSS/SVG — Sun & Moon orbit Mount Sumeru (Theravāda cosmology) */}
-        <svg className="absolute w-[260px] h-[260px] pointer-events-none select-none" viewBox="0 0 100 100">
-          <style dangerouslySetInnerHTML={{
-            __html: `
-            @keyframes wave-pulse {
-              0%   { r: 10px; opacity: 0.6; }
-              100% { r: 34px; opacity: 0; }
-            }
-            /* Shadow slides: -r = full moon, 0 = half, +r = new moon, 0 = half, repeat */
-            @keyframes shadow-slide {
-              0%   { transform: translateX(-4.5px); }
-              25%  { transform: translateX(0px); }
-              50%  { transform: translateX(4.5px); }
-              75%  { transform: translateX(0px); }
-              100% { transform: translateX(-4.5px); }
-            }
-          ` }} />
+        {/* Center alignment wrapper for orbits & logo, shifted up to prevent clipping on mobile */}
+        <div className="relative w-[260px] h-[260px] flex items-center justify-center -translate-y-5">
+          {/* Styled CSS/SVG — Sun & Moon orbit Mount Sumeru (Theravāda cosmology) */}
+          <svg className="absolute inset-0 w-full h-full pointer-events-none select-none" viewBox="0 0 100 100">
+            <style dangerouslySetInnerHTML={{
+              __html: `
+              /* Shadow slides: -r = full moon, 0 = half, +r = new moon, 0 = half, repeat */
+              @keyframes shadow-slide {
+                0%   { transform: translateX(-4.5px); }
+                25%  { transform: translateX(0px); }
+                50%  { transform: translateX(4.5px); }
+                75%  { transform: translateX(0px); }
+                100% { transform: translateX(-4.5px); }
+              }
+            ` }} />
 
-          <defs>
-            {/* Moon phase mask */}
-            <mask id="moon-phase-mask">
-              <circle cx="50" cy="10" r="4.5" fill="white" />
-              <circle cx="50" cy="10" r="4.5" fill="black"
-                style={{
-                  animation: 'shadow-slide 48s linear infinite',
-                  transformOrigin: '50px 10px'
-                }} />
-            </mask>
+            <defs>
+              {/* Moon phase mask */}
+              <mask id="moon-phase-mask">
+                <circle cx="50" cy="10" r="4.5" fill="white" />
+                <circle cx="50" cy="10" r="4.5" fill="black"
+                  style={{
+                    animation: 'shadow-slide 48s linear infinite',
+                    transformOrigin: '50px 10px'
+                  }} />
+              </mask>
 
-            {/* Vignette removed — no SVG rect needed */}
+              {/* Vignette removed — no SVG rect needed */}
 
-            {/* Sun radial glow — anchored to sun position (50, 90) */}
-            <radialGradient id="sun-glow" cx="50" cy="90" r="8"
-              gradientUnits="userSpaceOnUse">
-              <stop offset="0%" stopColor="#f0c060" stopOpacity="0.7" />
-              <stop offset="60%" stopColor="#d08820" stopOpacity="0.25" />
-              <stop offset="100%" stopColor="#b06010" stopOpacity="0" />
-            </radialGradient>
-          </defs>
+              {/* Sun radial glow — anchored to sun position (50, 90) */}
+              <radialGradient id="sun-glow" cx="50" cy="90" r="8"
+                gradientUnits="userSpaceOnUse">
+                <stop offset="0%" stopColor="#f0c060" stopOpacity="0.7" />
+                <stop offset="60%" stopColor="#d08820" stopOpacity="0.25" />
+                <stop offset="100%" stopColor="#b06010" stopOpacity="0" />
+              </radialGradient>
+            </defs>
 
-          {/* ── Ripple waves behind the logo ───────────────────────────── */}
-          <circle cx="50" cy="50" r="10" stroke="#7a5c3a" strokeWidth="0.6"
-            fill="none" opacity="0"
-            style={{ animation: 'wave-pulse 12s linear infinite' }} />
-          <circle cx="50" cy="50" r="10" stroke="#7a5c3a" strokeWidth="0.6"
-            fill="none" opacity="0"
-            style={{ animation: 'wave-pulse 12s linear infinite 4s' }} />
-          <circle cx="50" cy="50" r="10" stroke="#7a5c3a" strokeWidth="0.6"
-            fill="none" opacity="0"
-            style={{ animation: 'wave-pulse 12s linear infinite 8s' }} />
-
-          {/* ── Chanting beads — full circle (Mālā) ────────────────────── */}
-          <circle cx="50" cy="50" r="40"
-            stroke="#7a5c3a" strokeWidth="2"
-            strokeDasharray="0.1 3.5" strokeLinecap="round"
-            fill="none" opacity="0.18" />
-
-          {/* ── Sumeru orbit ring ───────────────────────────────────────── */}
-          <circle cx="50" cy="50" r="40"
-            stroke="#7a5c3a" strokeWidth="0.4"
-            fill="none" opacity="0.12" />
-
-          {/* ── Sun & Moon orbit Sumeru clockwise together ────────────────
-               Both are in the same rotating group so they remain 180° apart.
-               Moon is at (50, 10) — top.  Sun is at (50, 90) — bottom.       */}
-          <g className="animate-[spin_48s_linear_infinite]" style={{ transformOrigin: '50% 50%' }}>
-
-            {/* ── SUN ─────────────────────────────────────────────────── */}
-            {/* Soft warm glow */}
-            <circle cx="50" cy="90" r="8" fill="url(#sun-glow)" />
-            {/* Sun disc */}
-            <circle cx="50" cy="90" r="3.2"
-              fill="#d4922a" opacity="0.65" />
-            {/* Bright core */}
-            <circle cx="50" cy="90" r="1.6"
-              fill="#f5d070" opacity="0.80" />
-
-            {/* ── MOON ─────────────────────────────────────────────────── */}
-            <g className="animate-[spin_48s_linear_infinite_reverse]"
-              style={{ transformOrigin: '50px 10px' }}>
-              {/* Shadowed (dark) side — deep blue-grey like night sky */}
-              <circle cx="50" cy="10" r="4.5"
-                fill="#2a3040" opacity="0.55" />
-              {/* Lit side — pearlescent silver-white */}
-              <circle cx="50" cy="10" r="4.5"
-                fill="#e8e4d8" opacity="0.95"
-                mask="url(#moon-phase-mask)" />
-              {/* Crisp outline */}
-              <circle cx="50" cy="10" r="4.5"
-                stroke="#c8c0b0" strokeWidth="0.5"
-                fill="none" opacity="0.6" />
+            {/* ── Chanting beads — full circle (Mālā) slowly rotating ────── */}
+            <g className="animate-[spin_180s_linear_infinite]" style={{ transformOrigin: '50% 50%' }}>
+              <circle cx="50" cy="50" r="40"
+                stroke="#7a5c3a" strokeWidth="2"
+                strokeDasharray="0.1 3.5" strokeLinecap="round"
+                fill="none" opacity="0.18" />
             </g>
 
-          </g>
-        </svg>
+            {/* ── Sumeru orbit ring ───────────────────────────────────────── */}
+            <circle cx="50" cy="50" r="40"
+              stroke="#7a5c3a" strokeWidth="0.4"
+              fill="none" opacity="0.12" />
 
-        {/* IIT Logo centered on top of the orbits */}
-        <img
-          src="/logo.png"
-          alt="IIT Logo"
-          className="relative z-10 w-28 h-28 object-contain drop-shadow-lg select-none pointer-events-none"
-        />
+            {/* ── Sun & Moon orbit Sumeru clockwise together ────────────────
+                 Both are in the same rotating group so they remain 180° apart.
+                 Moon is at (50, 10) — top.  Sun is at (50, 90) — bottom.       */}
+            <g className="animate-[spin_48s_linear_infinite]" style={{ transformOrigin: '50% 50%' }}>
+
+              {/* ── SUN ─────────────────────────────────────────────────── */}
+              {/* Soft warm glow */}
+              <circle cx="50" cy="90" r="8" fill="url(#sun-glow)" />
+              {/* Sun disc */}
+              <circle cx="50" cy="90" r="3.2"
+                fill="#d4922a" opacity="0.65" />
+              {/* Bright core */}
+              <circle cx="50" cy="90" r="1.6"
+                fill="#f5d070" opacity="0.80" />
+
+              {/* ── MOON ─────────────────────────────────────────────────── */}
+              <g className="animate-[spin_48s_linear_infinite_reverse]"
+                style={{ transformOrigin: '50px 10px' }}>
+                {/* Shadowed (dark) side — deep blue-grey like night sky */}
+                <circle cx="50" cy="10" r="4.5"
+                  fill="#2a3040" opacity="0.55" />
+                {/* Lit side — pearlescent silver-white */}
+                <circle cx="50" cy="10" r="4.5"
+                  fill="#e8e4d8" opacity="0.95"
+                  mask="url(#moon-phase-mask)" />
+                {/* Crisp outline */}
+                <circle cx="50" cy="10" r="4.5"
+                  stroke="#c8c0b0" strokeWidth="0.5"
+                  fill="none" opacity="0.6" />
+              </g>
+
+            </g>
+          </svg>
+
+          {/* IIT Logo centered on top of the orbits */}
+          <img
+            src="/logo.png"
+            alt="IIT Logo"
+            className="relative z-10 w-28 h-28 object-contain drop-shadow-lg select-none pointer-events-none"
+          />
+        </div>
 
       </div>
 
@@ -421,21 +411,21 @@ export function CalendarScreen({
                 style={{ background: 'var(--surface)', border: '1px solid var(--border)' }}
               >
                 <NavBtn onClick={prevYear} small title="Previous Year"><ChevronLeft size="1.2em" className="stroke-[3px]" /></NavBtn>
-                <span className="px-1 text-xs font-bold font-mono" style={{ color: 'var(--accent)' }}>
+                <span className="px-1 text-xs font-bold tracking-wider" style={{ color: 'var(--accent)' }}>
                   {format(currentDate, 'yyyy')}
                 </span>
                 <NavBtn onClick={nextYear} small title="Next Year"><ChevronRight size="1.2em" className="stroke-[3px]" /></NavBtn>
               </div>
 
               <div
-                className="flex items-center p-1 rounded-xl shadow-sm"
+                className="flex items-center p-1 rounded-2xl shadow-sm"
                 style={{ background: 'var(--surface)', border: '1px solid var(--border)' }}
               >
-                <NavBtn onClick={prevMonth} title="Previous Month"><ChevronLeft size="1.3em" /></NavBtn>
-                <span className="px-1 text-xs font-black uppercase tracking-widest" style={{ color: 'var(--accent)' }}>
+                <NavBtn onClick={prevMonth} small title="Previous Month"><ChevronLeft size="1.2em" className="stroke-[3px]" /></NavBtn>
+                <span className="px-1 text-xs font-bold uppercase tracking-wider" style={{ color: 'var(--accent)' }}>
                   {format(currentDate, 'MMM')}
                 </span>
-                <NavBtn onClick={nextMonth} title="Next Month"><ChevronRight size="1.3em" /></NavBtn>
+                <NavBtn onClick={nextMonth} small title="Next Month"><ChevronRight size="1.2em" className="stroke-[3px]" /></NavBtn>
               </div>
             </div>
           </header>
@@ -621,11 +611,10 @@ export function CalendarScreen({
                                   {t('calendar.startsIn')}
                                 </p>
                                 <p
-                                  className="text-2xl font-black flex items-baseline gap-1 justify-end leading-none"
+                                  className="text-2xl font-black leading-none"
                                   style={{ color: 'var(--accent)' }}
                                 >
                                   {Math.max(0, Math.round((nextUposatha.date.getTime() - selectedDate.setHours(0, 0, 0, 0)) / 86400000))}
-                                  <span className="text-xs font-black uppercase">{t('calendar.daysLeft')}</span>
                                 </p>
                               </div>
                             )}
@@ -1017,7 +1006,7 @@ export function CalendarScreen({
                       <div className="flex justify-center items-center gap-3 pt-2 relative z-10">
                         <button
                           onClick={() => setReflectionOffset(prev => prev - 1)}
-                          className="btn-pill-ghost !px-2"
+                          className="btn-pill-ghost w-9 h-9 !px-0 justify-center rounded-full"
                         >
                           <ChevronLeft size={20} />
                         </button>
@@ -1027,7 +1016,7 @@ export function CalendarScreen({
                             const rand = Math.floor(Math.random() * firebaseReflections.length);
                             setReflectionOffset(rand);
                           }}
-                          className="btn-pill-ghost"
+                          className="btn-pill-ghost h-9 px-4"
                         >
                           <Shuffle size={14} />
                           {t('calendar.random')}
@@ -1035,7 +1024,7 @@ export function CalendarScreen({
 
                         <button
                           onClick={() => setReflectionOffset(prev => prev + 1)}
-                          className="btn-pill-ghost !px-2"
+                          className="btn-pill-ghost w-9 h-9 !px-0 justify-center rounded-full"
                         >
                           <ChevronRight size={20} />
                         </button>
