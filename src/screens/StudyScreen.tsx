@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { Settings2, PlusCircle, CheckCircle2, Circle, MoreVertical, BarChart2, Clock } from 'lucide-react';
+import { Settings2, PlusCircle, CheckCircle2, Circle, Edit2, BarChart2, Clock } from 'lucide-react';
 import { cn } from '../lib/utils';
 import { useUI } from '../UIContext';
 import { useI18n } from '../hooks/useI18n';
@@ -262,9 +262,9 @@ export function StudyScreen() {
   // Theming colors based on mode (simulating pomofocus UI but mapped to our theme tokens if needed)
   const getModeColorClass = () => {
     switch (mode) {
-      case 'pomodoro': return 'text-slate-800 dark:text-slate-100 border-slate-100 dark:border-slate-800/80';
-      case 'shortBreak': return 'text-slate-800 dark:text-slate-100 border-slate-100 dark:border-slate-800/80';
-      case 'longBreak': return 'text-slate-800 dark:text-slate-100 border-slate-100 dark:border-slate-800/80';
+      case 'pomodoro': return 'text-slate-800 dark:text-slate-100';
+      case 'shortBreak': return 'text-slate-800 dark:text-slate-100';
+      case 'longBreak': return 'text-slate-800 dark:text-slate-100';
     }
   };
 
@@ -394,7 +394,7 @@ export function StudyScreen() {
           <div className={cn("glass-card rounded-[2.5rem] p-6 sm:p-10 flex flex-col items-center transition-colors shadow-sm", getModeColorClass())}>
 
             {/* Mode Selector */}
-            <div className="flex gap-1.5 mb-8 bg-slate-100/80 dark:bg-slate-900/50 p-1.5 rounded-full border border-slate-200/10 backdrop-blur-md w-full max-w-[340px] justify-between">
+            <div className="flex gap-1.5 mb-8 bg-[var(--bg-input)] p-1.5 rounded-full border border-[var(--border-subtle)] backdrop-blur-md w-full max-w-[340px] justify-between">
               <button
                 onClick={() => switchMode('pomodoro')}
                 className={cn(
@@ -472,14 +472,14 @@ export function StudyScreen() {
                   key={task.id}
                   onClick={() => setActiveTaskId(task.id)}
                   className={cn(
-                    "glass-card p-4 rounded-2xl flex items-center justify-between cursor-pointer border-l-4 transition-all hover:-translate-y-0.5",
-                    activeTaskId === task.id ? 'border-l-saffron shadow-md' : 'border-l-transparent',
+                    "glass-card p-4 rounded-2xl flex items-center justify-between cursor-pointer border-l-4 transition-all",
+                    activeTaskId === task.id ? 'border-l-saffron' : 'border-l-transparent',
                     task.completed ? 'opacity-60' : ''
                   )}
                 >
                   <div className="flex items-center gap-3 overflow-hidden">
-                    <button onClick={(e) => toggleTaskCompletion(task.id, e)} className="flex-shrink-0 text-red-500 dark:text-red-400">
-                      {task.completed ? <CheckCircle2 size={24} className="text-red-500" /> : <Circle size={24} className="text-slate-300 dark:text-slate-600" />}
+                    <button onClick={(e) => toggleTaskCompletion(task.id, e)} className="flex-shrink-0 text-saffron">
+                      {task.completed ? <CheckCircle2 size={24} className="text-saffron" /> : <Circle size={24} className="text-slate-300 dark:text-slate-600" />}
                     </button>
                     <span className={cn("font-medium truncate", task.completed && "line-through text-slate-500")}>
                       {task.name}
@@ -491,9 +491,9 @@ export function StudyScreen() {
                     </span>
                     <button
                       onClick={(e) => { e.stopPropagation(); editTask(task); }}
-                      className="p-2 border border-slate-200 dark:border-slate-700 rounded-lg bg-white dark:bg-slate-800 text-slate-500 hover:bg-slate-50 dark:hover:bg-slate-700"
+                      className="p-2 border border-[var(--border-subtle)] rounded-lg bg-[var(--bg-card)] text-[var(--text-muted)] hover:bg-[var(--bg-card-alt)] transition-colors"
                     >
-                      <MoreVertical size={16} />
+                      <Edit2 size={16} />
                     </button>
                   </div>
                 </div>
@@ -509,7 +509,7 @@ export function StudyScreen() {
                   value={taskForm.name}
                   onChange={(e) => setTaskForm({ ...taskForm, name: e.target.value })}
                   autoFocus
-                  className="w-full text-lg font-medium bg-transparent outline-none border-b-2 border-slate-200 dark:border-slate-700 pb-2 mb-4 text-slate-800 dark:text-slate-200 placeholder:text-slate-400"
+                  className="w-full text-lg font-medium bg-transparent outline-none border-b-2 border-slate-200 dark:border-slate-700 focus:border-saffron pb-2 mb-4 text-slate-800 dark:text-slate-200 placeholder:text-slate-400 transition-colors"
                 />
 
                 <div className="mb-6">
@@ -520,7 +520,7 @@ export function StudyScreen() {
                       min="1"
                       value={taskForm.est}
                       onChange={(e) => setTaskForm({ ...taskForm, est: Math.max(1, parseInt(e.target.value) || 1) })}
-                      className="w-20 bg-slate-100 dark:bg-slate-800 px-3 py-2 rounded-xl text-center font-bold text-slate-700 dark:text-slate-300 outline-none border border-slate-200 dark:border-slate-700"
+                      className="w-20 bg-slate-100 dark:bg-slate-800 px-3 py-2 rounded-xl text-center font-bold text-slate-700 dark:text-slate-300 outline-none border border-slate-200 dark:border-slate-700 focus:border-saffron transition-colors"
                     />
                     <div className="flex gap-2">
                       <button onClick={() => setTaskForm(prev => ({ ...prev, est: prev.est + 1 }))} className="w-10 h-10 rounded-xl bg-slate-100 dark:bg-slate-800 flex items-center justify-center font-bold text-slate-600 hover:bg-slate-200 dark:hover:bg-slate-700">+</button>
@@ -529,7 +529,7 @@ export function StudyScreen() {
                   </div>
                 </div>
 
-                <div className="flex justify-between items-center pt-4 bg-slate-50 dark:bg-slate-900/50 -mx-5 -mb-5 px-5 py-4 rounded-b-[2rem]">
+                <div className="flex justify-between items-center pt-4 bg-[var(--bg-card-alt)] border-t border-[var(--border-subtle)] -mx-5 -mb-5 px-5 py-4 rounded-b-[2rem]">
                   {editingTaskId ? (
                     <button onClick={() => deleteTask(editingTaskId)} className="text-sm font-bold text-red-500 uppercase tracking-widest">{t('study.delete') || 'Delete'}</button>
                   ) : <div />}
@@ -542,7 +542,7 @@ export function StudyScreen() {
                     </button>
                     <button
                       onClick={handleSaveTask}
-                      className="px-6 py-2 rounded-full text-sm font-bold uppercase tracking-widest bg-slate-800 dark:bg-white text-white dark:text-slate-900 shadow-md active:scale-95"
+                      className="px-6 py-2 rounded-full text-sm font-bold uppercase tracking-widest bg-saffron text-white shadow-md shadow-saffron/20 active:scale-95 hover:bg-saffron/90"
                     >
                       {t('study.save') || 'Save'}
                     </button>
