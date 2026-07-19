@@ -154,14 +154,14 @@
     "autoStartPomodoros": "ចាប់ផ្តើមប៉ូម៉ូដូរ៉ូដោយស្វ័យប្រវត្តិ",
     "longBreakInterval": "ចន្លោះពេលសម្រាកវែង",
     "task": "ភារកិច្ច",
-    "autoCheckTasks": "ពិនិត្យភារកិច្ចโดยស្វ័យប្រវត្តិ",
+    "autoCheckTasks": "ពិនិត្យភារកិច្ចដោយស្វ័យប្រវត្តិ",
     "checkToBottom": "ផ្លាស់ទីទៅខាងក្រោមពេលគូសសញ្ញា"
   },
   "meditation": {
     "startingIn": "ចាប់ផ្តើមក្នុងរយៈពេល",
     "complete": "រួចរាល់",
     "remaining": "នៅសល់",
-    "startMeditation": "เริ่มការធ្វើសមាធិ",
+    "startMeditation": "ចាប់ផ្តើម",
     "stopSession": "បញ្ឈប់សម័យប្រជុំ",
     "configure": "កំណត់រចនាសម្ព័ន្ធ",
     "yourJourney": "ដំណើររបស់អ្នក",

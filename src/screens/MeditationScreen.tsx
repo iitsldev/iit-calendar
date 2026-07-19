@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { Play, Square, RotateCcw, Volume2, Activity, Award, Clock, Settings2, X, Minus, Plus, Pause, Sun, ChevronLeft, ChevronRight, Settings as SettingsIcon } from 'lucide-react';
+import { Play, Square, RotateCcw, Volume2, Activity, Award, Clock, Settings2, X, Minus, Plus, Pause, Sun, ChevronLeft, ChevronRight, Settings as SettingsIcon, BarChart2 } from 'lucide-react';
 import { cn } from '../lib/utils';
 import { format, differenceInDays, startOfDay, subDays, isSameDay, subWeeks, subMonths, startOfWeek, endOfWeek, startOfMonth, endOfMonth } from 'date-fns';
 import { alarmService, ActiveMeditation } from '../services/alarm/AlarmService';
@@ -32,6 +32,7 @@ export function MeditationScreen() {
   const [stats, setStats] = useState<MeditationStats>(loadStats);
   const [isPaused, setIsPaused] = useState(false);
   const [wakeLock, setWakeLock] = useState<any>(null);
+  const [view, setView] = useState<'timer' | 'insights' | 'config'>('timer');
 
   const [chartView, setChartView] = useState<'day' | 'week' | 'month'>('day');
   const [chartOffset, setChartOffset] = useState(0);
@@ -76,7 +77,6 @@ export function MeditationScreen() {
   const [isRunning, setIsRunning] = useState(false);
   const [isFinished, setIsFinished] = useState(false);
   const [countdown, setCountdown] = useState(0);
-  const [showSettings, setShowSettings] = useState(false);
 
   const lastTickRef = useRef<number>(Date.now());
 
@@ -427,7 +427,7 @@ export function MeditationScreen() {
   const isDistractionFree = isRunning || countdown > 0 || isPaused;
 
   return (
-    <div className="flex flex-col min-h-screen relative bg-[var(--bg-main)]">
+    <div className="flex flex-col relative bg-[var(--bg-main)]">
 
       {/* Dynamic/Notch-compatible Vector Illustration Header (Stillness: ripple/lotus theme) */}
       <div
@@ -491,7 +491,7 @@ export function MeditationScreen() {
       </div>
 
       {/* Card Overlay container (Oval at the top overlapping the header) */}
-      <div className="relative z-20 mt-[-2.5rem] bg-[var(--bg-main)] rounded-t-[3rem] px-4 pt-6 pb-24 shadow-[0_-10px_40px_rgba(0,0,0,0.03)] dark:shadow-[0_-10px_40px_rgba(0,0,0,0.25)] flex flex-col gap-6">
+      <div className="relative z-20 mt-[-2.5rem] bg-[var(--bg-main)] rounded-t-[3rem] px-4 pt-6 pb-6 shadow-[0_-10px_40px_rgba(0,0,0,0.03)] dark:shadow-[0_-10px_40px_rgba(0,0,0,0.25)] flex flex-col gap-6">
 
         {/* Title & Tagline info inside the card */}
         <div className="px-2 text-center">
@@ -504,148 +504,169 @@ export function MeditationScreen() {
         </div>
 
         {/* ── Original Meditation Content wrapper ── */}
-        <div className="space-y-8 animate-in fade-in duration-700">
+        <div className="max-w-2xl w-full mx-auto space-y-8 animate-in fade-in duration-700">
 
-          {/* ── Timer Section ─────────────────────────────────────────────────── */}
-          <div className={cn(
-            "flex flex-col items-center pt-8 pb-4 relative transition-all duration-700",
-            isDistractionFree ? "min-h-[70vh] justify-center" : ""
-          )}>
-            <div className="relative w-[300px] h-[300px] flex items-center justify-center mb-8">
-              <svg className="absolute inset-0 w-full h-full transform -rotate-90">
-                <circle cx="150" cy="150" r="120" stroke="var(--sm-surface)" strokeWidth="4" fill="none" className="opacity-40" />
-                <circle
-                  cx="150" cy="150" r="120"
-                  stroke="var(--sm-accent)"
-                  strokeWidth="6"
-                  fill="none"
-                  strokeDasharray={circumference}
-                  strokeDashoffset={strokeDashoffset}
-                  strokeLinecap="round"
-                  className="transition-all duration-300 ease-linear"
-                />
-              </svg>
-
-              <div className="text-center z-10 flex flex-col items-center">
-                {countdown > 0 ? (
-                  <>
-                    <span className="text-sm font-bold uppercase tracking-[0.3em] mb-2" style={{ color: 'var(--sm-text-muted)' }}>
-                      {t('meditation.startingIn')}
-                    </span>
-                    <div className="font-serif text-6xl font-medium tracking-tight" style={{ color: 'var(--sm-accent)' }}>
-                      {Math.ceil(countdown)}
-                    </div>
-                  </>
-                ) : (
-                  <>
-                    <span className="text-sm font-bold uppercase tracking-[0.3em] mb-2" style={{ color: 'var(--sm-text-muted)' }}>
-                      {isFinished ? t('meditation.complete') : (isPaused ? 'Paused' : t('meditation.remaining'))}
-                    </span>
-                    <div className="font-serif text-6xl font-medium tracking-tight" style={{ color: 'var(--sm-text-primary)' }}>
-                      {timeString}
-                    </div>
-                  </>
-                )}
-
-                {/* Quick settings button (only when stopped) */}
-                {!isDistractionFree && !isFinished && (
+          {/* Mode Switcher */}
+          <div className="h-14 flex items-center justify-center">
+            {!isDistractionFree && (
+              <div className="flex justify-center gap-2 p-1.5 rounded-full w-fit mx-auto border border-slate-100 dark:border-slate-800">
+                {[
+                  { id: 'timer', icon: Clock, label: t('study.timer') || 'Timer' },
+                  { id: 'insights', icon: BarChart2, label: t('chant.insights') || 'Insights' },
+                  { id: 'config', icon: Settings2, label: t('meditation.configure') || 'Configure' }
+                ].map(m => (
                   <button
-                    onClick={() => setShowSettings(true)}
-                    className="absolute -bottom-6 flex items-center gap-2 px-4 py-2 rounded-full text-xs font-bold uppercase tracking-widest transition-colors"
-                    style={{
-                      backgroundColor: 'var(--sm-surface)',
-                      color: 'var(--sm-text-secondary)',
-                    }}
-                  >
-                    <Settings2 size={14} /> {t('meditation.configure')}
-                  </button>
-                )}
-
-                {isDistractionFree && (
-                  <button
-                    onClick={toggleWakeLock}
+                    key={m.id}
+                    onClick={() => setView(m.id as any)}
                     className={cn(
-                      "flex items-center mt-6 gap-2 px-4 py-2 rounded-full text-[10px] font-black uppercase tracking-widest transition-all active:scale-95",
-                      wakeLock
-                        ? "bg-amber-500/20 text-amber-600 dark:text-amber-400 border border-amber-500/30"
-                        : "bg-slate-100 dark:bg-slate-800 text-slate-400 dark:text-slate-500 border border-transparent"
+                      "flex items-center gap-2 py-2.5 rounded-full text-[0.65rem] font-black uppercase tracking-widest transition-all cursor-pointer",
+                      view === m.id
+                        ? "bg-saffron text-white shadow-md shadow-saffron/20 px-5"
+                        : "text-primary-300 dark:text-primary-700 hover:text-primary-600 dark:hover:text-primary-300 px-3.5"
                     )}
                   >
-                    <Sun size={12} className={cn(wakeLock && "animate-pulse")} />
-                    {wakeLock ? 'Screen Always On' : 'Keep Screen On'}
+                    <m.icon size={14} />
+                    {view === m.id && <span>{m.label}</span>}
                   </button>
-                )}
+                ))}
               </div>
-            </div>
-
-            {/* Controls */}
-            <div className="flex items-center gap-6 w-full max-w-[280px] justify-between">
-              {!isDistractionFree ? (
-                <>
-                  <button
-                    onClick={resetTimer}
-                    className="w-12 h-12 rounded-full flex items-center justify-center transition-transform active:scale-90"
-                    style={{ backgroundColor: 'var(--sm-surface)', color: 'var(--sm-text-secondary)' }}
-                  >
-                    <RotateCcw size={18} />
-                  </button>
-
-                  <button
-                    onClick={toggleTimer}
-                    className="flex-1 h-14 rounded-full flex items-center justify-center gap-3 font-bold tracking-widest uppercase text-xs transition-transform active:scale-95 border shadow-[0_0_20px_rgba(212,136,32,0.2)]"
-                    style={{
-                      background: 'linear-gradient(135deg, var(--sm-accent), rgb(180 110 20))',
-                      color: '#fff',
-                      borderColor: 'var(--sm-accent-shadow)'
-                    }}
-                  >
-                    <Play size={16} fill="currentColor" /> {t('meditation.startMeditation')}
-                  </button>
-
-                  <button
-                    onClick={() => setSettings(s => ({ ...s, soundEnabled: !s.soundEnabled }))}
-                    className="w-12 h-12 rounded-full flex items-center justify-center transition-transform active:scale-90 relative"
-                    style={{ backgroundColor: 'var(--sm-surface)', color: 'var(--sm-text-secondary)' }}
-                  >
-                    <Volume2 size={18} />
-                    {!settings.soundEnabled && (
-                      <div className="absolute inset-0 flex items-center justify-center">
-                        <div className="w-6 h-[2px] rotate-45 bg-red-500/80 rounded-full" />
-                      </div>
-                    )}
-                  </button>
-                </>
-              ) : (
-                <>
-                  <button
-                    onClick={handleStop}
-                    className="flex-1 h-14 rounded-full flex items-center justify-center gap-3 font-bold tracking-widest uppercase text-xs transition-all active:scale-95 bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300"
-                  >
-                    <Square size={16} fill="currentColor" /> Stop
-                  </button>
-
-                  <button
-                    onClick={toggleTimer}
-                    className="flex-1 h-14 rounded-full flex items-center justify-center gap-3 font-bold tracking-widest uppercase text-xs transition-all active:scale-95 bg-amber-600 text-white shadow-lg shadow-amber-600/20"
-                  >
-                    {isRunning ? (
-                      <><Pause size={16} fill="currentColor" /> Pause</>
-                    ) : (
-                      <><Play size={16} fill="currentColor" /> Resume</>
-                    )}
-                  </button>
-                </>
-              )}
-            </div>
+            )}
           </div>
 
-          {/* ── Stats Area ────────────────────────────────────────────────────── */}
-          <AnimatePresence>
-            {!isDistractionFree && (
+          <AnimatePresence mode="wait">
+            {(isDistractionFree || view === 'timer') && (
               <motion.div
-                initial={{ opacity: 0, y: 20 }}
+                key="timer"
+                initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, scale: 0.95 }}
+                exit={{ opacity: 0, y: -10 }}
+                className="flex flex-col items-center pt-8 pb-4 relative"
+              >
+                <div className="relative w-[300px] h-[300px] flex items-center justify-center mb-8">
+                  <svg className="absolute inset-0 w-full h-full transform -rotate-90">
+                    <circle cx="150" cy="150" r="120" stroke="var(--sm-surface)" strokeWidth="4" fill="none" className="opacity-40" />
+                    <circle
+                      cx="150" cy="150" r="120"
+                      stroke="var(--accent)"
+                      strokeWidth="6"
+                      fill="none"
+                      strokeDasharray={circumference}
+                      strokeDashoffset={strokeDashoffset}
+                      strokeLinecap="round"
+                      className="transition-all duration-300 ease-linear"
+                    />
+                  </svg>
+
+                  <div className="text-center z-10 flex flex-col items-center">
+                    {countdown > 0 ? (
+                      <>
+                        <span className="text-sm font-bold uppercase tracking-[0.3em] mb-2" style={{ color: 'var(--sm-text-muted)' }}>
+                          {t('meditation.startingIn')}
+                        </span>
+                        <div className="font-serif text-6xl font-medium tracking-tight" style={{ color: 'var(--accent)' }}>
+                          {Math.ceil(countdown)}
+                        </div>
+                      </>
+                    ) : (
+                      <>
+                        <span className="text-sm font-bold uppercase tracking-[0.3em] mb-2" style={{ color: 'var(--sm-text-muted)' }}>
+                          {isFinished ? t('meditation.complete') : (isPaused ? 'Paused' : t('meditation.remaining'))}
+                        </span>
+                        <div className="font-serif text-6xl font-medium tracking-tight" style={{ color: 'var(--sm-text-primary)' }}>
+                          {timeString}
+                        </div>
+                      </>
+                    )}
+
+                    {isDistractionFree && (
+                      <button
+                        onClick={toggleWakeLock}
+                        className={cn(
+                          "flex items-center mt-6 gap-2 px-4 py-2 rounded-full text-[10px] font-black uppercase tracking-widest transition-all active:scale-95",
+                          wakeLock
+                            ? "bg-amber-500/20 text-amber-600 dark:text-amber-400 border border-amber-500/30"
+                            : "bg-slate-100 dark:bg-slate-800 text-slate-400 dark:text-slate-500 border border-transparent"
+                        )}
+                      >
+                        <Sun size={12} className={cn(wakeLock && "animate-pulse")} />
+                        {wakeLock ? 'Screen Always On' : 'Keep Screen On'}
+                      </button>
+                    )}
+                  </div>
+                </div>
+
+                {/* Controls */}
+                <div className="flex items-center gap-6 w-full max-w-[280px] justify-between">
+                  {!isDistractionFree ? (
+                    <>
+                      <button
+                        onClick={resetTimer}
+                        className="w-12 h-12 rounded-full flex items-center justify-center transition-transform active:scale-90"
+                        style={{ backgroundColor: 'var(--sm-surface)', color: 'var(--sm-text-secondary)' }}
+                      >
+                        <RotateCcw size={18} />
+                      </button>
+
+                      <button
+                        onClick={toggleTimer}
+                        className="flex-1 h-14 rounded-full flex items-center justify-center gap-3 font-bold tracking-widest uppercase text-xs transition-transform active:scale-95 border text-white shadow-lg"
+                        style={{
+                          backgroundColor: 'var(--accent)',
+                          borderColor: 'var(--accent-shadow)',
+                          boxShadow: '0 0 20px var(--accent-shadow)'
+                        }}
+                      >
+                        <Play size={16} fill="currentColor" /> {t('meditation.startMeditation')}
+                      </button>
+
+                      <button
+                        onClick={() => setSettings(s => ({ ...s, soundEnabled: !s.soundEnabled }))}
+                        className="w-12 h-12 rounded-full flex items-center justify-center transition-transform active:scale-90 relative"
+                        style={{ backgroundColor: 'var(--sm-surface)', color: 'var(--sm-text-secondary)' }}
+                      >
+                        <Volume2 size={18} />
+                        {!settings.soundEnabled && (
+                          <div className="absolute inset-0 flex items-center justify-center">
+                            <div className="w-6 h-[2px] rotate-45 bg-red-500/80 rounded-full" />
+                          </div>
+                        )}
+                      </button>
+                    </>
+                  ) : (
+                    <>
+                      <button
+                        onClick={handleStop}
+                        className="flex-1 h-14 rounded-full flex items-center justify-center gap-3 font-bold tracking-widest uppercase text-xs transition-all active:scale-95 bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300"
+                      >
+                        <Square size={16} fill="currentColor" /> Stop
+                      </button>
+
+                      <button
+                        onClick={toggleTimer}
+                        className="flex-1 h-14 rounded-full flex items-center justify-center gap-3 font-bold tracking-widest uppercase text-xs transition-all active:scale-95 text-white shadow-lg"
+                        style={{
+                          backgroundColor: 'var(--accent)',
+                          boxShadow: '0 10px 15px -3px var(--accent-shadow), 0 4px 6px -4px var(--accent-shadow)'
+                        }}
+                      >
+                        {isRunning ? (
+                          <><Pause size={16} fill="currentColor" /> Pause</>
+                        ) : (
+                          <><Play size={16} fill="currentColor" /> Resume</>
+                        )}
+                      </button>
+                    </>
+                  )}
+                </div>
+              </motion.div>
+            )}
+
+            {(!isDistractionFree && view === 'insights') && (
+              <motion.div
+                key="insights"
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -10 }}
                 className="grid grid-cols-1 gap-4 mt-8"
               >
                 <div className="rounded-[2rem] p-6 relative overflow-hidden" style={{ backgroundColor: 'var(--sm-card-bg)', border: '1px solid var(--sm-border)' }}>
@@ -655,32 +676,32 @@ export function MeditationScreen() {
                   </div>
 
                   {/* Prominent Streak */}
-                  <div className="flex justify-center items-center flex-col mb-8 py-6 rounded-3xl" style={{ border: '1px solid var(--sm-accent-muted)', backgroundColor: 'var(--sm-accent-subtle)' }}>
-                    <Award size={24} style={{ color: 'var(--sm-accent)' }} className="mb-2" />
+                  <div className="flex justify-center items-center flex-col mb-8 py-6 rounded-3xl" style={{ border: '1px solid var(--accent-muted)', backgroundColor: 'var(--accent-subtle)' }}>
+                    <Award size={24} style={{ color: 'var(--accent)' }} className="mb-2" />
                     <p className="text-sm font-black uppercase tracking-widest mb-1" style={{ color: 'var(--sm-text-muted)' }}>{t('meditation.currentStreak')}</p>
-                    <div className="font-serif text-5xl font-medium tracking-tight" style={{ color: 'var(--sm-accent)' }}>{currentStreak} <span className="text-2xl">{t('meditation.days')}</span></div>
+                    <div className="font-serif text-5xl font-medium tracking-tight" style={{ color: 'var(--accent)' }}>{currentStreak} <span className="text-2xl">{t('meditation.days')}</span></div>
                   </div>
 
                   <div className="grid grid-cols-2 gap-4 mb-8">
                     <div className="rounded-2xl p-4" style={{ backgroundColor: 'var(--sm-surface)' }}>
                       <div className="text-sm font-black uppercase tracking-widest mb-1" style={{ color: 'var(--sm-text-muted)' }}>{t('meditation.weeklyTime')}</div>
-                      <div className="font-serif text-3xl" style={{ color: 'var(--sm-accent)' }}>
+                      <div className="font-serif text-3xl" style={{ color: 'var(--accent)' }}>
                         {Math.floor(weeklyMinutes / 60) > 0 ? `${Math.floor(weeklyMinutes / 60)}h ${weeklyMinutes % 60}m` : `${weeklyMinutes}m`}
                       </div>
                     </div>
                     <div className="rounded-2xl p-4" style={{ backgroundColor: 'var(--sm-surface)' }}>
                       <div className="text-sm font-black uppercase tracking-widest mb-1" style={{ color: 'var(--sm-text-muted)' }}>{t('meditation.sessions')}</div>
-                      <div className="font-serif text-3xl" style={{ color: 'var(--sm-accent)' }}>{stats.sessions.filter(s => differenceInDays(today, new Date(s.date)) < 7).length}</div>
+                      <div className="font-serif text-3xl" style={{ color: 'var(--accent)' }}>{stats.sessions.filter(s => differenceInDays(today, new Date(s.date)) < 7).length}</div>
                     </div>
                   </div>
 
                   <div className="space-y-2">
                     <div className="flex justify-between text-sm uppercase tracking-widest font-bold" style={{ color: 'var(--sm-text-muted)' }}>
                       <span>{t('meditation.nextMilestone')}</span>
-                      <span style={{ color: 'var(--sm-accent)' }}>{Math.round(progressPercent)}%</span>
+                      <span style={{ color: 'var(--accent)' }}>{Math.round(progressPercent)}%</span>
                     </div>
                     <div className="h-2 rounded-full w-full overflow-hidden" style={{ backgroundColor: 'var(--sm-surface)' }}>
-                      <div className="h-full rounded-full transition-all duration-1000" style={{ width: `${progressPercent}%`, backgroundColor: 'var(--sm-accent)' }} />
+                      <div className="h-full rounded-full transition-all duration-1000" style={{ width: `${progressPercent}%`, backgroundColor: 'var(--accent)' }} />
                     </div>
                     <p className="text-xs italic text-center mt-6 mb-2 opacity-70" style={{ color: 'var(--sm-text-secondary)' }}>
                       "Silence is the sleep that nourishes wisdom."
@@ -707,7 +728,7 @@ export function MeditationScreen() {
                               ? "shadow-sm"
                               : "opacity-60 hover:opacity-100"
                           )}
-                          style={chartView === view ? { backgroundColor: 'var(--sm-card-bg)', color: 'var(--sm-accent)' } : { color: 'var(--sm-text-secondary)' }}
+                          style={chartView === view ? { backgroundColor: 'var(--sm-card-bg)', color: 'var(--accent)' } : { color: 'var(--sm-text-secondary)' }}
                         >
                           {view === 'day' ? 'Day' : view === 'week' ? 'Week' : 'Month'}
                         </button>
@@ -750,13 +771,13 @@ export function MeditationScreen() {
                               className="w-2 sm:w-3 rounded-full"
                               style={{
                                 backgroundColor: item.minutes > 0
-                                  ? (item.isCurrent ? 'var(--sm-accent)' : 'var(--sm-text-disabled)')
+                                  ? (item.isCurrent ? 'var(--accent)' : 'var(--sm-text-disabled)')
                                   : 'transparent',
                                 minHeight: item.minutes > 0 ? '4px' : '0'
                               }}
                             />
                           </div>
-                          <span className="text-[10px] sm:text-xs font-bold uppercase whitespace-nowrap" style={{ color: item.isCurrent ? 'var(--sm-accent)' : 'var(--sm-text-muted)' }}>
+                          <span className="text-[10px] sm:text-xs font-bold uppercase whitespace-nowrap" style={{ color: item.isCurrent ? 'var(--accent)' : 'var(--sm-text-muted)' }}>
                             {item.label}
                           </span>
                         </div>
@@ -768,70 +789,100 @@ export function MeditationScreen() {
                     <span>
                       {chartView === 'day' ? t('meditation.dailyAverage') : chartView === 'week' ? 'Weekly Average' : 'Monthly Average'}
                     </span>
-                    <span style={{ color: 'var(--sm-accent)' }}>
+                    <span style={{ color: 'var(--accent)' }}>
                       {(chartData.reduce((acc, curr) => acc + curr.minutes, 0) / chartData.length).toFixed(1)} {t('meditation.mins')}
                     </span>
                   </div>
                 </div>
               </motion.div>
             )}
-          </AnimatePresence>
 
-          {/* ── Settings Modal ────────────────────────────────────────────────── */}
-          <AnimatePresence>
-            {showSettings && (
+            {(!isDistractionFree && view === 'config') && (
               <motion.div
-                initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
-                className="fixed inset-0 z-[100] flex items-end sm:items-center justify-center p-4 backdrop-blur-md bg-black/35 dark:bg-black/55"
+                key="config"
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -10 }}
+                className="grid grid-cols-1 gap-4 mt-8"
               >
-                <motion.div
-                  initial={{ y: 100 }} animate={{ y: 0 }} exit={{ y: 100 }}
-                  className="glass-card w-full max-w-lg max-h-[90vh] flex flex-col rounded-[2.5rem] shadow-2xl relative bg-white/92 dark:bg-stone-950/95 border border-stone-200/60 dark:border-yellow-950 overflow-hidden"
+                <div
+                  className="rounded-[2rem] p-6 relative overflow-hidden"
+                  style={{
+                    backgroundColor: 'var(--sm-card-bg)',
+                    border: '1px solid var(--sm-border)'
+                  }}
                 >
-                  <div className="flex justify-between items-center p-8 pb-4 border-b border-stone-100 dark:border-white/5">
-                    <h2 className="font-serif text-2xl font-bold text-stone-900 dark:text-stone-100">
+                  <div className="flex justify-between items-center mb-6">
+                    <h3 className="font-serif text-xl" style={{ color: 'var(--sm-text-primary)' }}>
                       {t('meditation.sessionSettings')}
-                    </h2>
-                    <button
-                      onClick={() => setShowSettings(false)}
-                      className="p-2 rounded-full transition-colors text-stone-400 dark:text-amber-700/70 hover:text-amber-700 dark:hover:text-amber-500"
-                    >
-                      <X size={24} />
-                    </button>
+                    </h3>
+                    <Settings2 size={20} style={{ color: 'var(--sm-text-muted)' }} />
                   </div>
 
-                  <div className="flex-1 overflow-y-auto p-8 pt-6 space-y-8 scrollbar-hide">
+                  <div className="space-y-6">
                     {/* Duration Section */}
                     <div>
-                      <label className="block text-xs font-black uppercase tracking-widest mb-4 text-stone-400 dark:text-amber-700/70">{t('meditation.durationLabel')}</label>
+                      <label className="block text-[10px] font-black uppercase tracking-widest mb-3" style={{ color: 'var(--sm-text-muted)' }}>
+                        {t('meditation.durationLabel')}
+                      </label>
                       <div className="flex items-center gap-4">
                         <div className="flex-1 flex flex-col items-center gap-2">
                           <div className="relative w-full">
                             <select
                               value={settings.durationHours}
                               onChange={(e) => setSettings({ ...settings, durationHours: parseInt(e.target.value) })}
-                              className="w-full bg-stone-50 dark:bg-stone-900/50 px-4 py-5 rounded-2xl border border-stone-200 dark:border-amber-900/30 outline-none font-serif text-3xl text-center text-amber-700 dark:text-amber-500 focus:ring-2 focus:ring-amber-500/20 transition-all appearance-none cursor-pointer"
+                              className="w-full px-4 py-4 rounded-2xl border outline-none font-serif text-2xl text-center focus:ring-2 focus:ring-amber-500/20 transition-all appearance-none cursor-pointer"
+                              style={{
+                                backgroundColor: 'var(--sm-surface)',
+                                borderColor: 'var(--sm-border)',
+                                color: 'var(--sm-accent)'
+                              }}
                             >
                               {Array.from({ length: 24 }).map((_, i) => (
-                                <option key={`hour-${i}`} value={i}>{i.toString().padStart(2, '0')}</option>
+                                <option key={`hour-${i}`} value={i} style={{ backgroundColor: 'var(--sm-card-bg)', color: 'var(--sm-text-primary)' }}>
+                                  {i.toString().padStart(2, '0')}
+                                </option>
                               ))}
                             </select>
-                            <span className="absolute -top-2 left-1/2 -translate-x-1/2 px-2 bg-white dark:bg-stone-950 text-[10px] font-black uppercase tracking-tighter text-stone-400 pointer-events-none">Hours</span>
+                            <span
+                              className="absolute -top-2 left-1/2 -translate-x-1/2 px-2 text-[9px] font-black uppercase tracking-tighter pointer-events-none"
+                              style={{
+                                backgroundColor: 'var(--sm-card-bg)',
+                                color: 'var(--sm-text-muted)'
+                              }}
+                            >
+                              Hours
+                            </span>
                           </div>
                         </div>
-                        <span className="text-2xl font-serif text-stone-300">:</span>
+                        <span className="text-2xl font-serif" style={{ color: 'var(--sm-border)' }}>:</span>
                         <div className="flex-1 flex flex-col items-center gap-2">
                           <div className="relative w-full">
                             <select
                               value={settings.durationMinutes}
                               onChange={(e) => setSettings({ ...settings, durationMinutes: parseInt(e.target.value) })}
-                              className="w-full bg-stone-50 dark:bg-stone-900/50 px-4 py-5 rounded-2xl border border-stone-200 dark:border-amber-900/30 outline-none font-serif text-3xl text-center text-amber-700 dark:text-amber-500 focus:ring-2 focus:ring-amber-500/20 transition-all appearance-none cursor-pointer"
+                              className="w-full px-4 py-4 rounded-2xl border outline-none font-serif text-2xl text-center focus:ring-2 focus:ring-amber-500/20 transition-all appearance-none cursor-pointer"
+                              style={{
+                                backgroundColor: 'var(--sm-surface)',
+                                borderColor: 'var(--sm-border)',
+                                color: 'var(--sm-accent)'
+                              }}
                             >
                               {[0, 1, 5, 10, 15, 20, 25, 30, 35, 40, 45, 50, 55].map(m => (
-                                <option key={`min-${m}`} value={m}>{m.toString().padStart(2, '0')}</option>
+                                <option key={`min-${m}`} value={m} style={{ backgroundColor: 'var(--sm-card-bg)', color: 'var(--sm-text-primary)' }}>
+                                  {m.toString().padStart(2, '0')}
+                                </option>
                               ))}
                             </select>
-                            <span className="absolute -top-2 left-1/2 -translate-x-1/2 px-2 bg-white dark:bg-stone-950 text-[10px] font-black uppercase tracking-tighter text-stone-400 pointer-events-none">Minutes</span>
+                            <span
+                              className="absolute -top-2 left-1/2 -translate-x-1/2 px-2 text-[9px] font-black uppercase tracking-tighter pointer-events-none"
+                              style={{
+                                backgroundColor: 'var(--sm-card-bg)',
+                                color: 'var(--sm-text-muted)'
+                              }}
+                            >
+                              Minutes
+                            </span>
                           </div>
                         </div>
                       </div>
@@ -839,88 +890,126 @@ export function MeditationScreen() {
 
                     {/* Interval Section */}
                     <div>
-                      <label className="block text-xs font-black uppercase tracking-widest mb-4 text-stone-400 dark:text-amber-700/70">{t('meditation.intervalBell')}</label>
+                      <label className="block text-[10px] font-black uppercase tracking-widest mb-3" style={{ color: 'var(--sm-text-muted)' }}>
+                        {t('meditation.intervalBell')}
+                      </label>
                       <div className="flex items-center gap-4">
                         <div className="flex-1 flex flex-col items-center gap-2">
                           <div className="relative w-full">
                             <select
                               value={settings.intervalMinutes}
                               onChange={(e) => setSettings({ ...settings, intervalMinutes: parseInt(e.target.value) })}
-                              className="w-full bg-stone-50 dark:bg-stone-900/50 px-4 py-5 rounded-2xl border border-stone-200 dark:border-amber-900/30 outline-none font-serif text-3xl text-center text-amber-700 dark:text-amber-500 focus:ring-2 focus:ring-amber-500/20 transition-all appearance-none cursor-pointer"
+                              className="w-full px-4 py-4 rounded-2xl border outline-none font-serif text-2xl text-center focus:ring-2 focus:ring-amber-500/20 transition-all appearance-none cursor-pointer"
+                              style={{
+                                backgroundColor: 'var(--sm-surface)',
+                                borderColor: 'var(--sm-border)',
+                                color: 'var(--sm-accent)'
+                              }}
                             >
                               {Array.from({ length: 60 }).map((_, i) => (
-                                <option key={`int-min-${i}`} value={i}>{i.toString().padStart(2, '0')}</option>
+                                <option key={`int-min-${i}`} value={i} style={{ backgroundColor: 'var(--sm-card-bg)', color: 'var(--sm-text-primary)' }}>
+                                  {i.toString().padStart(2, '0')}
+                                </option>
                               ))}
                             </select>
-                            <span className="absolute -top-2 left-1/2 -translate-x-1/2 px-2 bg-white dark:bg-stone-950 text-[10px] font-black uppercase tracking-tighter text-stone-400 pointer-events-none">Minutes</span>
+                            <span
+                              className="absolute -top-2 left-1/2 -translate-x-1/2 px-2 text-[9px] font-black uppercase tracking-tighter pointer-events-none"
+                              style={{
+                                backgroundColor: 'var(--sm-card-bg)',
+                                color: 'var(--sm-text-muted)'
+                              }}
+                            >
+                              Minutes
+                            </span>
                           </div>
                         </div>
-                        <span className="text-2xl font-serif text-stone-300">:</span>
+                        <span className="text-2xl font-serif" style={{ color: 'var(--sm-border)' }}>:</span>
                         <div className="flex-1 flex flex-col items-center gap-2">
                           <div className="relative w-full">
                             <select
                               value={settings.intervalSeconds}
                               onChange={(e) => setSettings({ ...settings, intervalSeconds: parseInt(e.target.value) })}
-                              className="w-full bg-stone-50 dark:bg-stone-900/50 px-4 py-5 rounded-2xl border border-stone-200 dark:border-amber-900/30 outline-none font-serif text-3xl text-center text-amber-700 dark:text-amber-500 focus:ring-2 focus:ring-amber-500/20 transition-all appearance-none cursor-pointer"
+                              className="w-full px-4 py-4 rounded-2xl border outline-none font-serif text-2xl text-center focus:ring-2 focus:ring-amber-500/20 transition-all appearance-none cursor-pointer"
+                              style={{
+                                backgroundColor: 'var(--sm-surface)',
+                                borderColor: 'var(--sm-border)',
+                                color: 'var(--sm-accent)'
+                              }}
                             >
                               {[0, 15, 30, 45].map(s => (
-                                <option key={`int-sec-${s}`} value={s}>{s.toString().padStart(2, '0')}</option>
+                                <option key={`int-sec-${s}`} value={s} style={{ backgroundColor: 'var(--sm-card-bg)', color: 'var(--sm-text-primary)' }}>
+                                  {s.toString().padStart(2, '0')}
+                                </option>
                               ))}
                             </select>
-                            <span className="absolute -top-2 left-1/2 -translate-x-1/2 px-2 bg-white dark:bg-stone-950 text-[10px] font-black uppercase tracking-tighter text-stone-400 pointer-events-none">Seconds</span>
+                            <span
+                              className="absolute -top-2 left-1/2 -translate-x-1/2 px-2 text-[9px] font-black uppercase tracking-tighter pointer-events-none"
+                              style={{
+                                backgroundColor: 'var(--sm-card-bg)',
+                                color: 'var(--sm-text-muted)'
+                              }}
+                            >
+                              Seconds
+                            </span>
                           </div>
                         </div>
                       </div>
                     </div>
 
+                    {/* Preparation Check Section */}
                     <div>
-                      <label className="block text-xs font-black uppercase tracking-widest mb-2 text-stone-400 dark:text-amber-700/70">{t('meditation.preparationCheck')}</label>
+                      <label className="block text-[10px] font-black uppercase tracking-widest mb-2" style={{ color: 'var(--sm-text-muted)' }}>
+                        {t('meditation.preparationCheck')}
+                      </label>
                       <select
                         value={settings.delaySeconds}
                         onChange={(e) => setSettings({ ...settings, delaySeconds: parseInt(e.target.value) })}
-                        className="w-full px-5 py-4 rounded-2xl outline-none font-serif text-lg border border-stone-200 dark:border-amber-900/30 text-stone-900 dark:text-stone-100 bg-stone-50 dark:bg-stone-900/50 focus:ring-2 focus:ring-amber-500/20 transition-all"
+                        className="w-full px-5 py-4 rounded-2xl outline-none font-serif text-base border focus:ring-2 focus:ring-amber-500/20 transition-all cursor-pointer"
+                        style={{
+                          backgroundColor: 'var(--sm-surface)',
+                          borderColor: 'var(--sm-border)',
+                          color: 'var(--sm-text-primary)'
+                        }}
                       >
-                        <option value={0}>{t('meditation.noDelay')}</option>
-                        <option value={5}>5 {t('meditation.seconds')}</option>
-                        <option value={10}>10 {t('meditation.seconds')}</option>
-                        <option value={30}>30 {t('meditation.seconds')}</option>
-                        <option value={60}>1 {t('meditation.minutes')}</option>
+                        <option value={0} style={{ backgroundColor: 'var(--sm-card-bg)', color: 'var(--sm-text-primary)' }}>{t('meditation.noDelay')}</option>
+                        <option value={5} style={{ backgroundColor: 'var(--sm-card-bg)', color: 'var(--sm-text-primary)' }}>5 {t('meditation.seconds')}</option>
+                        <option value={10} style={{ backgroundColor: 'var(--sm-card-bg)', color: 'var(--sm-text-primary)' }}>10 {t('meditation.seconds')}</option>
+                        <option value={30} style={{ backgroundColor: 'var(--sm-card-bg)', color: 'var(--sm-text-primary)' }}>30 {t('meditation.seconds')}</option>
+                        <option value={60} style={{ backgroundColor: 'var(--sm-card-bg)', color: 'var(--sm-text-primary)' }}>1 {t('meditation.minutes')}</option>
                       </select>
                     </div>
 
+                    {/* Bell Type Section */}
                     <div>
-                      <label className="block text-xs font-black uppercase tracking-widest mb-2 text-stone-400 dark:text-amber-700/70">{t('meditation.bellType')}</label>
+                      <label className="block text-[10px] font-black uppercase tracking-widest mb-2" style={{ color: 'var(--sm-text-muted)' }}>
+                        {t('meditation.bellType')}
+                      </label>
                       <div className="grid grid-cols-3 gap-2">
-                        {['bowl', 'gong', 'chime', 'tibetan', 'woodblock', 'bell'].map(bell => (
-                          <button
-                            key={`bell-option-${bell}`}
-                            onClick={() => {
-                              setSettings({ ...settings, bellType: bell });
-                              playBell(bell);
-                            }}
-                            className={cn(
-                              "py-4 text-xs font-black rounded-xl capitalize border transition-all active:scale-95",
-                              settings.bellType === bell
-                                ? "bg-amber-600 border-amber-600 text-white shadow-lg shadow-amber-600/20"
-                                : "bg-stone-50 dark:bg-stone-900/50 border-stone-200 dark:border-amber-900/30 text-stone-500 dark:text-amber-700"
-                            )}
-                          >
-                            {bell}
-                          </button>
-                        ))}
+                        {['bowl', 'gong', 'chime', 'tibetan', 'woodblock', 'bell'].map(bell => {
+                          const isActive = settings.bellType === bell;
+                          return (
+                            <button
+                              key={`bell-option-${bell}`}
+                              onClick={() => {
+                                setSettings({ ...settings, bellType: bell });
+                                playBell(bell);
+                              }}
+                              className="py-3.5 text-[10px] font-black rounded-xl capitalize border transition-all active:scale-95 cursor-pointer"
+                              style={{
+                                backgroundColor: isActive ? 'var(--sm-accent)' : 'var(--sm-surface)',
+                                borderColor: isActive ? 'var(--sm-accent)' : 'var(--sm-border)',
+                                color: isActive ? '#ffffff' : 'var(--sm-text-muted)',
+                                boxShadow: isActive ? '0 4px 12px var(--sm-accent-shadow)' : 'none'
+                              }}
+                            >
+                              {bell}
+                            </button>
+                          );
+                        })}
                       </div>
                     </div>
                   </div>
-
-                  <div className="p-8 border-t border-stone-100 dark:border-white/5 bg-white/50 dark:bg-stone-950/50 backdrop-blur-sm">
-                    <button
-                      onClick={() => setShowSettings(false)}
-                      className="w-full py-5 rounded-full font-black tracking-widest text-xs uppercase text-white shadow-xl transition-all active:scale-95 bg-gradient-to-r from-amber-700 to-amber-600 hover:shadow-amber-600/30"
-                    >
-                      {t('meditation.saveSettings')}
-                    </button>
-                  </div>
-                </motion.div>
+                </div>
               </motion.div>
             )}
           </AnimatePresence>

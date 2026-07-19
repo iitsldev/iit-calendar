@@ -246,7 +246,7 @@ export function CalendarScreen({
   };
 
   return (
-    <div className="flex flex-col min-h-screen relative bg-[var(--bg-main)]">
+    <div className="flex flex-col relative bg-[var(--bg-main)]">
 
       {/* Dynamic/Notch-compatible Vector Illustration Header */}
       <div
