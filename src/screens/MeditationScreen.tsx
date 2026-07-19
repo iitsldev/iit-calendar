@@ -495,10 +495,10 @@ export function MeditationScreen() {
 
         {/* Title & Tagline info inside the card */}
         <div className="px-2 text-center">
-          <h1 className="font-serif text-3xl font-bold text-slate-800 dark:text-slate-100 leading-none mb-1.5">
+          <h1 className="font-serif text-3xl font-bold leading-none mb-1.5" style={{ color: 'var(--text-primary)' }}>
             {t('common.stillness') || 'Stillness'}
           </h1>
-          <p className="text-[10px] font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400 leading-none">
+          <p className="text-[10px] font-semibold uppercase tracking-wider leading-none" style={{ color: 'var(--text-muted)' }}>
             Practice mindfulness
           </p>
         </div>
@@ -509,7 +509,7 @@ export function MeditationScreen() {
           {/* Mode Switcher */}
           <div className="h-14 flex items-center justify-center">
             {!isDistractionFree && (
-              <div className="flex justify-center gap-2 p-1.5 rounded-full w-fit mx-auto border border-slate-100 dark:border-slate-800">
+              <div className="flex justify-center gap-2 p-1.5 rounded-full w-fit mx-auto border" style={{ borderColor: 'var(--border-subtle)' }}>
                 {[
                   { id: 'timer', icon: Clock, label: t('study.timer') || 'Timer' },
                   { id: 'insights', icon: BarChart2, label: t('chant.insights') || 'Insights' },
@@ -584,11 +584,11 @@ export function MeditationScreen() {
                         className={cn(
                           "flex items-center mt-6 gap-2 px-4 py-2 rounded-full text-[10px] font-black uppercase tracking-widest transition-all active:scale-95",
                           wakeLock
-                            ? "bg-amber-500/20 text-amber-600 dark:text-amber-400 border border-amber-500/30"
-                            : "bg-slate-100 dark:bg-slate-800 text-slate-400 dark:text-slate-500 border border-transparent"
+                            ? "bg-[var(--accent-subtle)] text-[var(--accent)] border border-[var(--accent-muted)]"
+                            : "bg-[var(--bg-card)] text-[var(--text-muted)] border border-transparent"
                         )}
                       >
-                        <Sun size={12} className={cn(wakeLock && "animate-pulse")} />
+                        <Sun size={12} className={cn(wakeLock && "animate-pulse")} style={{ color: wakeLock ? 'var(--accent)' : undefined }} />
                         {wakeLock ? 'Screen Always On' : 'Keep Screen On'}
                       </button>
                     )}
@@ -636,7 +636,8 @@ export function MeditationScreen() {
                     <>
                       <button
                         onClick={handleStop}
-                        className="flex-1 h-14 rounded-full flex items-center justify-center gap-3 font-bold tracking-widest uppercase text-xs transition-all active:scale-95 bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300"
+                        className="flex-1 h-14 rounded-full flex items-center justify-center gap-3 font-bold tracking-widest uppercase text-xs transition-all active:scale-95"
+                        style={{ backgroundColor: 'var(--bg-card)', color: 'var(--text-secondary)' }}
                       >
                         <Square size={16} fill="currentColor" /> Stop
                       </button>
@@ -669,50 +670,34 @@ export function MeditationScreen() {
                 exit={{ opacity: 0, y: -10 }}
                 className="grid grid-cols-1 gap-4 mt-8"
               >
-                <div className="rounded-[2rem] p-6 relative overflow-hidden" style={{ backgroundColor: 'var(--sm-card-bg)', border: '1px solid var(--sm-border)' }}>
-                  <div className="flex justify-between items-start mb-4">
-                    <h3 className="font-serif text-xl" style={{ color: 'var(--sm-text-primary)' }}>{t('meditation.yourJourney')}</h3>
-                    <Activity size={20} style={{ color: 'var(--sm-text-muted)' }} />
-                  </div>
-
-                  {/* Prominent Streak */}
-                  <div className="flex justify-center items-center flex-col mb-8 py-6 rounded-3xl" style={{ border: '1px solid var(--accent-muted)', backgroundColor: 'var(--accent-subtle)' }}>
-                    <Award size={24} style={{ color: 'var(--accent)' }} className="mb-2" />
-                    <p className="text-sm font-black uppercase tracking-widest mb-1" style={{ color: 'var(--sm-text-muted)' }}>{t('meditation.currentStreak')}</p>
-                    <div className="font-serif text-5xl font-medium tracking-tight" style={{ color: 'var(--accent)' }}>{currentStreak} <span className="text-2xl">{t('meditation.days')}</span></div>
-                  </div>
-
-                  <div className="grid grid-cols-2 gap-4 mb-8">
-                    <div className="rounded-2xl p-4" style={{ backgroundColor: 'var(--sm-surface)' }}>
-                      <div className="text-sm font-black uppercase tracking-widest mb-1" style={{ color: 'var(--sm-text-muted)' }}>{t('meditation.weeklyTime')}</div>
-                      <div className="font-serif text-3xl" style={{ color: 'var(--accent)' }}>
-                        {Math.floor(weeklyMinutes / 60) > 0 ? `${Math.floor(weeklyMinutes / 60)}h ${weeklyMinutes % 60}m` : `${weeklyMinutes}m`}
-                      </div>
+                {/* Your Journey — 3 stat cards (matching Study Insights style) */}
+                <div className="grid grid-cols-3 gap-3">
+                  {[
+                    { icon: Award, value: currentStreak, label: t('meditation.currentStreak') || 'Day Streak' },
+                    { icon: Clock, value: Math.floor(weeklyMinutes / 60) > 0 ? `${Math.floor(weeklyMinutes / 60)}h ${weeklyMinutes % 60}m` : `${weeklyMinutes}m`, label: t('meditation.weeklyTime') || 'This Week' },
+                    { icon: Activity, value: stats.sessions.filter(s => differenceInDays(today, new Date(s.date)) < 7).length, label: t('meditation.sessions') || 'Sessions' },
+                  ].map(({ icon: Icon, value, label }) => (
+                    <div
+                      key={label}
+                      className="rounded-2xl p-4 flex flex-col items-center justify-center text-center gap-1"
+                      style={{ backgroundColor: 'var(--accent-subtle)', border: '1px solid var(--accent-muted)' }}
+                    >
+                      <Icon size={20} style={{ color: 'var(--accent)' }} />
+                      <div className="text-2xl font-black" style={{ color: 'var(--accent)' }}>{value}</div>
+                      <div className="text-[9px] font-bold uppercase tracking-wider" style={{ color: 'var(--text-muted)' }}>{label}</div>
                     </div>
-                    <div className="rounded-2xl p-4" style={{ backgroundColor: 'var(--sm-surface)' }}>
-                      <div className="text-sm font-black uppercase tracking-widest mb-1" style={{ color: 'var(--sm-text-muted)' }}>{t('meditation.sessions')}</div>
-                      <div className="font-serif text-3xl" style={{ color: 'var(--accent)' }}>{stats.sessions.filter(s => differenceInDays(today, new Date(s.date)) < 7).length}</div>
-                    </div>
-                  </div>
-
-                  <div className="space-y-2">
-                    <div className="flex justify-between text-sm uppercase tracking-widest font-bold" style={{ color: 'var(--sm-text-muted)' }}>
-                      <span>{t('meditation.nextMilestone')}</span>
-                      <span style={{ color: 'var(--accent)' }}>{Math.round(progressPercent)}%</span>
-                    </div>
-                    <div className="h-2 rounded-full w-full overflow-hidden" style={{ backgroundColor: 'var(--sm-surface)' }}>
-                      <div className="h-full rounded-full transition-all duration-1000" style={{ width: `${progressPercent}%`, backgroundColor: 'var(--accent)' }} />
-                    </div>
-                    <p className="text-xs italic text-center mt-6 mb-2 opacity-70" style={{ color: 'var(--sm-text-secondary)' }}>
-                      "Silence is the sleep that nourishes wisdom."
-                    </p>
-                  </div>
+                  ))}
                 </div>
 
-                <div className="rounded-[2rem] p-6" style={{ backgroundColor: 'var(--sm-card-bg)', border: '1px solid var(--sm-border)' }}>
-                  <div className="flex justify-between items-center mb-6">
-                    <h3 className="font-serif text-xl" style={{ color: 'var(--sm-text-primary)' }}>{t('meditation.meditationHistory')}</h3>
-                    <Activity size={20} style={{ color: 'var(--sm-text-muted)' }} />
+                <div
+                  className="rounded-[1.5rem] p-5"
+                  style={{ backgroundColor: 'var(--bg-card, var(--bg-main))', border: '1px solid var(--border-subtle)' }}
+                >
+                  <div className="flex items-center gap-2 mb-5">
+                    <BarChart2 size={16} style={{ color: 'var(--accent)' }} />
+                    <span className="text-xs font-black uppercase tracking-widest" style={{ color: 'var(--text-muted)' }}>
+                      {t('meditation.meditationHistory') || 'Meditation History'}
+                    </span>
                   </div>
 
                   {/* Chart Controls */}
@@ -831,7 +816,7 @@ export function MeditationScreen() {
                             <select
                               value={settings.durationHours}
                               onChange={(e) => setSettings({ ...settings, durationHours: parseInt(e.target.value) })}
-                              className="w-full px-4 py-4 rounded-2xl border outline-none font-serif text-2xl text-center focus:ring-2 focus:ring-amber-500/20 transition-all appearance-none cursor-pointer"
+                              className="w-full px-4 py-4 rounded-2xl border outline-none font-serif text-2xl text-center focus:ring-2 transition-all appearance-none cursor-pointer"
                               style={{
                                 backgroundColor: 'var(--sm-surface)',
                                 borderColor: 'var(--sm-border)',
@@ -861,7 +846,7 @@ export function MeditationScreen() {
                             <select
                               value={settings.durationMinutes}
                               onChange={(e) => setSettings({ ...settings, durationMinutes: parseInt(e.target.value) })}
-                              className="w-full px-4 py-4 rounded-2xl border outline-none font-serif text-2xl text-center focus:ring-2 focus:ring-amber-500/20 transition-all appearance-none cursor-pointer"
+                              className="w-full px-4 py-4 rounded-2xl border outline-none font-serif text-2xl text-center focus:ring-2 transition-all appearance-none cursor-pointer"
                               style={{
                                 backgroundColor: 'var(--sm-surface)',
                                 borderColor: 'var(--sm-border)',
@@ -899,7 +884,7 @@ export function MeditationScreen() {
                             <select
                               value={settings.intervalMinutes}
                               onChange={(e) => setSettings({ ...settings, intervalMinutes: parseInt(e.target.value) })}
-                              className="w-full px-4 py-4 rounded-2xl border outline-none font-serif text-2xl text-center focus:ring-2 focus:ring-amber-500/20 transition-all appearance-none cursor-pointer"
+                              className="w-full px-4 py-4 rounded-2xl border outline-none font-serif text-2xl text-center focus:ring-2 transition-all appearance-none cursor-pointer"
                               style={{
                                 backgroundColor: 'var(--sm-surface)',
                                 borderColor: 'var(--sm-border)',
@@ -929,7 +914,7 @@ export function MeditationScreen() {
                             <select
                               value={settings.intervalSeconds}
                               onChange={(e) => setSettings({ ...settings, intervalSeconds: parseInt(e.target.value) })}
-                              className="w-full px-4 py-4 rounded-2xl border outline-none font-serif text-2xl text-center focus:ring-2 focus:ring-amber-500/20 transition-all appearance-none cursor-pointer"
+                              className="w-full px-4 py-4 rounded-2xl border outline-none font-serif text-2xl text-center focus:ring-2 transition-all appearance-none cursor-pointer"
                               style={{
                                 backgroundColor: 'var(--sm-surface)',
                                 borderColor: 'var(--sm-border)',
@@ -964,7 +949,7 @@ export function MeditationScreen() {
                       <select
                         value={settings.delaySeconds}
                         onChange={(e) => setSettings({ ...settings, delaySeconds: parseInt(e.target.value) })}
-                        className="w-full px-5 py-4 rounded-2xl outline-none font-serif text-base border focus:ring-2 focus:ring-amber-500/20 transition-all cursor-pointer"
+                        className="w-full px-5 py-4 rounded-2xl outline-none font-serif text-base border focus:ring-2 transition-all cursor-pointer"
                         style={{
                           backgroundColor: 'var(--sm-surface)',
                           borderColor: 'var(--sm-border)',
@@ -996,10 +981,10 @@ export function MeditationScreen() {
                               }}
                               className="py-3.5 text-[10px] font-black rounded-xl capitalize border transition-all active:scale-95 cursor-pointer"
                               style={{
-                                backgroundColor: isActive ? 'var(--sm-accent)' : 'var(--sm-surface)',
-                                borderColor: isActive ? 'var(--sm-accent)' : 'var(--sm-border)',
-                                color: isActive ? '#ffffff' : 'var(--sm-text-muted)',
-                                boxShadow: isActive ? '0 4px 12px var(--sm-accent-shadow)' : 'none'
+                                backgroundColor: isActive ? 'var(--accent)' : 'var(--bg-card)',
+                                borderColor: isActive ? 'var(--accent)' : 'var(--border-subtle)',
+                                color: isActive ? '#ffffff' : 'var(--text-muted)',
+                                boxShadow: isActive ? '0 4px 12px var(--accent-shadow)' : 'none'
                               }}
                             >
                               {bell}

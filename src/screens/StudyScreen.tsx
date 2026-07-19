@@ -1,11 +1,11 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { Settings2, PlusCircle, CheckCircle2, Circle, MoreVertical, Trash2, BarChart2, Settings as SettingsIcon } from 'lucide-react';
+import { Settings2, PlusCircle, CheckCircle2, Circle, MoreVertical, BarChart2, Clock } from 'lucide-react';
 import { cn } from '../lib/utils';
 import { useUI } from '../UIContext';
 import { useI18n } from '../hooks/useI18n';
-import { StudySettingsModal, StudySettings } from '../components/study/StudySettingsModal';
-import { StudyReportModal, StudySession } from '../components/study/StudyReportModal';
+import { StudySettings, StudySettingsData } from '../components/study/StudySettings';
+import { StudyInsights, StudySession } from '../components/study/StudyInsights';
 import { alarmService } from '../services/alarm/AlarmService';
 
 type Mode = 'pomodoro' | 'shortBreak' | 'longBreak';
@@ -18,7 +18,7 @@ interface Task {
   completed: boolean;
 }
 
-const DEFAULT_SETTINGS: StudySettings = {
+const DEFAULT_SETTINGS: StudySettingsData = {
   pomodoro: 25 * 60,
   shortBreak: 5 * 60,
   longBreak: 15 * 60,
@@ -34,7 +34,7 @@ export function StudyScreen() {
   const { setShowSettings: setShowGlobalSettings } = useUI();
 
   // Settings & Sessions
-  const [settings, setSettings] = useState<StudySettings>(() => {
+  const [settings, setSettings] = useState<StudySettingsData>(() => {
     const saved = localStorage.getItem('study_settings');
     return saved ? { ...DEFAULT_SETTINGS, ...JSON.parse(saved) } : DEFAULT_SETTINGS;
   });
@@ -45,8 +45,7 @@ export function StudyScreen() {
   });
 
   // UI State
-  const [showSettings, setShowSettings] = useState(false);
-  const [showReport, setShowReport] = useState(false);
+  const [view, setView] = useState<'timer' | 'insights' | 'configs'>('timer');
 
   // Timer State
   const [mode, setMode] = useState<Mode>('pomodoro');
@@ -339,25 +338,7 @@ export function StudyScreen() {
           />
         </svg>
 
-        {/* Reports Trigger overlays on top left of header */}
-        <button
-          onClick={() => setShowReport(true)}
-          className="absolute top-[calc(0.75rem+env(safe-area-inset-top))] left-4 z-30 flex items-center gap-1.5 px-3 py-1.5 bg-white/20 dark:bg-black/20 border border-white/10 rounded-full text-xs font-bold uppercase tracking-widest backdrop-blur-md hover:bg-white/30 dark:hover:bg-black/30 transition-colors text-white"
-        >
-          <BarChart2 size={13} /> {t('study.report') || 'Report'}
-        </button>
 
-        {/* Pomodoro Settings & Global Settings gear overlays on top right of header */}
-        <div className="absolute top-[calc(0.75rem+env(safe-area-inset-top))] right-4 z-30 flex items-center gap-1.5" style={{ top: 'calc(0.75rem + env(safe-area-inset-top))' }}>
-          <button
-            onClick={() => setShowSettings(true)}
-            className="w-9 h-9 rounded-full flex items-center justify-center bg-white/20 dark:bg-black/20 backdrop-blur-md text-white border border-white/10 active:scale-95 transition-all"
-            aria-label="Pomodoro Settings"
-            title={t('study.settings') || 'Settings'}
-          >
-            <Settings2 size={16} />
-          </button>
-        </div>
       </div>
 
       {/* Card Overlay container (Oval at the top overlapping the header) */}
@@ -373,7 +354,40 @@ export function StudyScreen() {
           </p>
         </div>
 
-        {/* ── Original Study Content wrapper ── */}
+        {/* Tab Strip — Timer / Insights / Configs */}
+        <div className="h-14 flex items-center justify-center">
+          <div className="flex justify-center gap-2 p-1.5 rounded-full w-fit mx-auto border border-slate-100 dark:border-slate-800">
+            {[
+              { id: 'timer', icon: Clock, label: t('study.timer') || 'Timer' },
+              { id: 'insights', icon: BarChart2, label: t('study.insights') || 'Insights' },
+              { id: 'configs', icon: Settings2, label: t('study.configs') || 'Configs' },
+            ].map(tab => (
+              <button
+                key={tab.id}
+                onClick={() => setView(tab.id as any)}
+                className={cn(
+                  "flex items-center gap-2 py-2.5 rounded-full text-[0.65rem] font-black uppercase tracking-widest transition-all cursor-pointer",
+                  view === tab.id
+                    ? "bg-saffron text-white shadow-md shadow-saffron/20 px-5"
+                    : "text-primary-300 dark:text-primary-700 hover:text-primary-600 dark:hover:text-primary-300 px-3.5"
+                )}
+              >
+                <tab.icon size={14} />
+                {view === tab.id && <span>{tab.label}</span>}
+              </button>
+            ))}
+          </div>
+        </div>
+
+        {/* ── Study Content by Tab ── */}
+        <AnimatePresence mode="wait">
+        {view === 'timer' && (
+        <motion.div
+          key="study-timer"
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          exit={{ opacity: 0, y: -10 }}
+        >
         <div className={cn("space-y-6 animate-in fade-in duration-700 p-2 min-h-[70vh] rounded-[2.5rem] transition-colors relative", getModeBg())}>
 
           {/* Timer Card */}
@@ -449,9 +463,6 @@ export function StudyScreen() {
           <div className="max-w-md mx-auto mt-8 w-full px-2 pb-10">
             <div className="flex justify-between items-center mb-6 border-b border-slate-100 dark:border-slate-800/80 pb-3">
               <h2 className="font-serif text-2xl font-bold text-slate-800 dark:text-slate-200">{t('study.tasks') || 'Tasks'}</h2>
-              <button className="p-2 bg-slate-200 dark:bg-slate-800 rounded-lg text-slate-600 dark:text-slate-300">
-                <MoreVertical size={20} />
-              </button>
             </div>
 
             {/* Task List */}
@@ -548,30 +559,54 @@ export function StudyScreen() {
             )}
           </div>
 
-          <StudySettingsModal
-            show={showSettings}
-            onClose={() => setShowSettings(false)}
+        </div>
+        </motion.div>
+        )}
+
+        {view === 'insights' && (
+        <motion.div
+          key="study-insights"
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          exit={{ opacity: 0, y: -10 }}
+          className="pb-10"
+        >
+          <StudyInsights
+            show={true}
+            onClose={() => setView('timer')}
+            sessions={sessions}
+            inline={true}
+          />
+        </motion.div>
+        )}
+
+        {view === 'configs' && (
+        <motion.div
+          key="study-configs"
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          exit={{ opacity: 0, y: -10 }}
+          className="pb-10"
+        >
+          <StudySettings
+            show={true}
+            onClose={() => setView('timer')}
             settings={settings}
             onUpdate={(newSettings) => {
               setSettings(newSettings);
-              // If timer is NOT running, update current time left to match new setting
               if (!isRunning) {
                 setTimeLeft(newSettings[mode]);
               } else {
-                // Mid-session update
                 const newDurationMs = newSettings[mode] * 1000;
                 alarmService.rescheduleStudyTimer(newDurationMs, mode);
                 setTimeLeft(newSettings[mode]);
               }
             }}
+            inline={true}
           />
-
-          <StudyReportModal
-            show={showReport}
-            onClose={() => setShowReport(false)}
-            sessions={sessions}
-          />
-        </div>
+        </motion.div>
+        )}
+        </AnimatePresence>
       </div>
     </div>
   );
