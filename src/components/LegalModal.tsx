@@ -65,7 +65,7 @@ export function LegalModal({ show, onClose }: { show: boolean; onClose: () => vo
             </div>
 
             {/* Content */}
-            <div className="flex-1 overflow-y-auto pr-2 space-y-6 text-sm leading-relaxed" style={{ color: 'var(--text-secondary)' }}>
+            <div className="flex-1 overflow-y-auto scrollbar-hide pr-2 space-y-6 text-sm leading-relaxed" style={{ color: 'var(--text-secondary)' }}>
               {section === 'about' && (
                 <div className="space-y-6">
                   <section>

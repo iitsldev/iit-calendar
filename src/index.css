@@ -135,11 +135,13 @@
 }
 
 /* Hide scrollbar for Chrome, Safari and Opera */
-.hide-scrollbar::-webkit-scrollbar {
+.hide-scrollbar::-webkit-scrollbar,
+.scrollbar-hide::-webkit-scrollbar {
   display: none;
 }
 /* Hide scrollbar for IE, Edge and Firefox */
-.hide-scrollbar {
+.hide-scrollbar,
+.scrollbar-hide {
   -ms-overflow-style: none;  /* IE and Edge */
   scrollbar-width: none;  /* Firefox */
 }
@@ -264,4 +266,36 @@
     box-shadow: 0 8px 20px var(--accent-shadow);
   }
 
+  /* ── Safe Area Headers ─────────────────────────────────────────────────── */
+  .safe-header {
+    --safe-header-top: env(safe-area-inset-top, 0px);
+    height: calc(18vh + var(--safe-header-top));
+    min-height: calc(140px + var(--safe-header-top));
+    padding-top: var(--safe-header-top);
+  }
+
+  .safe-header-calendar {
+    --safe-header-top: env(safe-area-inset-top, 0px);
+    height: calc(32vh + var(--safe-header-top));
+    min-height: calc(220px + var(--safe-header-top));
+    padding-top: var(--safe-header-top);
+  }
+
+  @media (min-width: 640px) {
+    .safe-header {
+      min-height: calc(160px + var(--safe-header-top));
+    }
+  }
+
+  @media (min-width: 768px) {
+    .safe-header {
+      min-height: calc(180px + var(--safe-header-top));
+    }
+  }
+
+  @media (min-width: 1024px) {
+    .safe-header {
+      min-height: calc(200px + var(--safe-header-top));
+    }
+  }
 }

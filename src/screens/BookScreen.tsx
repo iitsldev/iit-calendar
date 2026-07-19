@@ -182,10 +182,10 @@ export function BookScreen({ settings }: { settings: Settings }) {
 
       {/* Dynamic/Notch-compatible Vector Illustration Header (Library: ripple/scripture theme) */}
       <div
-        className="w-full h-[18vh] min-h-[140px] sm:min-h-[160px] md:min-h-[180px] lg:min-h-[200px] bg-gradient-to-tr from-yellow-600/20 via-gold/20 to-stone-500/10 sticky top-0 z-10 flex items-center justify-center overflow-hidden"
+        className="w-full safe-header bg-gradient-to-tr from-yellow-600/20 via-gold/20 to-stone-500/10 sticky top-0 z-10 flex items-center justify-center"
       >
         {/* Styled CSS/SVG Zen Concentric Rings Art */}
-        <svg className="absolute w-[160px] h-[160px] sm:w-[190px] sm:h-[190px] md:w-[220px] md:h-[220px] lg:w-[240px] lg:h-[240px] -translate-y-5" viewBox="0 0 100 100">
+        <svg className="absolute w-[160px] h-[160px] sm:w-[190px] sm:h-[190px] md:w-[220px] md:h-[220px] lg:w-[240px] lg:h-[240px] -translate-y-3" viewBox="0 0 100 100">
           <defs>
             {/* Soft shadow filter for the circular pill container */}
             <filter id="book-pill-shadow" x="-30%" y="-30%" width="160%" height="160%">

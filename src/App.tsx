@@ -219,7 +219,7 @@ export default function App() {
         className="flex-1 flex overflow-x-auto overflow-y-hidden snap-x snap-mandatory hide-scrollbar"
         style={{ scrollBehavior: 'smooth' }}
       >
-        <div id="tab-calendar" className="min-w-full w-full h-full flex-shrink-0 snap-center overflow-y-auto pb-32">
+        <div id="tab-calendar" className="min-w-full w-full h-full flex-shrink-0 snap-center overflow-y-auto hide-scrollbar pb-32">
           <CalendarScreen 
             settings={settings}
             onUpdateSettings={setSettings}
@@ -232,19 +232,19 @@ export default function App() {
           />
         </div>
         
-        <div id="tab-meditation" className="min-w-full w-full h-full flex-shrink-0 snap-center overflow-y-auto pb-32">
+        <div id="tab-meditation" className="min-w-full w-full h-full flex-shrink-0 snap-center overflow-y-auto hide-scrollbar pb-32">
           <MeditationScreen />
         </div>
 
-        <div id="tab-chants" className="min-w-full w-full h-full flex-shrink-0 snap-center overflow-y-auto pb-32">
+        <div id="tab-chants" className="min-w-full w-full h-full flex-shrink-0 snap-center overflow-y-auto hide-scrollbar pb-32">
           <ChantsScreen settings={settings} />
         </div>
 
-        <div id="tab-book" className="min-w-full w-full h-full flex-shrink-0 snap-center overflow-y-auto pb-32">
+        <div id="tab-book" className="min-w-full w-full h-full flex-shrink-0 snap-center overflow-y-auto hide-scrollbar pb-32">
           <BookScreen settings={settings} />
         </div>
 
-        <div id="tab-study" className="min-w-full w-full h-full flex-shrink-0 snap-center overflow-y-auto pb-32">
+        <div id="tab-study" className="min-w-full w-full h-full flex-shrink-0 snap-center overflow-y-auto hide-scrollbar pb-32">
           <StudyScreen />
         </div>
       </main>

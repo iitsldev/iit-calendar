@@ -250,10 +250,10 @@ export function CalendarScreen({
 
       {/* Dynamic/Notch-compatible Vector Illustration Header */}
       <div
-        className="w-full h-[32vh] min-h-[220px] bg-gradient-to-b from-[#f8f2e4] via-[#ede0c0] to-[#ddc898] dark:from-[#0d0905] dark:via-[#1a1005] dark:to-[#0d0905] sticky top-0 z-10 flex items-center justify-center overflow-hidden"
+        className="w-full safe-header-calendar bg-gradient-to-b from-[#f8f2e4] via-[#ede0c0] to-[#ddc898] dark:from-[#0d0905] dark:via-[#1a1005] dark:to-[#0d0905] sticky top-0 z-10 flex items-center justify-center"
       >
         {/* Center alignment wrapper for orbits & logo, shifted up to prevent clipping on mobile */}
-        <div className="relative w-[260px] h-[260px] flex items-center justify-center -translate-y-5">
+        <div className="relative w-[260px] h-[260px] flex items-center justify-center -translate-y-3">
           {/* Styled CSS/SVG — Sun & Moon orbit Mount Sumeru (Theravāda cosmology) */}
           <svg className="absolute inset-0 w-full h-full pointer-events-none select-none" viewBox="0 0 100 100">
             <style dangerouslySetInnerHTML={{

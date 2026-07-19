@@ -95,7 +95,7 @@ export function CardOrderModal({
               {t('calendar.reorderCards') || 'Reorder Cards'}
             </h2>
 
-            <div className="space-y-3 mb-6 overflow-y-auto pr-2 flex-grow custom-scrollbar">
+            <div className="space-y-3 mb-6 overflow-y-auto pr-2 flex-grow scrollbar-hide">
               {currentOrder.map((item, index) => {
                 const isDisabled = item.startsWith('!');
                 const cardId = isDisabled ? item.substring(1) : item;
