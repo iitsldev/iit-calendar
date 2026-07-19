@@ -1,11 +1,12 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { Play, Square, RotateCcw, Volume2, Activity, Award, Clock, Settings2, X, Minus, Plus, Pause, Sun, ChevronLeft, ChevronRight } from 'lucide-react';
+import { Play, Square, RotateCcw, Volume2, Activity, Award, Clock, Settings2, X, Minus, Plus, Pause, Sun, ChevronLeft, ChevronRight, Settings as SettingsIcon } from 'lucide-react';
 import { cn } from '../lib/utils';
 import { format, differenceInDays, startOfDay, subDays, isSameDay, subWeeks, subMonths, startOfWeek, endOfWeek, startOfMonth, endOfMonth } from 'date-fns';
 import { alarmService, ActiveMeditation } from '../services/alarm/AlarmService';
 import { meditationService } from '../services/MeditationService';
 import { useI18n } from '../hooks/useI18n';
+import { useUI } from '../UIContext';
 
 interface MeditationSession {
   id: string;
@@ -19,6 +20,7 @@ interface MeditationStats {
 
 export function MeditationScreen() {
   const { t } = useI18n();
+  const { setShowSettings: setShowGlobalSettings } = useUI();
   const loadStats = () => {
     if (typeof window !== 'undefined') {
       const saved = localStorage.getItem('zen_meditation_stats');
@@ -425,7 +427,48 @@ export function MeditationScreen() {
   const isDistractionFree = isRunning || countdown > 0 || isPaused;
 
   return (
-    <div className="space-y-8 animate-in fade-in duration-700">
+    <div className="flex flex-col min-h-screen relative bg-[var(--bg-main)]">
+      
+      {/* Dynamic/Notch-compatible Vector Illustration Header (Stillness: ripple/lotus theme) */}
+      <div 
+        className="w-full h-[18vh] min-h-[140px] bg-gradient-to-tr from-teal-500/20 via-emerald-500/20 to-cyan-500/10 sticky top-0 z-10 flex items-center justify-center overflow-hidden"
+      >
+        {/* Styled CSS/SVG Zen Concentric Rings Art */}
+        <svg className="absolute w-[180px] h-[180px] text-teal-600/30 dark:text-teal-400/20" viewBox="0 0 100 100">
+          <circle cx="50" cy="50" r="40" stroke="currentColor" strokeWidth="0.5" fill="none" />
+          <circle cx="50" cy="50" r="30" stroke="currentColor" strokeWidth="0.5" fill="none" strokeDasharray="3 3" />
+          <circle cx="50" cy="50" r="20" stroke="currentColor" strokeWidth="0.5" fill="none" />
+          <circle cx="50" cy="50" r="10" stroke="currentColor" strokeWidth="0.5" fill="none" strokeDasharray="1 1" />
+          {/* lotus/leaf silhouette */}
+          <path d="M 50 40 C 45 48, 45 52, 50 60 C 55 52, 55 48, 50 40" fill="currentColor" opacity="0.6" />
+          <path d="M 42 45 C 48 48, 52 48, 58 45 C 52 52, 48 52, 42 45" fill="currentColor" opacity="0.4" />
+        </svg>
+        
+        {/* Settings gear overlays on top right of header */}
+        <button
+          onClick={() => setShowGlobalSettings(true)}
+          className="absolute top-[calc(0.75rem+env(safe-area-inset-top))] right-4 z-30 w-9 h-9 rounded-full flex items-center justify-center bg-white/20 dark:bg-black/20 backdrop-blur-md text-white border border-white/10 active:scale-95 transition-all"
+          aria-label="Settings"
+        >
+          <SettingsIcon size={18} />
+        </button>
+      </div>
+
+      {/* Card Overlay container (Oval at the top overlapping the header) */}
+      <div className="relative z-20 mt-[-2.5rem] bg-[var(--bg-main)] rounded-t-[3rem] px-4 pt-6 pb-24 shadow-[0_-10px_40px_rgba(0,0,0,0.03)] dark:shadow-[0_-10px_40px_rgba(0,0,0,0.25)] flex flex-col gap-6">
+        
+        {/* Title & Tagline info inside the card */}
+        <div className="px-2 text-center">
+          <h1 className="font-serif text-3xl font-bold text-slate-800 dark:text-slate-100 leading-none mb-1.5">
+            {t('common.stillness') || 'Stillness'}
+          </h1>
+          <p className="text-[10px] font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400 leading-none">
+            Calm your mind and practice mindfulness
+          </p>
+        </div>
+
+        {/* ── Original Meditation Content wrapper ── */}
+        <div className="space-y-8 animate-in fade-in duration-700">
       
       {/* ── Timer Section ─────────────────────────────────────────────────── */}
       <div className={cn(
@@ -845,6 +888,8 @@ export function MeditationScreen() {
           </motion.div>
         )}
       </AnimatePresence>
+        </div>
+      </div>
     </div>
   );
 }

@@ -5,7 +5,7 @@ import { UserChant, ChantSession, UserChantStats } from '../types';
 import { ChantCounter } from '../components/chanting/ChantCounter';
 import { ChantList } from '../components/chanting/ChantList';
 import { ChantInsights } from '../components/chanting/ChantInsights';
-import { Plus, X, BarChart2, List, Trash2, Edit3, Lock, LogIn, ChevronDown, ChevronUp } from 'lucide-react';
+import { Plus, X, BarChart2, List, Trash2, Edit3, Lock, LogIn, ChevronDown, ChevronUp, Settings as SettingsIcon } from 'lucide-react';
 import { isSameDay, subDays } from 'date-fns';
 import { cn } from '../lib/utils';
 import { useUI } from '../UIContext';
@@ -133,11 +133,48 @@ export function ChantsScreen({ settings }: { settings: Settings }) {
   if (loading) return <div className="flex items-center justify-center py-20">{t('chant.loading')}</div>;
 
   return (
-    <div className="max-w-2xl mx-auto space-y-6">
-      <header className="text-center py-6">
-        <h2 className="font-serif text-4xl text-saffron dark:text-amber-500 mb-1">{t('chant.chantCounter')}</h2>
-        <p className="text-[0.65rem] font-black uppercase tracking-[0.4em] text-primary-400 dark:text-primary-500">{t('chant.focusMind')}</p>
-      </header>
+    <div className="flex flex-col min-h-screen relative bg-[var(--bg-main)]">
+      
+      {/* Dynamic/Notch-compatible Vector Illustration Header (Chants: bowl/sound wave theme) */}
+      <div 
+        className="w-full h-[18vh] min-h-[140px] bg-gradient-to-tr from-rose-500/20 via-lotus-base/20 to-amber-500/10 sticky top-0 z-10 flex items-center justify-center overflow-hidden"
+      >
+        {/* Styled CSS/SVG Chanting bowl & sound waves */}
+        <svg className="absolute w-[180px] h-[180px] text-saffron/40 dark:text-amber-500/20" viewBox="0 0 100 100">
+          <circle cx="50" cy="50" r="30" stroke="currentColor" strokeWidth="0.5" fill="none" />
+          <path d="M 30 50 Q 40 40, 50 50 T 70 50" stroke="currentColor" strokeWidth="0.75" fill="none" />
+          <path d="M 25 50 Q 37 35, 50 50 T 75 50" stroke="currentColor" strokeWidth="0.5" fill="none" strokeDasharray="2 2" />
+          <path d="M 20 50 Q 35 30, 50 50 T 80 50" stroke="currentColor" strokeWidth="0.25" fill="none" />
+          {/* Stylized bowl */}
+          <path d="M 35 55 Q 50 75, 65 55 Z" fill="currentColor" opacity="0.6" />
+          <rect x="33" y="53" width="34" height="2" rx="1" fill="currentColor" opacity="0.8" />
+        </svg>
+        
+        {/* Settings gear overlays on top right of header */}
+        <button
+          onClick={() => setShowSettings(true)}
+          className="absolute top-[calc(0.75rem+env(safe-area-inset-top))] right-4 z-30 w-9 h-9 rounded-full flex items-center justify-center bg-white/20 dark:bg-black/20 backdrop-blur-md text-white border border-white/10 active:scale-95 transition-all"
+          aria-label="Settings"
+        >
+          <SettingsIcon size={18} />
+        </button>
+      </div>
+
+      {/* Card Overlay container (Oval at the top overlapping the header) */}
+      <div className="relative z-20 mt-[-2.5rem] bg-[var(--bg-main)] rounded-t-[3rem] px-4 pt-6 pb-24 shadow-[0_-10px_40px_rgba(0,0,0,0.03)] dark:shadow-[0_-10px_40px_rgba(0,0,0,0.25)] flex flex-col gap-6">
+        
+        {/* Title & Tagline info inside the card */}
+        <div className="px-2 text-center">
+          <h1 className="font-serif text-3xl font-bold text-slate-800 dark:text-slate-100 leading-none mb-1.5">
+            {t('chant.chantCounter')}
+          </h1>
+          <p className="text-[10px] font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400 leading-none">
+            {t('chant.focusMind')}
+          </p>
+        </div>
+
+        {/* ── Original Chants Content wrapper ── */}
+        <div className="max-w-2xl w-full mx-auto space-y-6">
 
       {/* Mode Switcher */}
       <div className="flex justify-center gap-2 p-1.5 rounded-full w-fit mx-auto border border-slate-100 dark:border-slate-800">
@@ -315,6 +352,8 @@ export function ChantsScreen({ settings }: { settings: Settings }) {
         </div>
       )}
 
+        </div>
+      </div>
     </div>
   );
 }

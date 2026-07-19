@@ -1,7 +1,8 @@
 import React, { useState, useEffect, useRef, useMemo } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { BookOpen, List, X, ChevronRight, Search, ChevronUp, ChevronDown, Library } from 'lucide-react';
+import { BookOpen, List, X, ChevronRight, Search, ChevronUp, ChevronDown, Library, Settings as SettingsIcon } from 'lucide-react';
 import { cn } from '../lib/utils';
+import { useUI } from '../UIContext';
 import chantBookHtml from '../data/chantingbook.html?raw';
 import memorizationHtml from '../data/memorization.html?raw';
 import { useI18n } from '../hooks/useI18n';
@@ -57,6 +58,7 @@ function parseTocFromHtml(html: string, paliScript: PaliScript): TocItem[] {
 
 export function BookScreen({ settings }: { settings: Settings }) {
   const { t } = useI18n();
+  const { setShowSettings } = useUI();
   const [showToc, setShowToc] = useState(false);
   const [activeBook, setActiveBook] = useState<BookType>('chanting');
   const [searchTerm, setSearchTerm] = useState('');
@@ -176,8 +178,55 @@ export function BookScreen({ settings }: { settings: Settings }) {
   };
 
   return (
-    <div className="max-w-3xl mx-auto pb-20 relative animate-in fade-in duration-500">
-      <header className="sticky top-0 z-40 bg-white/80 dark:bg-slate-900/80 backdrop-blur-md border-b border-slate-200 dark:border-slate-800 py-4 px-4 sm:px-6 flex justify-between items-center rounded-b-3xl shadow-[0_4px_30px_rgba(0,0,0,0.03)] dark:shadow-[0_4px_30px_rgba(0,0,0,0.2)]">
+    <div className="flex flex-col min-h-screen relative bg-[var(--bg-main)] animate-in fade-in duration-500">
+      
+      {/* Dynamic/Notch-compatible Vector Illustration Header (Library: stack of scrolls theme) */}
+      <div 
+        className="w-full h-[18vh] min-h-[140px] bg-gradient-to-tr from-yellow-600/20 via-gold/20 to-stone-500/10 sticky top-0 z-10 flex items-center justify-center overflow-hidden"
+      >
+        {/* Styled CSS/SVG scrolls */}
+        <svg className="absolute w-[180px] h-[180px] text-amber-700/30 dark:text-amber-500/20" viewBox="0 0 100 100">
+          <path d="M 30 35 C 30 25, 45 25, 45 35 C 45 45, 30 45, 30 35 Z" fill="none" stroke="currentColor" strokeWidth="1" />
+          <path d="M 30 30 H 70 C 70 20, 85 20, 85 30 C 85 40, 70 40, 70 30 Z" fill="none" stroke="currentColor" strokeWidth="1" />
+          <path d="M 37.5 35 H 77.5" stroke="currentColor" strokeWidth="1.5" />
+          <path d="M 30 65 C 30 55, 45 55, 45 65 C 45 75, 30 75, 30 65 Z" fill="none" stroke="currentColor" strokeWidth="1" />
+          <path d="M 30 60 H 70 C 70 50, 85 50, 85 60 C 85 70, 70 70, 70 60 Z" fill="none" stroke="currentColor" strokeWidth="1" />
+          <path d="M 37.5 65 H 77.5" stroke="currentColor" strokeWidth="1.5" />
+          <path d="M 45 35 V 55" stroke="currentColor" strokeWidth="0.5" strokeDasharray="2 2" />
+          <path d="M 70 30 V 50" stroke="currentColor" strokeWidth="0.5" strokeDasharray="2 2" />
+        </svg>
+        
+        {/* Settings gear overlays on top right of header */}
+        <button
+          onClick={() => setShowSettings(true)}
+          className="absolute top-[calc(0.75rem+env(safe-area-inset-top))] right-4 z-30 w-9 h-9 rounded-full flex items-center justify-center bg-white/20 dark:bg-black/20 backdrop-blur-md text-white border border-white/10 active:scale-95 transition-all"
+          aria-label="Settings"
+        >
+          <SettingsIcon size={18} />
+        </button>
+      </div>
+
+      {/* Card Overlay container (Oval at the top overlapping the header) */}
+      <div className="relative z-20 mt-[-2.5rem] bg-[var(--bg-main)] rounded-t-[3rem] px-4 pt-6 pb-24 shadow-[0_-10px_40px_rgba(0,0,0,0.03)] dark:shadow-[0_-10px_40px_rgba(0,0,0,0.25)] flex flex-col gap-6">
+        
+        {/* Title & Tagline info inside the card */}
+        <div className="px-2 text-center">
+          <h1 className="font-serif text-3xl font-bold text-slate-800 dark:text-slate-100 leading-none mb-1.5">
+            {t(BOOKS[activeBook].titleKey as any)}
+          </h1>
+          <p className="text-[10px] font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400 leading-none">
+            Dhamma texts and chanting books
+          </p>
+        </div>
+
+        {/* ── Sticky Control Header (now relative to content container) ── */}
+        <header 
+          className="sticky top-0 z-40 bg-white/80 dark:bg-slate-900/80 backdrop-blur-md border-b border-slate-200/50 dark:border-slate-800/50 px-4 sm:px-6 flex justify-between items-center rounded-b-3xl shadow-[0_4px_30px_rgba(0,0,0,0.03)] dark:shadow-[0_4px_30px_rgba(0,0,0,0.2)]"
+          style={{
+            paddingTop: 'calc(0.75rem + env(safe-area-inset-top))',
+            paddingBottom: '0.75rem',
+          }}
+        >
         <div className="flex flex-col">
           <h2 className="hidden sm:flex font-serif text-2xl font-bold text-saffron dark:text-amber-500 items-center gap-2">
             <BookOpen size={24} /> {t(BOOKS[activeBook].titleKey as any)}
@@ -234,6 +283,13 @@ export function BookScreen({ settings }: { settings: Settings }) {
             className="p-2.5 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors shadow-sm active:scale-95 flex-shrink-0"
           >
             <List size={20} />
+          </button>
+          <button
+            onClick={() => setShowSettings(true)}
+            className="w-9 h-9 rounded-full flex items-center justify-center text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-100 hover:bg-slate-100/50 dark:hover:bg-slate-800/50 transition-all active:scale-95 ml-1"
+            aria-label="Settings"
+          >
+            <SettingsIcon size={18} />
           </button>
         </div>
       </header>
@@ -320,6 +376,7 @@ export function BookScreen({ settings }: { settings: Settings }) {
           </>
         )}
       </AnimatePresence>
+      </div>
     </div>
   );
 }

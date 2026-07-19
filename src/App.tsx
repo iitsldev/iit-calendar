@@ -214,59 +214,12 @@ export default function App() {
     >
       <style>{CSS_VARS}</style>
       
-      {/* Top App Bar */}
-      <header
-        className="px-6 flex justify-between items-center relative z-[60] border-b backdrop-blur-md"
-        style={{
-          backgroundColor: 'var(--bg-header)',
-          borderColor: 'var(--border-subtle)',
-          paddingTop: 'calc(0.75rem + env(safe-area-inset-top))',
-          paddingBottom: '0.75rem',
-        }}
-      >
-        <div className="flex items-center gap-3">
-          {/* Compact logo mark */}
-          <div className="w-8 h-8 rounded-lg overflow-hidden flex-shrink-0 border border-slate-200/20 shadow-sm">
-            <img src="/logo.png" alt="IIT Logo" className="w-full h-full object-contain" />
-          </div>
-
-          {/* Title + subtitle */}
-          <div className="flex flex-col gap-0.5">
-            <span
-              className="text-base font-bold tracking-tight leading-none text-slate-800 dark:text-slate-100"
-            >
-              IIT Calendar
-            </span>
-            <div className="flex items-center gap-1 text-[10px] font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400 leading-none">
-              <span>{settings.calendarType === 'srilanka' ? t('calendar.srilanka') : settings.calendarType}</span>
-              <span>·</span>
-              <span>{t('calendar.mode')}</span>
-              {settings.address && (
-                <>
-                  <span>·</span>
-                  <span className="max-w-[120px] truncate normal-case font-medium opacity-80">{settings.address}</span>
-                </>
-              )}
-            </div>
-          </div>
-        </div>
-
-        {/* Settings button */}
-        <button
-          onClick={() => setShowSettings(true)}
-          className="w-9 h-9 rounded-full flex items-center justify-center text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-100 hover:bg-slate-100/50 dark:hover:bg-slate-800/50 transition-all active:scale-95"
-          aria-label="Settings"
-        >
-          <SettingsIcon size={18} />
-        </button>
-      </header>
-
       <main 
         id="main-tabs"
         className="flex-1 flex overflow-x-auto overflow-y-hidden snap-x snap-mandatory hide-scrollbar"
         style={{ scrollBehavior: 'smooth' }}
       >
-        <div id="tab-calendar" className="min-w-full w-full h-full flex-shrink-0 snap-center px-3 overflow-y-auto pb-32">
+        <div id="tab-calendar" className="min-w-full w-full h-full flex-shrink-0 snap-center overflow-y-auto pb-32">
           <CalendarScreen 
             settings={settings}
             onUpdateSettings={setSettings}
@@ -279,19 +232,19 @@ export default function App() {
           />
         </div>
         
-        <div id="tab-meditation" className="min-w-full w-full h-full flex-shrink-0 snap-center px-3 overflow-y-auto pb-32">
+        <div id="tab-meditation" className="min-w-full w-full h-full flex-shrink-0 snap-center overflow-y-auto pb-32">
           <MeditationScreen />
         </div>
 
-        <div id="tab-chants" className="min-w-full w-full h-full flex-shrink-0 snap-center px-3 overflow-y-auto pb-32">
+        <div id="tab-chants" className="min-w-full w-full h-full flex-shrink-0 snap-center overflow-y-auto pb-32">
           <ChantsScreen settings={settings} />
         </div>
 
-        <div id="tab-book" className="min-w-full w-full h-full flex-shrink-0 snap-center px-3 overflow-y-auto pb-32">
+        <div id="tab-book" className="min-w-full w-full h-full flex-shrink-0 snap-center overflow-y-auto pb-32">
           <BookScreen settings={settings} />
         </div>
 
-        <div id="tab-study" className="min-w-full w-full h-full flex-shrink-0 snap-center px-3 overflow-y-auto pb-32">
+        <div id="tab-study" className="min-w-full w-full h-full flex-shrink-0 snap-center overflow-y-auto pb-32">
           <StudyScreen />
         </div>
       </main>
@@ -305,10 +258,10 @@ export default function App() {
       />
 
       {/* Bottom Nav */}
-      <nav className="fixed bottom-0 left-0 right-0 z-50 glass-card flex justify-around items-center border-t border-slate-100/50 dark:border-slate-800/50 bg-white/80 dark:bg-slate-900/80 shadow-[0_-8px_32px_rgba(0,0,0,0.04)] dark:shadow-[0_-8px_32px_rgba(0,0,0,0.25)] backdrop-blur-md overflow-x-auto"
+      <nav className="fixed bottom-0 left-0 right-0 z-50 glass-card flex justify-around items-center border-t border-slate-100/50 dark:border-slate-800/50 bg-white/85 dark:bg-slate-950/85 shadow-[0_-8px_32px_rgba(0,0,0,0.04)] dark:shadow-[0_-8px_32px_rgba(0,0,0,0.25)] backdrop-blur-md overflow-x-auto"
         style={{
-          paddingTop: '0.75rem',
-          paddingBottom: 'calc(0.75rem + env(safe-area-inset-bottom))',
+          paddingTop: '0.65rem',
+          paddingBottom: 'calc(0.65rem + env(safe-area-inset-bottom))',
           paddingLeft: '1rem',
           paddingRight: '1rem',
         }}
@@ -325,16 +278,18 @@ export default function App() {
 
 function NavButton({ icon, label, active, onClick }: { icon: React.ReactNode, label: string, active: boolean, onClick: () => void }) {
   return (
-    <button onClick={onClick} className="flex flex-col items-center justify-center flex-1 py-1 transition-all active:scale-95 relative group min-w-[64px]">
+    <button onClick={onClick} className="flex flex-col items-center justify-center flex-1 py-1 transition-all active:scale-[0.97] relative group min-w-[64px]">
       <div className={cn(
-        "transition-all duration-200",
-        active ? "text-saffron scale-110" : "text-slate-400 dark:text-slate-500 group-hover:text-slate-600 dark:group-hover:text-slate-400"
+        "px-5 py-1 rounded-full transition-all duration-300 flex items-center justify-center",
+        active 
+          ? "bg-[var(--accent-soft)] text-saffron scale-105" 
+          : "text-slate-400 dark:text-slate-500 group-hover:text-slate-600 dark:group-hover:text-slate-400"
       )}>
         {icon}
       </div>
       <span className={cn(
-        "text-[10px] font-semibold mt-1 tracking-tight transition-colors duration-200",
-        active ? "text-saffron font-bold" : "text-slate-400 dark:text-slate-500"
+        "text-[9px] font-bold mt-1 tracking-wider uppercase transition-colors duration-200",
+        active ? "text-saffron font-extrabold" : "text-slate-400 dark:text-slate-500"
       )}>{label}</span>
     </button>
   );

@@ -36,7 +36,8 @@ import { uposathaPositionInSeason, uposathasRemainingInSeason, uposathaSeason, g
 import { useData } from '../DataContext';
 import {COLOR_TOKENS} from '../theme/index'
 import { CardOrderModal, DEFAULT_CARD_ORDER } from '../components/CardOrderModal';
-import { Edit2 } from 'lucide-react';
+import { Edit2, Settings as SettingsIcon } from 'lucide-react';
+import { useUI } from '../UIContext';
 
 const DAYS_OF_WEEK = ['SUN', 'MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT'];
 
@@ -128,6 +129,7 @@ export function CalendarScreen({
   sunCalc: SunTimesCalculator;
 }) {
   const { t, language } = useI18n();
+  const { setShowSettings } = useUI();
   const { events: firebaseEvents, reflections: firebaseReflections } = useData();
   const [sunTimesExpanded, setSunTimesExpanded] = React.useState(false);
   const [paliExpanded, setPaliExpanded] = React.useState(false);
@@ -244,15 +246,150 @@ export function CalendarScreen({
   };
 
   return (
-    <div className="flex flex-col gap-4 pb-10">
-      {/* ── Calendar Grid Section ─────────────────────────────────────────── */}
-      <section
-        className="glass-card rounded-[2.5rem] p-4 pt-6 relative overflow-hidden shadow-sm"
-        style={{
-          background: 'color-mix(in srgb, var(--surface) 100%, transparent)',
-          borderColor: 'var(--border)',
-        }}
+    <div className="flex flex-col min-h-screen relative bg-[var(--bg-main)]">
+      
+      {/* Dynamic/Notch-compatible Vector Illustration Header */}
+      <div 
+        className="w-full h-[32vh] min-h-[220px] bg-gradient-to-b from-[#f8f2e4] via-[#ede0c0] to-[#ddc898] dark:from-[#0d0905] dark:via-[#1a1005] dark:to-[#0d0905] sticky top-0 z-10 flex items-center justify-center overflow-hidden"
       >
+        {/* Styled CSS/SVG — Sun & Moon orbit Mount Sumeru (Theravāda cosmology) */}
+        <svg className="absolute w-[260px] h-[260px] pointer-events-none select-none" viewBox="0 0 100 100">
+          <style dangerouslySetInnerHTML={{ __html: `
+            @keyframes wave-pulse {
+              0%   { r: 10px; opacity: 0.6; }
+              100% { r: 34px; opacity: 0; }
+            }
+            /* Shadow slides: -r = full moon, 0 = half, +r = new moon, 0 = half, repeat */
+            @keyframes shadow-slide {
+              0%   { transform: translateX(-4.5px); }
+              25%  { transform: translateX(0px); }
+              50%  { transform: translateX(4.5px); }
+              75%  { transform: translateX(0px); }
+              100% { transform: translateX(-4.5px); }
+            }
+          ` }} />
+
+          <defs>
+            {/* Moon phase mask */}
+            <mask id="moon-phase-mask">
+              <circle cx="50" cy="10" r="4.5" fill="white" />
+              <circle cx="50" cy="10" r="4.5" fill="black"
+                style={{ animation: 'shadow-slide 48s linear infinite',
+                         transformOrigin: '50px 10px' }} />
+            </mask>
+
+            {/* Vignette removed — no SVG rect needed */}
+
+            {/* Sun radial glow — anchored to sun position (50, 90) */}
+            <radialGradient id="sun-glow" cx="50" cy="90" r="8"
+              gradientUnits="userSpaceOnUse">
+              <stop offset="0%"   stopColor="#f0c060" stopOpacity="0.7" />
+              <stop offset="60%"  stopColor="#d08820" stopOpacity="0.25" />
+              <stop offset="100%" stopColor="#b06010" stopOpacity="0" />
+            </radialGradient>
+          </defs>
+
+          {/* ── Ripple waves behind the logo ───────────────────────────── */}
+          <circle cx="50" cy="50" r="10" stroke="#7a5c3a" strokeWidth="0.6"
+            fill="none" opacity="0"
+            style={{ animation: 'wave-pulse 12s linear infinite' }} />
+          <circle cx="50" cy="50" r="10" stroke="#7a5c3a" strokeWidth="0.6"
+            fill="none" opacity="0"
+            style={{ animation: 'wave-pulse 12s linear infinite 4s' }} />
+          <circle cx="50" cy="50" r="10" stroke="#7a5c3a" strokeWidth="0.6"
+            fill="none" opacity="0"
+            style={{ animation: 'wave-pulse 12s linear infinite 8s' }} />
+
+          {/* ── Chanting beads — full circle (Mālā) ────────────────────── */}
+          <circle cx="50" cy="50" r="40"
+            stroke="#7a5c3a" strokeWidth="2"
+            strokeDasharray="0.1 3.5" strokeLinecap="round"
+            fill="none" opacity="0.18" />
+
+          {/* ── Sumeru orbit ring ───────────────────────────────────────── */}
+          <circle cx="50" cy="50" r="40"
+            stroke="#7a5c3a" strokeWidth="0.4"
+            fill="none" opacity="0.12" />
+
+          {/* ── Sun & Moon orbit Sumeru clockwise together ────────────────
+               Both are in the same rotating group so they remain 180° apart.
+               Moon is at (50, 10) — top.  Sun is at (50, 90) — bottom.       */}
+          <g className="animate-[spin_48s_linear_infinite]" style={{ transformOrigin: '50% 50%' }}>
+
+            {/* ── SUN ─────────────────────────────────────────────────── */}
+            {/* Soft warm glow */}
+            <circle cx="50" cy="90" r="8" fill="url(#sun-glow)" />
+            {/* Sun disc */}
+            <circle cx="50" cy="90" r="3.2"
+              fill="#d4922a" opacity="0.65" />
+            {/* Bright core */}
+            <circle cx="50" cy="90" r="1.6"
+              fill="#f5d070" opacity="0.80" />
+
+            {/* ── MOON ─────────────────────────────────────────────────── */}
+            <g className="animate-[spin_48s_linear_infinite_reverse]"
+               style={{ transformOrigin: '50px 10px' }}>
+              {/* Shadowed (dark) side — deep blue-grey like night sky */}
+              <circle cx="50" cy="10" r="4.5"
+                fill="#2a3040" opacity="0.55" />
+              {/* Lit side — pearlescent silver-white */}
+              <circle cx="50" cy="10" r="4.5"
+                fill="#e8e4d8" opacity="0.95"
+                mask="url(#moon-phase-mask)" />
+              {/* Crisp outline */}
+              <circle cx="50" cy="10" r="4.5"
+                stroke="#c8c0b0" strokeWidth="0.5"
+                fill="none" opacity="0.6" />
+            </g>
+
+          </g>
+        </svg>
+
+        {/* IIT Logo centered on top of the orbits */}
+        <img 
+          src="/logo.png" 
+          alt="IIT Logo" 
+          className="relative z-10 w-28 h-28 object-contain drop-shadow-lg select-none pointer-events-none"
+        />
+        
+      </div>
+
+      {/* Card Overlay container (Oval at the top overlapping the header) */}
+      <div className="relative z-20 mt-[-2.5rem] bg-[var(--bg-main)] rounded-t-[3rem] px-4 pt-6 pb-24 shadow-[0_-10px_40px_rgba(0,0,0,0.03)] dark:shadow-[0_-10px_40px_rgba(0,0,0,0.25)] flex flex-col gap-6">
+        
+        {/* Title & Tagline info inside the card */}
+        <div className="px-2 text-center flex flex-col items-center relative w-full pr-12 pl-12">
+          <h1 className="font-serif text-3xl font-bold text-slate-800 dark:text-slate-100 leading-none mb-1.5">
+            IIT Calendar
+          </h1>
+          <button
+            onClick={() => setShowSettings(true)}
+            className="absolute top-1/2 -translate-y-1/2 right-2 w-9 h-9 rounded-full flex items-center justify-center bg-slate-100/85 dark:bg-slate-800/85 text-slate-600 dark:text-slate-300 border border-slate-200/50 dark:border-slate-700/50 active:scale-95 transition-all shadow-sm"
+            aria-label="Settings"
+          >
+            <SettingsIcon size={18} />
+          </button>
+          <div className="flex items-center justify-center gap-1.5 text-[10px] font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400 leading-none flex-wrap">
+            <span>{settings.calendarType === 'srilanka' ? t('calendar.srilanka') : settings.calendarType}</span>
+            <span>·</span>
+            <span>{t('calendar.mode')}</span>
+            {settings.address && (
+              <>
+                <span>·</span>
+                <span className="normal-case font-medium text-slate-400 dark:text-slate-500 truncate max-w-[200px]">{settings.address}</span>
+              </>
+            )}
+          </div>
+        </div>
+
+        {/* ── Calendar Grid Section ─────────────────────────────────────────── */}
+        <section
+          className="glass-card rounded-[2.5rem] p-4 pt-6 relative overflow-hidden shadow-sm"
+          style={{
+            background: 'color-mix(in srgb, var(--surface) 100%, transparent)',
+            borderColor: 'var(--border)',
+          }}
+        >
         <header className="flex flex-col gap-4 mt-4 mb-8 px-2 relative z-10">
           <div className="flex justify-between items-center w-full">
             <h2
@@ -973,6 +1110,7 @@ export function CalendarScreen({
         cardOrder={settings.calendarCardOrder || []}
         onUpdate={(newOrder) => onUpdateSettings({ ...settings, calendarCardOrder: newOrder })}
       />
+      </div>
     </div>
   );
 }

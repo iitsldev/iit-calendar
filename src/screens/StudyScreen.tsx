@@ -1,7 +1,8 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { Settings2, PlusCircle, CheckCircle2, Circle, MoreVertical, Trash2, BarChart2 } from 'lucide-react';
+import { Settings2, PlusCircle, CheckCircle2, Circle, MoreVertical, Trash2, BarChart2, Settings as SettingsIcon } from 'lucide-react';
 import { cn } from '../lib/utils';
+import { useUI } from '../UIContext';
 import { useI18n } from '../hooks/useI18n';
 import { StudySettingsModal, StudySettings } from '../components/study/StudySettingsModal';
 import { StudyReportModal, StudySession } from '../components/study/StudyReportModal';
@@ -30,7 +31,8 @@ const DEFAULT_SETTINGS: StudySettings = {
 
 export function StudyScreen() {
   const { t } = useI18n();
-  
+  const { setShowSettings: setShowGlobalSettings } = useUI();
+
   // Settings & Sessions
   const [settings, setSettings] = useState<StudySettings>(() => {
     const saved = localStorage.getItem('study_settings');
@@ -60,7 +62,7 @@ export function StudyScreen() {
   const [activeTaskId, setActiveTaskId] = useState<string | null>(() => {
     return localStorage.getItem('study_active_task') || null;
   });
-  
+
   // Form State
   const [showTaskForm, setShowTaskForm] = useState(false);
   const [editingTaskId, setEditingTaskId] = useState<string | null>(null);
@@ -102,7 +104,7 @@ export function StudyScreen() {
     initAudio();
     const ctx = audioCtxRef.current;
     if (!ctx) return;
-    
+
     const now = ctx.currentTime;
     const osc = ctx.createOscillator();
     const gain = ctx.createGain();
@@ -149,7 +151,7 @@ export function StudyScreen() {
     if (mode === 'pomodoro') {
       const newCount = pomodoroCount + 1;
       setPomodoroCount(newCount);
-      
+
       // Log session
       const session: StudySession = {
         id: Date.now().toString(),
@@ -161,10 +163,10 @@ export function StudyScreen() {
       // Update task actual count if there is an active task
       if (activeTaskId) {
         setTasks(prev => {
-          let updated = prev.map(t => 
+          let updated = prev.map(t =>
             t.id === activeTaskId ? { ...t, act: t.act + 1 } : t
           );
-          
+
           if (settings.autoCheckTasks) {
             updated = updated.map(t => {
               if (t.id === activeTaskId && t.act >= t.est) {
@@ -173,7 +175,7 @@ export function StudyScreen() {
               return t;
             });
           }
-          
+
           if (settings.checkToBottom) {
             const completed = updated.filter(t => t.completed);
             const active = updated.filter(t => !t.completed);
@@ -210,7 +212,7 @@ export function StudyScreen() {
     if (!taskForm.name.trim()) return;
 
     if (editingTaskId) {
-      setTasks(prev => prev.map(t => 
+      setTasks(prev => prev.map(t =>
         t.id === editingTaskId ? { ...t, name: taskForm.name, est: taskForm.est } : t
       ));
     } else {
@@ -224,7 +226,7 @@ export function StudyScreen() {
       setTasks(prev => [...prev, newTask]);
       if (!activeTaskId) setActiveTaskId(newTask.id);
     }
-    
+
     setTaskForm({ name: '', est: 1 });
     setShowTaskForm(false);
     setEditingTaskId(null);
@@ -238,7 +240,7 @@ export function StudyScreen() {
 
   const toggleTaskCompletion = (taskId: string, e: React.MouseEvent) => {
     e.stopPropagation();
-    setTasks(prev => prev.map(t => 
+    setTasks(prev => prev.map(t =>
       t.id === taskId ? { ...t, completed: !t.completed } : t
     ));
   };
@@ -273,224 +275,268 @@ export function StudyScreen() {
   };
 
   return (
-    <div className={cn("space-y-6 animate-in fade-in duration-700 p-2 min-h-[70vh] rounded-[2.5rem] transition-colors relative", getModeBg())}>
-      
-      {/* Top Bar for Study Screen */}
-      <div className="flex flex-wrap justify-between items-center px-4 pt-2 gap-y-3">
-        <h2 className="font-serif text-xl font-bold text-slate-800 dark:text-slate-200">
-          Pomodoro
-        </h2>
-        <div className="flex flex-wrap gap-2">
-          <button 
-            onClick={() => setShowReport(true)}
-            className="flex items-center gap-1.5 px-3 py-1.5 bg-slate-100/50 dark:bg-slate-800/50 border border-slate-200/10 rounded-full text-xs font-bold uppercase tracking-widest backdrop-blur-md hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors text-slate-600 dark:text-slate-300"
-          >
-            <BarChart2 size={14} /> {t('study.report') || 'Report'}
-          </button>
-          <button 
-            onClick={() => setShowSettings(true)}
-            className="flex items-center gap-1.5 px-3 py-1.5 bg-slate-100/50 dark:bg-slate-800/50 border border-slate-200/10 rounded-full text-xs font-bold uppercase tracking-widest backdrop-blur-md hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors text-slate-600 dark:text-slate-300"
-          >
-            <Settings2 size={14} /> {t('study.settings') || 'Settings'}
-          </button>
-        </div>
-      </div>
+    <div className="flex flex-col min-h-screen relative bg-[var(--bg-main)]">
 
-      {/* Timer Card */}
-      <div className={cn("glass-card rounded-[2.5rem] p-6 sm:p-10 flex flex-col items-center transition-colors shadow-sm", getModeColorClass())}>
-        
-        {/* Mode Selector */}
-        <div className="flex gap-1.5 mb-8 bg-slate-100/80 dark:bg-slate-900/50 p-1.5 rounded-full border border-slate-200/10 backdrop-blur-md w-full max-w-[340px] justify-between">
-          <button 
-            onClick={() => switchMode('pomodoro')}
-            className={cn(
-              "flex-1 py-2 rounded-full text-[10px] font-bold uppercase tracking-wider text-center transition-all",
-              mode === 'pomodoro' 
-                ? 'bg-white dark:bg-slate-800 text-[var(--accent)] shadow-sm font-bold' 
-                : 'text-slate-500 dark:text-slate-400 opacity-70 hover:opacity-100'
-            )}
-          >
-            {t('study.pomodoro') || 'Pomodoro'}
-          </button>
-          <button 
-            onClick={() => switchMode('shortBreak')}
-            className={cn(
-              "flex-1 py-2 rounded-full text-[10px] font-bold uppercase tracking-wider text-center transition-all",
-              mode === 'shortBreak' 
-                ? 'bg-white dark:bg-slate-800 text-emerald-600 dark:text-emerald-400 shadow-sm font-bold' 
-                : 'text-slate-500 dark:text-slate-400 opacity-70 hover:opacity-100'
-            )}
-          >
-            {t('study.shortBreak') || 'Short Break'}
-          </button>
-          <button 
-            onClick={() => switchMode('longBreak')}
-            className={cn(
-              "flex-1 py-2 rounded-full text-[10px] font-bold uppercase tracking-wider text-center transition-all",
-              mode === 'longBreak' 
-                ? 'bg-white dark:bg-slate-800 text-indigo-600 dark:text-indigo-400 shadow-sm font-bold' 
-                : 'text-slate-500 dark:text-slate-400 opacity-70 hover:opacity-100'
-            )}
-          >
-            {t('study.longBreak') || 'Long Break'}
-          </button>
-        </div>
+      {/* Dynamic/Notch-compatible Vector Illustration Header (Study: hourglass/timer theme) */}
+      <div
+        className="w-full h-[18vh] min-h-[140px] bg-gradient-to-tr from-indigo-500/20 via-blue-500/25 to-red-500/10 sticky top-0 z-10 flex items-center justify-center overflow-hidden"
+      >
+        {/* Styled CSS/SVG Timer Illustration */}
+        <svg className="absolute w-[180px] h-[180px] text-blue-600/30 dark:text-blue-400/20" viewBox="0 0 100 100">
+          <circle cx="50" cy="50" r="35" stroke="currentColor" strokeWidth="0.5" fill="none" />
+          {/* Hourglass */}
+          <path d="M 35 30 H 65 L 50 50 L 35 70 H 65" fill="none" stroke="currentColor" strokeWidth="1" strokeLinejoin="round" />
+          <path d="M 38 33 H 62 L 50 49 Z" fill="currentColor" opacity="0.6" />
+          <circle cx="50" cy="62" r="2" fill="currentColor" />
+          {/* Timer ticks */}
+          <line x1="50" y1="10" x2="50" y2="15" stroke="currentColor" strokeWidth="1.5" />
+          <line x1="50" y1="85" x2="50" y2="90" stroke="currentColor" strokeWidth="1.5" />
+          <line x1="15" y1="50" x2="20" y2="50" stroke="currentColor" strokeWidth="1.5" />
+          <line x1="80" y1="50" x2="85" y2="50" stroke="currentColor" strokeWidth="1.5" />
+        </svg>
 
-        {/* Time Display */}
-        <div 
-          className="font-sans font-medium text-7xl sm:text-8xl tracking-tight mb-8 tabular-nums select-none"
-          style={{
-            color: mode === 'pomodoro' 
-              ? 'var(--accent)' 
-              : mode === 'shortBreak' 
-                ? '#10b981' 
-                : '#6366f1'
-          }}
+        {/* Reports Trigger overlays on top left of header */}
+        <button
+          onClick={() => setShowReport(true)}
+          className="absolute top-[calc(0.75rem+env(safe-area-inset-top))] left-4 z-30 flex items-center gap-1.5 px-3 py-1.5 bg-white/20 dark:bg-black/20 border border-white/10 rounded-full text-xs font-bold uppercase tracking-widest backdrop-blur-md hover:bg-white/30 dark:hover:bg-black/30 transition-colors text-white"
         >
-          {formatTime(timeLeft)}
-        </div>
-
-        {/* Start/Stop Button */}
-        <button 
-          onClick={toggleTimer}
-          className={cn(
-            "w-full max-w-[240px] py-4 rounded-full font-bold text-base uppercase tracking-wider transition-all duration-300 active:scale-95 shadow-md text-white hover:shadow-lg",
-            mode === 'pomodoro' ? 'bg-[var(--accent)]' : '',
-            mode === 'shortBreak' ? 'bg-emerald-600 dark:bg-emerald-500' : '',
-            mode === 'longBreak' ? 'bg-indigo-600 dark:bg-indigo-500' : '',
-            isRunning && 'opacity-90'
-          )}
-        >
-          {isRunning ? (t('study.pause') || 'PAUSE') : (t('study.start') || 'START')}
+          <BarChart2 size={13} /> {t('study.report') || 'Report'}
         </button>
-      </div>
 
-      {/* Task Section */}
-      <div className="max-w-md mx-auto mt-8 w-full px-2 pb-10">
-        <div className="flex justify-between items-center mb-6 border-b border-slate-100 dark:border-slate-800/80 pb-3">
-          <h2 className="font-serif text-2xl font-bold text-slate-800 dark:text-slate-200">{t('study.tasks') || 'Tasks'}</h2>
-          <button className="p-2 bg-slate-200 dark:bg-slate-800 rounded-lg text-slate-600 dark:text-slate-300">
-            <MoreVertical size={20} />
+        {/* Pomodoro Settings & Global Settings gear overlays on top right of header */}
+        <div className="absolute top-[calc(0.75rem+env-safe-area-inset-top)] right-4 z-30 flex items-center gap-1.5" style={{ top: 'calc(0.75rem + env(safe-area-inset-top))' }}>
+          <button
+            onClick={() => setShowSettings(true)}
+            className="w-9 h-9 rounded-full flex items-center justify-center bg-white/20 dark:bg-black/20 backdrop-blur-md text-white border border-white/10 active:scale-95 transition-all"
+            aria-label="Pomodoro Settings"
+            title={t('study.settings') || 'Settings'}
+          >
+            <Settings2 size={16} />
+          </button>
+
+          <button
+            onClick={() => setShowGlobalSettings(true)}
+            className="w-9 h-9 rounded-full flex items-center justify-center bg-white/20 dark:bg-black/20 backdrop-blur-md text-white border border-white/10 active:scale-95 transition-all"
+            aria-label="Global Settings"
+          >
+            <SettingsIcon size={18} />
           </button>
         </div>
+      </div>
 
-        {/* Task List */}
-        <div className="space-y-3 mb-6">
-          {tasks.map(task => (
-            <div 
-              key={task.id} 
-              onClick={() => setActiveTaskId(task.id)}
+      {/* Card Overlay container (Oval at the top overlapping the header) */}
+      <div className="relative z-20 mt-[-2.5rem] bg-[var(--bg-main)] rounded-t-[3rem] px-4 pt-6 pb-24 shadow-[0_-10px_40px_rgba(0,0,0,0.03)] dark:shadow-[0_-10px_40px_rgba(0,0,0,0.25)] flex flex-col gap-6">
+
+        {/* Title & Tagline info inside the card */}
+        <div className="px-2 text-center">
+          <h1 className="font-serif text-3xl font-bold text-slate-800 dark:text-slate-100 leading-none mb-1.5">
+            Focus
+          </h1>
+          <p className="text-[10px] font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400 leading-none">
+            Pomodoro timer
+          </p>
+        </div>
+
+        {/* ── Original Study Content wrapper ── */}
+        <div className={cn("space-y-6 animate-in fade-in duration-700 p-2 min-h-[70vh] rounded-[2.5rem] transition-colors relative", getModeBg())}>
+
+          {/* Timer Card */}
+          <div className={cn("glass-card rounded-[2.5rem] p-6 sm:p-10 flex flex-col items-center transition-colors shadow-sm", getModeColorClass())}>
+
+            {/* Mode Selector */}
+            <div className="flex gap-1.5 mb-8 bg-slate-100/80 dark:bg-slate-900/50 p-1.5 rounded-full border border-slate-200/10 backdrop-blur-md w-full max-w-[340px] justify-between">
+              <button
+                onClick={() => switchMode('pomodoro')}
+                className={cn(
+                  "flex-1 py-2 rounded-full text-[10px] font-bold uppercase tracking-wider text-center transition-all",
+                  mode === 'pomodoro'
+                    ? 'bg-white dark:bg-slate-800 text-[var(--accent)] shadow-sm font-bold'
+                    : 'text-slate-500 dark:text-slate-400 opacity-70 hover:opacity-100'
+                )}
+              >
+                {t('study.pomodoro') || 'Pomodoro'}
+              </button>
+              <button
+                onClick={() => switchMode('shortBreak')}
+                className={cn(
+                  "flex-1 py-2 rounded-full text-[10px] font-bold uppercase tracking-wider text-center transition-all",
+                  mode === 'shortBreak'
+                    ? 'bg-white dark:bg-slate-800 text-emerald-600 dark:text-emerald-400 shadow-sm font-bold'
+                    : 'text-slate-500 dark:text-slate-400 opacity-70 hover:opacity-100'
+                )}
+              >
+                {t('study.shortBreak') || 'Short Break'}
+              </button>
+              <button
+                onClick={() => switchMode('longBreak')}
+                className={cn(
+                  "flex-1 py-2 rounded-full text-[10px] font-bold uppercase tracking-wider text-center transition-all",
+                  mode === 'longBreak'
+                    ? 'bg-white dark:bg-slate-800 text-indigo-600 dark:text-indigo-400 shadow-sm font-bold'
+                    : 'text-slate-500 dark:text-slate-400 opacity-70 hover:opacity-100'
+                )}
+              >
+                {t('study.longBreak') || 'Long Break'}
+              </button>
+            </div>
+
+            {/* Time Display */}
+            <div
+              className="font-sans font-medium text-7xl sm:text-8xl tracking-tight mb-8 tabular-nums select-none"
+              style={{
+                color: mode === 'pomodoro'
+                  ? 'var(--accent)'
+                  : mode === 'shortBreak'
+                    ? '#10b981'
+                    : '#6366f1'
+              }}
+            >
+              {formatTime(timeLeft)}
+            </div>
+
+            {/* Start/Stop Button */}
+            <button
+              onClick={toggleTimer}
               className={cn(
-                "glass-card p-4 rounded-2xl flex items-center justify-between cursor-pointer border-l-4 transition-all hover:-translate-y-0.5",
-                activeTaskId === task.id ? 'border-l-saffron shadow-md' : 'border-l-transparent',
-                task.completed ? 'opacity-60' : ''
+                "w-full max-w-[240px] py-4 rounded-full font-bold text-base uppercase tracking-wider transition-all duration-300 active:scale-95 shadow-md text-white hover:shadow-lg",
+                mode === 'pomodoro' ? 'bg-[var(--accent)]' : '',
+                mode === 'shortBreak' ? 'bg-emerald-600 dark:bg-emerald-500' : '',
+                mode === 'longBreak' ? 'bg-indigo-600 dark:bg-indigo-500' : '',
+                isRunning && 'opacity-90'
               )}
             >
-              <div className="flex items-center gap-3 overflow-hidden">
-                <button onClick={(e) => toggleTaskCompletion(task.id, e)} className="flex-shrink-0 text-red-500 dark:text-red-400">
-                  {task.completed ? <CheckCircle2 size={24} className="text-red-500" /> : <Circle size={24} className="text-slate-300 dark:text-slate-600" />}
-                </button>
-                <span className={cn("font-medium truncate", task.completed && "line-through text-slate-500")}>
-                  {task.name}
-                </span>
-              </div>
-              <div className="flex items-center gap-4 flex-shrink-0">
-                <span className="text-slate-500 dark:text-slate-400 text-sm font-bold">
-                  {task.act} / {task.est}
-                </span>
-                <button 
-                  onClick={(e) => { e.stopPropagation(); editTask(task); }}
-                  className="p-2 border border-slate-200 dark:border-slate-700 rounded-lg bg-white dark:bg-slate-800 text-slate-500 hover:bg-slate-50 dark:hover:bg-slate-700"
-                >
-                  <MoreVertical size={16} />
-                </button>
-              </div>
-            </div>
-          ))}
-        </div>
+              {isRunning ? (t('study.pause') || 'PAUSE') : (t('study.start') || 'START')}
+            </button>
+          </div>
 
-        {/* Add Task Form / Button */}
-        {showTaskForm ? (
-          <div className="glass-card p-5 rounded-[2rem] shadow-lg animate-in slide-in-from-top-4">
-            <input 
-              type="text" 
-              placeholder={t('study.taskName') || "What are you working on?"}
-              value={taskForm.name}
-              onChange={(e) => setTaskForm({...taskForm, name: e.target.value})}
-              autoFocus
-              className="w-full text-lg font-medium bg-transparent outline-none border-b-2 border-slate-200 dark:border-slate-700 pb-2 mb-4 text-slate-800 dark:text-slate-200 placeholder:text-slate-400"
-            />
-            
-            <div className="mb-6">
-              <label className="text-sm font-bold text-slate-500 uppercase tracking-widest block mb-2">{t('study.estPomodoros') || 'Est Pomodoros'}</label>
-              <div className="flex items-center gap-3">
-                <input 
-                  type="number" 
-                  min="1"
-                  value={taskForm.est}
-                  onChange={(e) => setTaskForm({...taskForm, est: Math.max(1, parseInt(e.target.value) || 1)})}
-                  className="w-20 bg-slate-100 dark:bg-slate-800 px-3 py-2 rounded-xl text-center font-bold text-slate-700 dark:text-slate-300 outline-none border border-slate-200 dark:border-slate-700"
+          {/* Task Section */}
+          <div className="max-w-md mx-auto mt-8 w-full px-2 pb-10">
+            <div className="flex justify-between items-center mb-6 border-b border-slate-100 dark:border-slate-800/80 pb-3">
+              <h2 className="font-serif text-2xl font-bold text-slate-800 dark:text-slate-200">{t('study.tasks') || 'Tasks'}</h2>
+              <button className="p-2 bg-slate-200 dark:bg-slate-800 rounded-lg text-slate-600 dark:text-slate-300">
+                <MoreVertical size={20} />
+              </button>
+            </div>
+
+            {/* Task List */}
+            <div className="space-y-3 mb-6">
+              {tasks.map(task => (
+                <div
+                  key={task.id}
+                  onClick={() => setActiveTaskId(task.id)}
+                  className={cn(
+                    "glass-card p-4 rounded-2xl flex items-center justify-between cursor-pointer border-l-4 transition-all hover:-translate-y-0.5",
+                    activeTaskId === task.id ? 'border-l-saffron shadow-md' : 'border-l-transparent',
+                    task.completed ? 'opacity-60' : ''
+                  )}
+                >
+                  <div className="flex items-center gap-3 overflow-hidden">
+                    <button onClick={(e) => toggleTaskCompletion(task.id, e)} className="flex-shrink-0 text-red-500 dark:text-red-400">
+                      {task.completed ? <CheckCircle2 size={24} className="text-red-500" /> : <Circle size={24} className="text-slate-300 dark:text-slate-600" />}
+                    </button>
+                    <span className={cn("font-medium truncate", task.completed && "line-through text-slate-500")}>
+                      {task.name}
+                    </span>
+                  </div>
+                  <div className="flex items-center gap-4 flex-shrink-0">
+                    <span className="text-slate-500 dark:text-slate-400 text-sm font-bold">
+                      {task.act} / {task.est}
+                    </span>
+                    <button
+                      onClick={(e) => { e.stopPropagation(); editTask(task); }}
+                      className="p-2 border border-slate-200 dark:border-slate-700 rounded-lg bg-white dark:bg-slate-800 text-slate-500 hover:bg-slate-50 dark:hover:bg-slate-700"
+                    >
+                      <MoreVertical size={16} />
+                    </button>
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            {/* Add Task Form / Button */}
+            {showTaskForm ? (
+              <div className="glass-card p-5 rounded-[2rem] shadow-lg animate-in slide-in-from-top-4">
+                <input
+                  type="text"
+                  placeholder={t('study.taskName') || "What are you working on?"}
+                  value={taskForm.name}
+                  onChange={(e) => setTaskForm({ ...taskForm, name: e.target.value })}
+                  autoFocus
+                  className="w-full text-lg font-medium bg-transparent outline-none border-b-2 border-slate-200 dark:border-slate-700 pb-2 mb-4 text-slate-800 dark:text-slate-200 placeholder:text-slate-400"
                 />
-                <div className="flex gap-2">
-                  <button onClick={() => setTaskForm(prev => ({...prev, est: prev.est + 1}))} className="w-10 h-10 rounded-xl bg-slate-100 dark:bg-slate-800 flex items-center justify-center font-bold text-slate-600 hover:bg-slate-200 dark:hover:bg-slate-700">+</button>
-                  <button onClick={() => setTaskForm(prev => ({...prev, est: Math.max(1, prev.est - 1)}))} className="w-10 h-10 rounded-xl bg-slate-100 dark:bg-slate-800 flex items-center justify-center font-bold text-slate-600 hover:bg-slate-200 dark:hover:bg-slate-700">-</button>
+
+                <div className="mb-6">
+                  <label className="text-sm font-bold text-slate-500 uppercase tracking-widest block mb-2">{t('study.estPomodoros') || 'Est Pomodoros'}</label>
+                  <div className="flex items-center gap-3">
+                    <input
+                      type="number"
+                      min="1"
+                      value={taskForm.est}
+                      onChange={(e) => setTaskForm({ ...taskForm, est: Math.max(1, parseInt(e.target.value) || 1) })}
+                      className="w-20 bg-slate-100 dark:bg-slate-800 px-3 py-2 rounded-xl text-center font-bold text-slate-700 dark:text-slate-300 outline-none border border-slate-200 dark:border-slate-700"
+                    />
+                    <div className="flex gap-2">
+                      <button onClick={() => setTaskForm(prev => ({ ...prev, est: prev.est + 1 }))} className="w-10 h-10 rounded-xl bg-slate-100 dark:bg-slate-800 flex items-center justify-center font-bold text-slate-600 hover:bg-slate-200 dark:hover:bg-slate-700">+</button>
+                      <button onClick={() => setTaskForm(prev => ({ ...prev, est: Math.max(1, prev.est - 1) }))} className="w-10 h-10 rounded-xl bg-slate-100 dark:bg-slate-800 flex items-center justify-center font-bold text-slate-600 hover:bg-slate-200 dark:hover:bg-slate-700">-</button>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="flex justify-between items-center pt-4 bg-slate-50 dark:bg-slate-900/50 -mx-5 -mb-5 px-5 py-4 rounded-b-[2rem]">
+                  {editingTaskId ? (
+                    <button onClick={() => deleteTask(editingTaskId)} className="text-sm font-bold text-red-500 uppercase tracking-widest">{t('study.delete') || 'Delete'}</button>
+                  ) : <div />}
+                  <div className="flex gap-3">
+                    <button
+                      onClick={() => { setShowTaskForm(false); setEditingTaskId(null); }}
+                      className="px-5 py-2 rounded-full text-sm font-bold uppercase tracking-widest text-slate-500"
+                    >
+                      {t('study.cancel') || 'Cancel'}
+                    </button>
+                    <button
+                      onClick={handleSaveTask}
+                      className="px-6 py-2 rounded-full text-sm font-bold uppercase tracking-widest bg-slate-800 dark:bg-white text-white dark:text-slate-900 shadow-md active:scale-95"
+                    >
+                      {t('study.save') || 'Save'}
+                    </button>
+                  </div>
                 </div>
               </div>
-            </div>
-
-            <div className="flex justify-between items-center pt-4 bg-slate-50 dark:bg-slate-900/50 -mx-5 -mb-5 px-5 py-4 rounded-b-[2rem]">
-              {editingTaskId ? (
-                <button onClick={() => deleteTask(editingTaskId)} className="text-sm font-bold text-red-500 uppercase tracking-widest">{t('study.delete') || 'Delete'}</button>
-              ) : <div />}
-              <div className="flex gap-3">
-                <button 
-                  onClick={() => { setShowTaskForm(false); setEditingTaskId(null); }}
-                  className="px-5 py-2 rounded-full text-sm font-bold uppercase tracking-widest text-slate-500"
-                >
-                  {t('study.cancel') || 'Cancel'}
-                </button>
-                <button 
-                  onClick={handleSaveTask}
-                  className="px-6 py-2 rounded-full text-sm font-bold uppercase tracking-widest bg-slate-800 dark:bg-white text-white dark:text-slate-900 shadow-md active:scale-95"
-                >
-                  {t('study.save') || 'Save'}
-                </button>
-              </div>
-            </div>
+            ) : (
+              <button
+                onClick={() => { setTaskForm({ name: '', est: 1 }); setShowTaskForm(true); }}
+                className="w-full py-3.5 border border-dashed border-slate-300 dark:border-slate-800 rounded-2xl flex items-center justify-center gap-2 text-slate-500 dark:text-slate-400 font-semibold uppercase tracking-wider text-xs hover:border-[var(--accent)] hover:text-[var(--accent)] hover:bg-slate-50/50 dark:hover:bg-slate-900/50 transition-all duration-200 active:scale-[0.98]"
+              >
+                <PlusCircle size={16} /> {t('study.addTask') || 'Add Task'}
+              </button>
+            )}
           </div>
-        ) : (
-          <button 
-            onClick={() => { setTaskForm({name: '', est: 1}); setShowTaskForm(true); }}
-            className="w-full py-3.5 border border-dashed border-slate-300 dark:border-slate-800 rounded-2xl flex items-center justify-center gap-2 text-slate-500 dark:text-slate-400 font-semibold uppercase tracking-wider text-xs hover:border-[var(--accent)] hover:text-[var(--accent)] hover:bg-slate-50/50 dark:hover:bg-slate-900/50 transition-all duration-200 active:scale-[0.98]"
-          >
-            <PlusCircle size={16} /> {t('study.addTask') || 'Add Task'}
-          </button>
-        )}
+
+          <StudySettingsModal
+            show={showSettings}
+            onClose={() => setShowSettings(false)}
+            settings={settings}
+            onUpdate={(newSettings) => {
+              setSettings(newSettings);
+              // If timer is NOT running, update current time left to match new setting
+              if (!isRunning) {
+                setTimeLeft(newSettings[mode]);
+              } else {
+                // Mid-session update
+                const newDurationMs = newSettings[mode] * 1000;
+                alarmService.rescheduleStudyTimer(newDurationMs, mode);
+                setTimeLeft(newSettings[mode]);
+              }
+            }}
+          />
+
+          <StudyReportModal
+            show={showReport}
+            onClose={() => setShowReport(false)}
+            sessions={sessions}
+          />
+        </div>
       </div>
-
-      <StudySettingsModal 
-        show={showSettings} 
-        onClose={() => setShowSettings(false)} 
-        settings={settings} 
-        onUpdate={(newSettings) => {
-          setSettings(newSettings);
-          // If timer is NOT running, update current time left to match new setting
-          if (!isRunning) {
-            setTimeLeft(newSettings[mode]);
-          } else {
-            // Mid-session update
-            const newDurationMs = newSettings[mode] * 1000;
-            alarmService.rescheduleStudyTimer(newDurationMs, mode);
-            setTimeLeft(newSettings[mode]);
-          }
-        }} 
-      />
-
-      <StudyReportModal 
-        show={showReport}
-        onClose={() => setShowReport(false)}
-        sessions={sessions}
-      />
     </div>
   );
 }
