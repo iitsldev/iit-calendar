@@ -2,3 +2,6 @@
 # will have compiled files and executables
 /target/
 /gen/schemas
+
+# Generated from public/logo.png by generate-icons.cjs / tauri icon
+/icons/

@@ -2,6 +2,10 @@ App/build
 App/Pods
 App/output
 App/App/public
+App/App/bell.wav
+App/App/noon_*.wav
+App/App/Assets.xcassets/AppIcon.appiconset
+App/App/Assets.xcassets/Splash.imageset
 DerivedData
 xcuserdata
 

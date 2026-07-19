@@ -1,2 +1,10 @@
 /build/*
 !/build/.npmkeep
+
+# Generated from source assets by generate-icons.cjs / @capacitor/assets
+/src/main/res/drawable*/splash.png
+/src/main/res/drawable*/ic_launcher*.xml
+/src/main/res/mipmap*/ic_launcher*.png
+/src/main/res/mipmap-anydpi-v26/ic_launcher*.xml
+/src/main/res/values/ic_launcher_background.xml
+/src/main/res/raw/*.wav
