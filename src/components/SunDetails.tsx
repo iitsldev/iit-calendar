@@ -3,7 +3,7 @@ import { motion } from 'motion/react';
 import { format } from 'date-fns';
 import { 
   Clock, 
-  ChevronUp, 
+  ChevronUp,
   ChevronDown, 
   Sunrise, 
   Sun, 
@@ -225,17 +225,18 @@ export function SunDetails({
   ];
 
   return (
-    <div className="glass-card rounded-[2rem] p-2 bg-white/50 dark:bg-slate-900/40 border-white/60 dark:border-slate-800 overflow-hidden shadow-sm">
+    <div className="glass-card rounded-[2rem] p-4 overflow-hidden shadow-sm" style={{ background: 'var(--bg-card)', borderColor: 'var(--border)' }}>
       <div className="flex justify-between items-center mb-6">
         <div className="flex items-center gap-2">
-          <Clock size="1.2em" className="text-saffron dark:text-gold" />
-          <span className="text-sm font-black text-slate-400 dark:text-slate-500 uppercase tracking-widest">{t('sun.solarEvents')}</span>
+          <Clock size={13} style={{ color: 'var(--accent)', opacity: 0.7 }} />
+          <span className="text-[10px] font-black uppercase tracking-[0.2em]" style={{ color: 'var(--text-muted)' }}>{t('sun.solarEvents')}</span>
         </div>
         <button 
           onClick={() => setExpanded(!expanded)}
-          className="p-1.5 rounded-full text-slate-400 hover:text-saffron" style={{ background: 'rgb(212 136 32 / 0.08)' }} 
+          className={cn("p-1.5 rounded-full transition-transform duration-300", expanded && "rotate-180")}
+          style={{ background: 'var(--accent-subtle)', color: 'var(--accent)' }}
         >
-          {expanded ? <ChevronUp size="1.2em"/> : <ChevronDown size="1.2em" />}
+          <ChevronDown size={14} />
         </button>
       </div>
 
@@ -341,7 +342,7 @@ export function SunDetails({
             <LegendItem color="bg-sky-400" label={t('sun.daylight')} />
           </div>
 
-          <div className="grid grid-cols-2 gap-y-6 gap-x-8 bg-white/40 dark:bg-slate-800/40 p-6 rounded-[2rem] border border-white/60 dark:border-slate-700">
+          <div className="grid grid-cols-2 gap-y-6 gap-x-8 p-6 rounded-[2rem]" style={{ background: 'var(--accent-subtle)', border: '1px solid var(--border)' }}>
             <DetailRow label={t('sun.traditionDawn')} value={safeFormat(activeDawn, 'hh:mm:ss a')} />
             <DetailRow label={t('sun.solarNoon')} value={safeFormat(times.solarNoon, 'hh:mm:ss a')} />
             {/* Solar Noon Alert Row */}
