@@ -216,52 +216,48 @@ export default function App() {
       
       {/* Top App Bar */}
       <header
-        className="px-5 py-3 flex justify-between items-center relative z-[60] rounded-lg border shadow-sm mb-4"
-        style={{ backgroundColor: 'var(--bg-header)', borderBottom: '0.5px solid rgba(0,0,0,0.08)' }}
+        className="px-6 flex justify-between items-center relative z-[60] border-b backdrop-blur-md"
+        style={{
+          backgroundColor: 'var(--bg-header)',
+          borderColor: 'var(--border-subtle)',
+          paddingTop: 'calc(0.75rem + env(safe-area-inset-top))',
+          paddingBottom: '0.75rem',
+        }}
       >
         <div className="flex items-center gap-3">
           {/* Compact logo mark */}
-          <div
-            className="w-16 h-16 rounded-lg flex items-center justify-center flex-shrink-0"
-          >
-            <img src="/logo.png" alt="IIT Logo" className="w-16 h-16 object-contain" />
+          <div className="w-8 h-8 rounded-lg overflow-hidden flex-shrink-0 border border-slate-200/20 shadow-sm">
+            <img src="/logo.png" alt="IIT Logo" className="w-full h-full object-contain" />
           </div>
 
           {/* Title + subtitle */}
           <div className="flex flex-col gap-0.5">
             <span
-              className="text-[17px] font-medium tracking-tight leading-none"
-              style={{ color: 'var(--text-primary)' }}
+              className="text-base font-bold tracking-tight leading-none text-slate-800 dark:text-slate-100"
             >
               IIT Calendar
             </span>
-            <span
-              className="text-[11px] uppercase tracking-widest leading-none"
-              style={{ color: 'var(--text-secondary)' }}
-            >
-              {settings.calendarType === 'srilanka' ? t('calendar.srilanka') : settings.calendarType}
-              {' · '}{t('calendar.mode')}
-               {settings.address && (
-                <p className="text-sm font-medium opacity-60 mt-0.5 max-w-[200px] truncate" style={{ color: 'var(--text-secondary)' }}>
-                  {settings.address}
-                </p>
+            <div className="flex items-center gap-1 text-[10px] font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400 leading-none">
+              <span>{settings.calendarType === 'srilanka' ? t('calendar.srilanka') : settings.calendarType}</span>
+              <span>·</span>
+              <span>{t('calendar.mode')}</span>
+              {settings.address && (
+                <>
+                  <span>·</span>
+                  <span className="max-w-[120px] truncate normal-case font-medium opacity-80">{settings.address}</span>
+                </>
               )}
-            </span>
+            </div>
           </div>
         </div>
 
         {/* Settings button */}
         <button
           onClick={() => setShowSettings(true)}
-          className="w-9 h-9 rounded-full flex items-center justify-center border transition-colors"
-          style={{
-            borderColor: 'var(--color-border-tertiary, rgba(0,0,0,0.12))',
-            color: 'var(--btn-header-text)',
-            backgroundColor: 'transparent',
-          }}
+          className="w-9 h-9 rounded-full flex items-center justify-center text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-100 hover:bg-slate-100/50 dark:hover:bg-slate-800/50 transition-all active:scale-95"
           aria-label="Settings"
         >
-          <SettingsIcon size={17} />
+          <SettingsIcon size={18} />
         </button>
       </header>
 
@@ -309,12 +305,19 @@ export default function App() {
       />
 
       {/* Bottom Nav */}
-      <nav className="fixed bottom-0 left-0 right-0 z-50 glass-card px-6 py-5 rounded-t-[2.5rem] flex justify-around items-center border-t border-white/80 dark:border-slate-800/80 bg-white/70 dark:bg-slate-900/70 shadow-[0_-10px_40px_rgba(0,0,0,0.03)] dark:shadow-[0_-10px_40px_rgba(0,0,0,0.3)] backdrop-blur-3xl overflow-x-auto">
-        <NavButton active={activeTab === 'calendar'} onClick={() => handleTabClick('calendar')} icon={<CalendarIcon size={22}/>} label={t('common.calendar') || 'Calendar'} />
-        <NavButton active={activeTab === 'meditation'} onClick={() => handleTabClick('meditation')} icon={<Timer size={22}/>} label={t('common.stillness') || 'Stillness'} />
-        <NavButton active={activeTab === 'chants'} onClick={() => handleTabClick('chants')} icon={<Wind size={22}/>} label={t('common.chants') || 'Chants'} />
-        <NavButton active={activeTab === 'book'} onClick={() => handleTabClick('book')} icon={<Book size={22}/>} label={t('common.book') || 'Book'} />
-        <NavButton active={activeTab === 'study'} onClick={() => handleTabClick('study')} icon={<BookOpen size={22}/>} label={t('common.study') || 'Study'} />
+      <nav className="fixed bottom-0 left-0 right-0 z-50 glass-card flex justify-around items-center border-t border-slate-100/50 dark:border-slate-800/50 bg-white/80 dark:bg-slate-900/80 shadow-[0_-8px_32px_rgba(0,0,0,0.04)] dark:shadow-[0_-8px_32px_rgba(0,0,0,0.25)] backdrop-blur-md overflow-x-auto"
+        style={{
+          paddingTop: '0.75rem',
+          paddingBottom: 'calc(0.75rem + env(safe-area-inset-bottom))',
+          paddingLeft: '1rem',
+          paddingRight: '1rem',
+        }}
+      >
+        <NavButton active={activeTab === 'calendar'} onClick={() => handleTabClick('calendar')} icon={<CalendarIcon size={20}/>} label={t('common.calendar') || 'Calendar'} />
+        <NavButton active={activeTab === 'meditation'} onClick={() => handleTabClick('meditation')} icon={<Timer size={20}/>} label={t('common.stillness') || 'Stillness'} />
+        <NavButton active={activeTab === 'chants'} onClick={() => handleTabClick('chants')} icon={<Wind size={20}/>} label={t('common.chants') || 'Chants'} />
+        <NavButton active={activeTab === 'book'} onClick={() => handleTabClick('book')} icon={<Book size={20}/>} label={t('common.book') || 'Book'} />
+        <NavButton active={activeTab === 'study'} onClick={() => handleTabClick('study')} icon={<BookOpen size={20}/>} label={t('common.study') || 'Study'} />
       </nav>
     </div>
   );
@@ -322,18 +325,17 @@ export default function App() {
 
 function NavButton({ icon, label, active, onClick }: { icon: React.ReactNode, label: string, active: boolean, onClick: () => void }) {
   return (
-    <button onClick={onClick} className="flex flex-col items-center gap-1.5 relative group min-w-[64px]">
+    <button onClick={onClick} className="flex flex-col items-center justify-center flex-1 py-1 transition-all active:scale-95 relative group min-w-[64px]">
       <div className={cn(
-        "transition-all duration-300",
+        "transition-all duration-200",
         active ? "text-saffron scale-110" : "text-slate-400 dark:text-slate-500 group-hover:text-slate-600 dark:group-hover:text-slate-400"
       )}>
-        {React.isValidElement(icon) ? React.cloneElement(icon as React.ReactElement, { size: '1.4em' } as any) : icon}
+        {icon}
       </div>
       <span className={cn(
-        "text-sm font-black uppercase tracking-widest transition-all",
-        active ? "text-slate-700 dark:text-slate-300 opacity-100" : "text-slate-400 dark:text-slate-500 opacity-0 group-hover:opacity-60"
+        "text-[10px] font-semibold mt-1 tracking-tight transition-colors duration-200",
+        active ? "text-saffron font-bold" : "text-slate-400 dark:text-slate-500"
       )}>{label}</span>
-      {active && <motion.div layoutId="nav" className="absolute -bottom-1 w-1 h-1 bg-saffron rounded-full" />}
     </button>
   );
 }

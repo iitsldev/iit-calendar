@@ -261,18 +261,15 @@ export function StudyScreen() {
   // Theming colors based on mode (simulating pomofocus UI but mapped to our theme tokens if needed)
   const getModeColorClass = () => {
     switch (mode) {
-      case 'pomodoro': return 'bg-red-500/10 dark:bg-red-500/20 text-red-700 dark:text-red-400 border-red-200 dark:border-red-900/50';
-      case 'shortBreak': return 'bg-teal-500/10 dark:bg-teal-500/20 text-teal-700 dark:text-teal-400 border-teal-200 dark:border-teal-900/50';
-      case 'longBreak': return 'bg-blue-500/10 dark:bg-blue-500/20 text-blue-700 dark:text-blue-400 border-blue-200 dark:border-blue-900/50';
+      case 'pomodoro': return 'text-slate-800 dark:text-slate-100 border-slate-100 dark:border-slate-800/80';
+      case 'shortBreak': return 'text-slate-800 dark:text-slate-100 border-slate-100 dark:border-slate-800/80';
+      case 'longBreak': return 'text-slate-800 dark:text-slate-100 border-slate-100 dark:border-slate-800/80';
     }
   };
 
   const getModeBg = () => {
-    switch (mode) {
-      case 'pomodoro': return 'bg-red-50 dark:bg-red-950/20';
-      case 'shortBreak': return 'bg-teal-50 dark:bg-teal-950/20';
-      case 'longBreak': return 'bg-blue-50 dark:bg-blue-950/20';
-    }
+    // Keep it transparent so it adopts the global app theme background seamlessly
+    return 'bg-transparent';
   };
 
   return (
@@ -286,13 +283,13 @@ export function StudyScreen() {
         <div className="flex flex-wrap gap-2">
           <button 
             onClick={() => setShowReport(true)}
-            className="flex items-center gap-1.5 px-3 py-1.5 bg-white/40 dark:bg-black/20 rounded-full text-xs font-bold uppercase tracking-widest backdrop-blur-md hover:bg-white/60 dark:hover:bg-black/40 transition-colors"
+            className="flex items-center gap-1.5 px-3 py-1.5 bg-slate-100/50 dark:bg-slate-800/50 border border-slate-200/10 rounded-full text-xs font-bold uppercase tracking-widest backdrop-blur-md hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors text-slate-600 dark:text-slate-300"
           >
             <BarChart2 size={14} /> {t('study.report') || 'Report'}
           </button>
           <button 
             onClick={() => setShowSettings(true)}
-            className="flex items-center gap-1.5 px-3 py-1.5 bg-white/40 dark:bg-black/20 rounded-full text-xs font-bold uppercase tracking-widest backdrop-blur-md hover:bg-white/60 dark:hover:bg-black/40 transition-colors"
+            className="flex items-center gap-1.5 px-3 py-1.5 bg-slate-100/50 dark:bg-slate-800/50 border border-slate-200/10 rounded-full text-xs font-bold uppercase tracking-widest backdrop-blur-md hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors text-slate-600 dark:text-slate-300"
           >
             <Settings2 size={14} /> {t('study.settings') || 'Settings'}
           </button>
@@ -303,29 +300,53 @@ export function StudyScreen() {
       <div className={cn("glass-card rounded-[2.5rem] p-6 sm:p-10 flex flex-col items-center transition-colors shadow-sm", getModeColorClass())}>
         
         {/* Mode Selector */}
-        <div className="flex gap-2 mb-8 bg-white/50 dark:bg-black/20 p-1.5 rounded-full border border-black/5 dark:border-white/5 backdrop-blur-md overflow-x-auto w-full max-w-[320px] justify-between">
+        <div className="flex gap-1.5 mb-8 bg-slate-100/80 dark:bg-slate-900/50 p-1.5 rounded-full border border-slate-200/10 backdrop-blur-md w-full max-w-[340px] justify-between">
           <button 
             onClick={() => switchMode('pomodoro')}
-            className={cn("px-4 py-2 rounded-full text-xs font-black uppercase tracking-widest whitespace-nowrap transition-all", mode === 'pomodoro' ? 'bg-white dark:bg-white/10 shadow-sm' : 'opacity-60')}
+            className={cn(
+              "flex-1 py-2 rounded-full text-[10px] font-bold uppercase tracking-wider text-center transition-all",
+              mode === 'pomodoro' 
+                ? 'bg-white dark:bg-slate-800 text-[var(--accent)] shadow-sm font-bold' 
+                : 'text-slate-500 dark:text-slate-400 opacity-70 hover:opacity-100'
+            )}
           >
             {t('study.pomodoro') || 'Pomodoro'}
           </button>
           <button 
             onClick={() => switchMode('shortBreak')}
-            className={cn("px-4 py-2 rounded-full text-xs font-black uppercase tracking-widest whitespace-nowrap transition-all", mode === 'shortBreak' ? 'bg-white dark:bg-white/10 shadow-sm' : 'opacity-60')}
+            className={cn(
+              "flex-1 py-2 rounded-full text-[10px] font-bold uppercase tracking-wider text-center transition-all",
+              mode === 'shortBreak' 
+                ? 'bg-white dark:bg-slate-800 text-emerald-600 dark:text-emerald-400 shadow-sm font-bold' 
+                : 'text-slate-500 dark:text-slate-400 opacity-70 hover:opacity-100'
+            )}
           >
             {t('study.shortBreak') || 'Short Break'}
           </button>
           <button 
             onClick={() => switchMode('longBreak')}
-            className={cn("px-4 py-2 rounded-full text-xs font-black uppercase tracking-widest whitespace-nowrap transition-all", mode === 'longBreak' ? 'bg-white dark:bg-white/10 shadow-sm' : 'opacity-60')}
+            className={cn(
+              "flex-1 py-2 rounded-full text-[10px] font-bold uppercase tracking-wider text-center transition-all",
+              mode === 'longBreak' 
+                ? 'bg-white dark:bg-slate-800 text-indigo-600 dark:text-indigo-400 shadow-sm font-bold' 
+                : 'text-slate-500 dark:text-slate-400 opacity-70 hover:opacity-100'
+            )}
           >
             {t('study.longBreak') || 'Long Break'}
           </button>
         </div>
 
         {/* Time Display */}
-        <div className="font-serif text-8xl sm:text-9xl font-bold tracking-tighter mb-8 drop-shadow-sm">
+        <div 
+          className="font-sans font-medium text-7xl sm:text-8xl tracking-tight mb-8 tabular-nums select-none"
+          style={{
+            color: mode === 'pomodoro' 
+              ? 'var(--accent)' 
+              : mode === 'shortBreak' 
+                ? '#10b981' 
+                : '#6366f1'
+          }}
+        >
           {formatTime(timeLeft)}
         </div>
 
@@ -333,11 +354,11 @@ export function StudyScreen() {
         <button 
           onClick={toggleTimer}
           className={cn(
-            "w-full max-w-[240px] py-5 rounded-full font-black text-xl uppercase tracking-widest transition-transform active:scale-95 shadow-xl border-b-4",
-            mode === 'pomodoro' ? 'bg-red-500 hover:bg-red-600 border-red-700 text-white' : '',
-            mode === 'shortBreak' ? 'bg-teal-500 hover:bg-teal-600 border-teal-700 text-white' : '',
-            mode === 'longBreak' ? 'bg-blue-500 hover:bg-blue-600 border-blue-700 text-white' : '',
-            isRunning && 'translate-y-[4px] border-b-0 shadow-sm'
+            "w-full max-w-[240px] py-4 rounded-full font-bold text-base uppercase tracking-wider transition-all duration-300 active:scale-95 shadow-md text-white hover:shadow-lg",
+            mode === 'pomodoro' ? 'bg-[var(--accent)]' : '',
+            mode === 'shortBreak' ? 'bg-emerald-600 dark:bg-emerald-500' : '',
+            mode === 'longBreak' ? 'bg-indigo-600 dark:bg-indigo-500' : '',
+            isRunning && 'opacity-90'
           )}
         >
           {isRunning ? (t('study.pause') || 'PAUSE') : (t('study.start') || 'START')}
@@ -346,7 +367,7 @@ export function StudyScreen() {
 
       {/* Task Section */}
       <div className="max-w-md mx-auto mt-8 w-full px-2 pb-10">
-        <div className="flex justify-between items-center mb-6 border-b-2 border-slate-200 dark:border-slate-800 pb-4">
+        <div className="flex justify-between items-center mb-6 border-b border-slate-100 dark:border-slate-800/80 pb-3">
           <h2 className="font-serif text-2xl font-bold text-slate-800 dark:text-slate-200">{t('study.tasks') || 'Tasks'}</h2>
           <button className="p-2 bg-slate-200 dark:bg-slate-800 rounded-lg text-slate-600 dark:text-slate-300">
             <MoreVertical size={20} />
@@ -440,9 +461,9 @@ export function StudyScreen() {
         ) : (
           <button 
             onClick={() => { setTaskForm({name: '', est: 1}); setShowTaskForm(true); }}
-            className="w-full py-4 border-2 border-dashed border-slate-300 dark:border-slate-700 rounded-[2rem] flex items-center justify-center gap-2 text-slate-500 dark:text-slate-400 font-bold uppercase tracking-widest text-sm hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors"
+            className="w-full py-3.5 border border-dashed border-slate-300 dark:border-slate-800 rounded-2xl flex items-center justify-center gap-2 text-slate-500 dark:text-slate-400 font-semibold uppercase tracking-wider text-xs hover:border-[var(--accent)] hover:text-[var(--accent)] hover:bg-slate-50/50 dark:hover:bg-slate-900/50 transition-all duration-200 active:scale-[0.98]"
           >
-            <PlusCircle size={20} /> {t('study.addTask') || 'Add Task'}
+            <PlusCircle size={16} /> {t('study.addTask') || 'Add Task'}
           </button>
         )}
       </div>

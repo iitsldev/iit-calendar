@@ -21,7 +21,7 @@
   :root {
     /* Surfaces */
     --bg-main:        #fffffd;
-    --bg-header:      #e5e5e5;
+    --bg-header:      rgba(255, 255, 255, 0.7);
     --bg-card:        #ffffff;
     --bg-card-alt:    #f5f3f0;   /* section background inside modal */
     --bg-input:       #f5f3f0;
@@ -31,7 +31,7 @@
     --text-primary:   #1c1917;   /* stone-900 */
     --text-secondary: #44403c;   /* stone-700 */
     --text-muted:     #78716c;   /* stone-500 */
-    --text-faint:     #2596be;   /* stone-400 — labels, placeholders */
+    --text-faint:     #a8a29e;   /* stone-400 — labels, placeholders */
 
     /* Borders */
     --border-base:    #d6d3d1;   /* stone-300 */
@@ -52,7 +52,7 @@
   .dark {
     /* Surfaces */
     --bg-main:        #020617;
-    --bg-header:      #0f172a;
+    --bg-header:      rgba(15, 23, 42, 0.7);
     --bg-card:        #111827;
     --bg-card-alt:    #1c2333;
     --bg-input:       #1e293b;
