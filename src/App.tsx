@@ -1,10 +1,10 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { 
-  Calendar as CalendarIcon, 
-  Settings as SettingsIcon, 
-  Wind, 
-  Timer, 
+import {
+  Calendar as CalendarIcon,
+  Settings as SettingsIcon,
+  Wind,
+  Timer,
   BookOpen,
   Book,
   Info,
@@ -39,7 +39,7 @@ const TABS = ['calendar', 'meditation', 'chants', 'book', 'study'] as const;
 export default function App() {
   const { t } = useI18n();
   useWidgetSync();
-  
+
   // Persistence
   const [settings, setSettings] = useState<Settings>(() => {
     const saved = localStorage.getItem('iit_settings');
@@ -88,14 +88,14 @@ export default function App() {
 
   useEffect(() => {
     localStorage.setItem('iit_settings', JSON.stringify(settings));
-    
+
     // Apply theme
     const root = document.documentElement;
     root.classList.toggle('dark', settings.darkMode);
-    
+
     // Apply font size
     root.style.fontSize = `${settings.fontSize}px`;
-    
+
     // Set theme colors (Tailwind variables)
     const colors: Record<string, string> = {
       saffron: '#7f5700',
@@ -104,7 +104,7 @@ export default function App() {
       rose: '#f43f5e',
       slate: '#475569'
     };
-    
+
     root.style.setProperty('--accent', colors[settings.themeColor]);
 
     // Refresh notifications when settings change
@@ -141,7 +141,7 @@ export default function App() {
   useEffect(() => {
     const main = document.getElementById('main-tabs');
     if (!main) return;
-    
+
     if (!('onscrollsnapchange' in window)) {
       const observer = new IntersectionObserver((entries) => {
         entries.forEach(entry => {
@@ -151,12 +151,12 @@ export default function App() {
           }
         });
       }, { root: main, threshold: 0.5 });
-      
+
       TABS.forEach(tab => {
         const el = document.getElementById(`tab-${tab}`);
         if (el) observer.observe(el);
       });
-      
+
       return () => observer.disconnect();
     } else {
       const handleSnapChange = (e: any) => {
@@ -178,7 +178,7 @@ export default function App() {
       el.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
     }
   };
-  
+
   // Choose engine based on settings
   const calendarEngine = useMemo(() => {
     const config = { lat: settings.lat, lng: settings.lng };
@@ -190,7 +190,7 @@ export default function App() {
       default: return new ThaiCalendar(config);
     }
   }, [settings]);
-  
+
   const sunCalc = useMemo(() => new SunTimesCalculator(settings.lat, settings.lng), [settings.lat, settings.lng]);
 
   const getCurrentLocation = () => {
@@ -207,20 +207,20 @@ export default function App() {
   };
 
   return (
-    <div 
-      className="flex flex-col h-[100dvh] overflow-hidden font-sans transition-colors duration-500 UT" 
+    <div
+      className="flex flex-col h-[100dvh] overflow-hidden font-sans transition-colors duration-500 UT"
       lang={settings.language}
       style={{ backgroundColor: 'var(--bg-main)' }}
     >
       <style>{CSS_VARS}</style>
-      
-      <main 
+
+      <main
         id="main-tabs"
         className="flex-1 flex overflow-x-auto overflow-y-hidden snap-x snap-mandatory hide-scrollbar"
         style={{ scrollBehavior: 'smooth' }}
       >
-        <div id="tab-calendar" className="min-w-full w-full h-full flex-shrink-0 snap-center overflow-y-auto hide-scrollbar pb-32">
-          <CalendarScreen 
+        <div id="tab-calendar" className="min-w-full w-full h-full flex-shrink-0 snap-center overflow-y-auto hide-scrollbar" style={{ paddingBottom: 'calc(5.5rem + env(safe-area-inset-bottom))' }}>
+          <CalendarScreen
             settings={settings}
             onUpdateSettings={setSettings}
             currentDate={currentDate}
@@ -231,25 +231,25 @@ export default function App() {
             sunCalc={sunCalc}
           />
         </div>
-        
-        <div id="tab-meditation" className="min-w-full w-full h-full flex-shrink-0 snap-center overflow-y-auto hide-scrollbar pb-32">
+
+        <div id="tab-meditation" className="min-w-full w-full h-full flex-shrink-0 snap-center overflow-y-auto hide-scrollbar" style={{ paddingBottom: 'calc(5.5rem + env(safe-area-inset-bottom))' }}>
           <MeditationScreen />
         </div>
 
-        <div id="tab-chants" className="min-w-full w-full h-full flex-shrink-0 snap-center overflow-y-auto hide-scrollbar pb-32">
+        <div id="tab-chants" className="min-w-full w-full h-full flex-shrink-0 snap-center overflow-y-auto hide-scrollbar" style={{ paddingBottom: 'calc(5.5rem + env(safe-area-inset-bottom))' }}>
           <ChantsScreen settings={settings} />
         </div>
 
-        <div id="tab-book" className="min-w-full w-full h-full flex-shrink-0 snap-center overflow-y-auto hide-scrollbar pb-32">
+        <div id="tab-book" className="min-w-full w-full h-full flex-shrink-0 snap-center overflow-y-auto hide-scrollbar" style={{ paddingBottom: 'calc(5.5rem + env(safe-area-inset-bottom))' }}>
           <BookScreen settings={settings} />
         </div>
 
-        <div id="tab-study" className="min-w-full w-full h-full flex-shrink-0 snap-center overflow-y-auto hide-scrollbar pb-32">
+        <div id="tab-study" className="min-w-full w-full h-full flex-shrink-0 snap-center overflow-y-auto hide-scrollbar" style={{ paddingBottom: 'calc(5.5rem + env(safe-area-inset-bottom))' }}>
           <StudyScreen />
         </div>
       </main>
 
-      <SettingsModal 
+      <SettingsModal
         show={showSettings}
         onClose={() => setShowSettings(false)}
         settings={settings}
@@ -266,11 +266,11 @@ export default function App() {
           paddingRight: '1rem',
         }}
       >
-        <NavButton active={activeTab === 'calendar'} onClick={() => handleTabClick('calendar')} icon={<CalendarIcon size={20}/>} label={t('common.calendar') || 'Calendar'} />
-        <NavButton active={activeTab === 'meditation'} onClick={() => handleTabClick('meditation')} icon={<Timer size={20}/>} label={t('common.stillness') || 'Stillness'} />
-        <NavButton active={activeTab === 'chants'} onClick={() => handleTabClick('chants')} icon={<Wind size={20}/>} label={t('common.chants') || 'Chants'} />
-        <NavButton active={activeTab === 'book'} onClick={() => handleTabClick('book')} icon={<Book size={20}/>} label={t('common.book') || 'Book'} />
-        <NavButton active={activeTab === 'study'} onClick={() => handleTabClick('study')} icon={<BookOpen size={20}/>} label={t('common.study') || 'Study'} />
+        <NavButton active={activeTab === 'calendar'} onClick={() => handleTabClick('calendar')} icon={<CalendarIcon size={20} />} label={t('common.calendar') || 'Calendar'} />
+        <NavButton active={activeTab === 'meditation'} onClick={() => handleTabClick('meditation')} icon={<Timer size={20} />} label={t('common.stillness') || 'Stillness'} />
+        <NavButton active={activeTab === 'chants'} onClick={() => handleTabClick('chants')} icon={<Wind size={20} />} label={t('common.chants') || 'Chants'} />
+        <NavButton active={activeTab === 'book'} onClick={() => handleTabClick('book')} icon={<Book size={20} />} label={t('common.book') || 'Book'} />
+        <NavButton active={activeTab === 'study'} onClick={() => handleTabClick('study')} icon={<BookOpen size={20} />} label={t('common.study') || 'Study'} />
       </nav>
     </div>
   );
@@ -281,8 +281,8 @@ function NavButton({ icon, label, active, onClick }: { icon: React.ReactNode, la
     <button onClick={onClick} className="flex flex-col items-center justify-center flex-1 py-1 transition-all active:scale-[0.97] relative group min-w-[64px]">
       <div className={cn(
         "px-5 py-1 rounded-full transition-all duration-300 flex items-center justify-center",
-        active 
-          ? "bg-[var(--accent-soft)] text-saffron scale-105" 
+        active
+          ? "bg-[var(--accent-soft)] text-saffron scale-105"
           : "text-slate-400 dark:text-slate-500 group-hover:text-slate-600 dark:group-hover:text-slate-400"
       )}>
         {icon}
@@ -297,7 +297,7 @@ function NavButton({ icon, label, active, onClick }: { icon: React.ReactNode, la
 
 function PlaceholderTab({ icon, title, text }: { icon: React.ReactNode, title: string, text: string }) {
   return (
-    <motion.div 
+    <motion.div
       initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }}
       className="flex flex-col items-center justify-center py-20 text-center"
     >

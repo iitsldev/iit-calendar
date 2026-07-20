@@ -577,21 +577,6 @@ export function MeditationScreen() {
                         </div>
                       </>
                     )}
-
-                    {isDistractionFree && (
-                      <button
-                        onClick={toggleWakeLock}
-                        className={cn(
-                          "flex items-center mt-6 gap-2 px-4 py-2 rounded-full text-[10px] font-black uppercase tracking-widest transition-all active:scale-95",
-                          wakeLock
-                            ? "bg-[var(--accent-subtle)] text-[var(--accent)] border border-[var(--accent-muted)]"
-                            : "bg-[var(--bg-card)] text-[var(--text-muted)] border border-transparent"
-                        )}
-                      >
-                        <Sun size={12} className={cn(wakeLock && "animate-pulse")} style={{ color: wakeLock ? 'var(--accent)' : undefined }} />
-                        {wakeLock ? 'Screen Always On' : 'Keep Screen On'}
-                      </button>
-                    )}
                   </div>
                 </div>
 
@@ -601,8 +586,12 @@ export function MeditationScreen() {
                     <>
                       <button
                         onClick={resetTimer}
-                        className="w-12 h-12 rounded-full flex items-center justify-center transition-transform active:scale-90"
-                        style={{ backgroundColor: 'var(--sm-surface)', color: 'var(--sm-text-secondary)' }}
+                        className="w-12 h-12 rounded-full flex items-center justify-center transition-transform active:scale-90 border"
+                        style={{
+                          backgroundColor: 'var(--surface)',
+                          borderColor: 'var(--border)',
+                          color: 'var(--text-secondary)'
+                        }}
                       >
                         <RotateCcw size={18} />
                       </button>
@@ -621,8 +610,15 @@ export function MeditationScreen() {
 
                       <button
                         onClick={() => setSettings(s => ({ ...s, soundEnabled: !s.soundEnabled }))}
-                        className="w-12 h-12 rounded-full flex items-center justify-center transition-transform active:scale-90 relative"
-                        style={{ backgroundColor: 'var(--sm-surface)', color: 'var(--sm-text-secondary)' }}
+                        className={cn(
+                          "w-12 h-12 rounded-full flex items-center justify-center transition-transform active:scale-90 border relative",
+                          !settings.soundEnabled && "border-red-500/30 dark:border-red-400/20 text-red-500 dark:text-red-400"
+                        )}
+                        style={{
+                          backgroundColor: 'var(--surface)',
+                          borderColor: settings.soundEnabled ? 'var(--border)' : undefined,
+                          color: settings.soundEnabled ? 'var(--text-secondary)' : undefined
+                        }}
                       >
                         <Volume2 size={18} />
                         {!settings.soundEnabled && (
@@ -636,8 +632,12 @@ export function MeditationScreen() {
                     <>
                       <button
                         onClick={handleStop}
-                        className="flex-1 h-14 rounded-full flex items-center justify-center gap-3 font-bold tracking-widest uppercase text-xs transition-all active:scale-95"
-                        style={{ backgroundColor: 'var(--bg-card)', color: 'var(--text-secondary)' }}
+                        className="flex-1 h-14 rounded-full flex items-center justify-center gap-3 font-bold tracking-widest uppercase text-xs transition-all active:scale-95 border"
+                        style={{
+                          backgroundColor: 'var(--surface)',
+                          borderColor: 'var(--border)',
+                          color: 'var(--text-secondary)'
+                        }}
                       >
                         <Square size={16} fill="currentColor" /> Stop
                       </button>
@@ -659,6 +659,51 @@ export function MeditationScreen() {
                     </>
                   )}
                 </div>
+
+                {isDistractionFree && (
+                  <div className="flex items-center justify-center gap-3 mt-6">
+                    {/* Keep Screen On button */}
+                    <button
+                      onClick={toggleWakeLock}
+                      className={cn(
+                        "flex items-center gap-2 px-4 py-2.5 rounded-full text-[10px] font-black uppercase tracking-widest transition-all active:scale-95 border",
+                        wakeLock
+                          ? "text-[var(--accent)]"
+                          : "text-[var(--text-muted)]"
+                      )}
+                      style={{
+                        backgroundColor: wakeLock ? 'var(--accent-subtle)' : 'var(--surface)',
+                        borderColor: wakeLock ? 'var(--accent-muted)' : 'var(--border)'
+                      }}
+                    >
+                      <Sun size={12} className={cn(wakeLock && "animate-pulse")} style={{ color: wakeLock ? 'var(--accent)' : undefined }} />
+                      {wakeLock ? 'Screen Always On' : 'Keep Screen On'}
+                    </button>
+
+                    {/* Mute/Sound toggle button */}
+                    <button
+                      onClick={() => setSettings(s => ({ ...s, soundEnabled: !s.soundEnabled }))}
+                      className={cn(
+                        "flex items-center gap-2 px-4 py-2.5 rounded-full text-[10px] font-black uppercase tracking-widest transition-all active:scale-95 border relative",
+                        settings.soundEnabled
+                          ? "text-[var(--text-muted)] border-[var(--border)]"
+                          : "text-red-500 dark:text-red-400 border-red-500/30 dark:border-red-400/20"
+                      )}
+                      style={{
+                        backgroundColor: 'var(--surface)',
+                        borderColor: settings.soundEnabled ? 'var(--border)' : undefined
+                      }}
+                    >
+                      <Volume2 size={12} />
+                      {settings.soundEnabled ? 'Sound On' : 'Muted'}
+                      {!settings.soundEnabled && (
+                        <div className="absolute inset-0 flex items-center justify-center">
+                          <div className="w-5 h-[1.5px] rotate-45 bg-red-500/80 rounded-full" />
+                        </div>
+                      )}
+                    </button>
+                  </div>
+                )}
               </motion.div>
             )}
 

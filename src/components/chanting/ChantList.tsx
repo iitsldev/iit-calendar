@@ -46,7 +46,7 @@ export function ChantList({ chants, selectedChantId, onSelect, onAddChant, paliS
         />
       </div>
 
-      <div className="space-y-3 max-h-[40vh] overflow-y-auto pr-2 scrollbar-hide">
+      <div className="space-y-3">
         {filteredChants.map(chant => (
           <ChantCard
             key={chant.id}

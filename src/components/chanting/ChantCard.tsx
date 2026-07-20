@@ -43,41 +43,41 @@ export function ChantCard({ chant, selected, onClick, onDelete, paliScript }: Ch
   return (
     <motion.div
       layout
-      whileHover={{ y: -2 }}
-      whileTap={{ scale: 0.98 }}
+      whileHover={{ y: -1 }}
+      whileTap={{ scale: 0.99 }}
       onClick={onClick}
       onKeyDown={handleKeyDown}
       role="button"
       tabIndex={0}
       className={cn(
-        "w-full text-left p-5 rounded-[1.5rem] transition-all duration-300 border bg-[var(--bg-card)] cursor-pointer focus:outline-none focus:ring-2 focus:ring-[var(--accent)]",
+        "w-full text-left p-3.5 rounded-[1.2rem] transition-all duration-300 border bg-[var(--bg-card)] cursor-pointer focus:outline-none focus:ring-2 focus:ring-[var(--accent)]",
         selected 
-          ? "border-[var(--accent)] text-[var(--text-primary)] shadow-lg shadow-[var(--accent)]/20" 
+          ? "border-[var(--accent)] text-[var(--text-primary)] shadow-md shadow-[var(--accent)]/10" 
           : "border-[var(--border-subtle)] hover:border-[var(--accent)]/30"
       )}
     >
-      <div className="flex justify-between items-start">
-        <div className="flex gap-4 items-center">
+      <div className="flex justify-between items-center">
+        <div className="flex gap-3 items-center min-w-0 flex-1">
           <div className={cn(
-            "p-3 rounded-2xl flex items-center justify-center transition-colors",
+            "p-2 rounded-xl flex items-center justify-center transition-colors flex-shrink-0",
             selected ? "bg-[var(--accent)]" : "bg-[var(--bg-muted)]"
           )}>
             <div className={cn(
-              "w-2 h-2 rounded-full",
+              "w-1.5 h-1.5 rounded-full",
               selected ? "bg-[var(--bg-main)]" : "bg-[var(--text-faint)]"
             )} />
           </div>
-          <div>
+          <div className="min-w-0 flex-1">
             <h4 className={cn(
-              "text-lg font-bold leading-tight",
+              "text-sm font-bold leading-tight truncate",
               selected ? "text-[var(--accent)]" : "text-[var(--text-primary)]"
             )}>
               <ConvertedTitle text={chant.title} script={paliScript} />
             </h4>
-            <div className="flex items-center gap-2 mt-1">
-              {selected && <Check size={12} className="text-white/70" />}
+            <div className="flex items-center gap-1.5 mt-0.5">
+              {selected && <Check size={10} className="text-[var(--accent)]" />}
               <span className={cn(
-                "text-[0.65rem] font-black uppercase tracking-widest",
+                "text-[0.6rem] font-black uppercase tracking-widest truncate",
                 selected ? "text-[var(--accent)]" : "text-[var(--text-muted)]"
               )}>
                 {selected ? 'Active Selection' : lastUsedText}
@@ -85,29 +85,29 @@ export function ChantCard({ chant, selected, onClick, onDelete, paliScript }: Ch
             </div>
           </div>
         </div>
-        <div className="text-right flex flex-col items-end">
-          <div className="flex gap-2 mb-2">
-            {onDelete && (
-               <button 
-                 onClick={(e) => { e.stopPropagation(); onDelete(); }} 
-                 className="text-[var(--text-faint)] hover:text-red-500 p-1 active:scale-90 transition-transform"
-               >
-                 <Trash2 size={16} />
-               </button>
-            )}
+        <div className="text-right flex items-center gap-3 flex-shrink-0 ml-2">
+          <div className="flex flex-col items-end">
+            <p className={cn(
+              "text-[0.55rem] font-black uppercase tracking-[0.2em] mb-0.5 leading-none",
+              selected ? "text-[var(--accent)]" : "text-[var(--text-muted)]"
+            )}>
+              Total
+            </p>
+            <p className={cn(
+              "text-base font-bold font-mono leading-none",
+              selected ? "text-[var(--text-primary)]" : "text-[var(--text-secondary)]"
+            )}>
+              {chant.totalCount.toLocaleString()}
+            </p>
           </div>
-          <p className={cn(
-            "text-[0.65rem] font-black uppercase tracking-[0.2em] mb-0.5 mt-auto",
-            selected ? "text-[var(--accent)]" : "text-[var(--text-muted)]"
-          )}>
-            Total
-          </p>
-          <p className={cn(
-            "text-xl font-bold font-mono",
-            selected ? "text-[var(--text-primary)]" : "text-[var(--text-secondary)]"
-          )}>
-            {chant.totalCount.toLocaleString()}
-          </p>
+          {onDelete && (
+             <button 
+               onClick={(e) => { e.stopPropagation(); onDelete(); }} 
+               className="text-[var(--text-faint)] hover:text-red-500 p-1 active:scale-90 transition-transform"
+             >
+               <Trash2 size={14} />
+             </button>
+          )}
         </div>
       </div>
     </motion.div>

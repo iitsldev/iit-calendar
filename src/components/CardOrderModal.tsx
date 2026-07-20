@@ -1,4 +1,5 @@
 import React from 'react';
+import { createPortal } from 'react-dom';
 import { motion, AnimatePresence } from 'motion/react';
 import { X, ChevronUp, ChevronDown, GripVertical, Check } from 'lucide-react';
 import { useI18n } from '../hooks/useI18n';
@@ -26,6 +27,17 @@ export function CardOrderModal({
   onUpdate: (newOrder: string[]) => void;
 }) {
   const { t } = useI18n();
+
+  React.useEffect(() => {
+    if (show) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = '';
+    }
+    return () => {
+      document.body.style.overflow = '';
+    };
+  }, [show]);
   
   // Ensure all possible cards are present in the list
   const currentOrder = React.useMemo(() => {
@@ -63,7 +75,7 @@ export function CardOrderModal({
     onUpdate(newOrder);
   };
 
-  return (
+  return createPortal(
     <AnimatePresence>
       {show && (
         <motion.div
@@ -87,11 +99,13 @@ export function CardOrderModal({
               onClick={onClose}
               className="absolute top-6 right-6 p-2 rounded-full transition-colors z-10"
               style={{ color: 'var(--accent)' }}
+              onMouseEnter={e => (e.currentTarget.style.color = 'var(--text-primary)')}
+              onMouseLeave={e => (e.currentTarget.style.color = 'var(--accent)')}
             >
               <X size="1.5em" />
             </button>
 
-            <h2 className="font-serif text-2xl font-bold mb-6 pr-10" style={{ color: 'var(--accent)' }}>
+            <h2 className="font-serif text-3xl font-bold mb-6 ml-2" style={{ color: 'var(--accent)' }}>
               {t('calendar.reorderCards') || 'Reorder Cards'}
             </h2>
 
@@ -156,17 +170,14 @@ export function CardOrderModal({
 
             <button
               onClick={onClose}
-              className="w-full py-4 rounded-3xl font-bold uppercase tracking-[0.2em] text-xs shadow-xl active:scale-[0.98] transition-all shrink-0"
-              style={{
-                backgroundColor: 'var(--text-primary)',
-                color: 'var(--bg-main)',
-              }}
+              className="btn-primary mt-2"
             >
               {t('common.confirm')}
             </button>
           </motion.div>
         </motion.div>
       )}
-    </AnimatePresence>
+    </AnimatePresence>,
+    document.body
   );
 }

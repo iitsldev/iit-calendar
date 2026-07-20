@@ -9,16 +9,16 @@ interface ChantCounterProps {
   onCountChange: (value: number) => void;
   onCommit: (durationMin?: number) => void;
   targetCount: number;
+  timerSettings: { hours: number; minutes: number };
+  children?: React.ReactNode;
 }
 
-export function ChantCounter({ currentCount, onCountChange, onCommit, targetCount }: ChantCounterProps) {
+export function ChantCounter({ currentCount, onCountChange, onCommit, targetCount, timerSettings, children }: ChantCounterProps) {
   const { t } = useI18n();
   const controls = useAnimation();
   const [manualValue, setManualValue] = useState(currentCount.toString());
 
   // Timer states
-  const [showTimeSettings, setShowTimeSettings] = useState(false);
-  const [timerSettings, setTimerSettings] = useState({ hours: 0, minutes: 0 }); // 0 means stopwatch
   const totalDurationMs = (timerSettings.hours * 60 + timerSettings.minutes) * 60 * 1000;
   
   const [remainingMs, setRemainingMs] = useState(totalDurationMs);
@@ -30,6 +30,38 @@ export function ChantCounter({ currentCount, onCountChange, onCommit, targetCoun
   const intervalRef = useRef<number | null>(null);
 
   const isStarted = isRunning || isFinished || elapsedMs > 0 || currentCount > 0;
+
+  const [isStuck, setIsStuck] = useState(false);
+  const sentinelRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (!isStarted) {
+      setIsStuck(false);
+      return;
+    }
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        setIsStuck(!entry.isIntersecting);
+      },
+      { 
+        rootMargin: "-65px 0px 0px 0px",
+        threshold: [0, 1] 
+      }
+    );
+
+    const target = sentinelRef.current;
+    if (target) {
+      observer.observe(target);
+    }
+
+    return () => {
+      if (target) {
+        observer.unobserve(target);
+      }
+      observer.disconnect();
+    };
+  }, [isStarted]);
 
   useEffect(() => {
     setManualValue(currentCount.toString());
@@ -68,7 +100,6 @@ export function ChantCounter({ currentCount, onCountChange, onCommit, targetCoun
       if (intervalRef.current) clearInterval(intervalRef.current);
     };
   }, [isRunning, totalDurationMs]);
-
   const toggleTimer = () => {
     if (!isRunning && !isFinished) {
       setIsRunning(true);
@@ -96,11 +127,12 @@ export function ChantCounter({ currentCount, onCountChange, onCommit, targetCoun
     onCommit(min > 0 ? min : undefined);
   };
 
-  const handleTap = async () => {
+  const handleTap = () => {
+    if (!isRunning) return;
     onCountChange(currentCount + 1);
-    await controls.start({
+    controls.start({
       scale: [1, 0.95, 1],
-      transition: { duration: 0.1 }
+      transition: { duration: 0.08 }
     });
   };
 
@@ -120,199 +152,229 @@ export function ChantCounter({ currentCount, onCountChange, onCommit, targetCoun
     return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
   };
 
+  const circumference = 2 * Math.PI * 120;
+  const strokeDashoffset = isFinished ? 0 : totalDurationMs === 0 ? 0 : circumference - ((remainingMs / totalDurationMs) * circumference);
+
   return (
-    <div className="flex flex-col items-center py-6 min-h-[50vh] transition-all duration-500">
-      
+    <div className="flex flex-col items-center transition-all duration-500 w-full py-0">
       {!isStarted ? (
         <motion.div 
           initial={{ opacity: 0 }} animate={{ opacity: 1 }} 
-          className="flex flex-col items-center justify-center flex-1 w-full"
+          className="flex flex-col items-center w-full pt-3 pb-5 gap-6"
         >
-          <div className="text-center mb-10">
-            <div className="text-sm font-bold uppercase tracking-[0.3em] text-[var(--text-muted)] mb-4">
-              Duration
-            </div>
-            <button 
-              onClick={() => setShowTimeSettings(true)}
-              className="font-serif text-6xl font-medium tracking-tight text-[var(--text-primary)] hover:opacity-80 transition-opacity flex items-center justify-center gap-3"
-            >
-              {timerSettings.hours > 0 ? `${timerSettings.hours}:${timerSettings.minutes.toString().padStart(2, '0')}:00` : `${timerSettings.minutes.toString().padStart(2, '0')}:00`}
-              <Settings2 size={24} className="text-amber-500/50" />
-            </button>
-            <div className="mt-4 text-xs font-medium text-[var(--text-secondary)] bg-[var(--surface)] px-4 py-2 rounded-full inline-block border border-[var(--border-subtle)]">
-              {timerSettings.hours === 0 && timerSettings.minutes === 0 ? "Stopwatch Mode (No limit)" : "Countdown Mode"}
+          <div className="relative w-64 h-64 flex items-center justify-center">
+            <svg className="absolute inset-0 w-full h-full transform -rotate-90" viewBox="0 0 256 256">
+              <circle cx="128" cy="128" r="120" stroke="var(--sm-surface)" strokeWidth="4" fill="none" className="opacity-40" />
+              <circle
+                cx="128" cy="128" r="120"
+                stroke="var(--accent)"
+                strokeWidth="6"
+                fill="none"
+                strokeDasharray={circumference}
+                strokeDashoffset={0}
+                strokeLinecap="round"
+                className="transition-all duration-300 ease-linear"
+              />
+            </svg>
+
+            <div className="text-center z-10 flex flex-col items-center">
+              <span className="text-xs font-bold uppercase tracking-[0.3em] mb-2" style={{ color: 'var(--text-muted)' }}>
+                Duration
+              </span>
+              <div className="font-serif text-5xl font-medium tracking-tight text-[var(--text-primary)]">
+                {timerSettings.hours > 0 ? `${timerSettings.hours}:${timerSettings.minutes.toString().padStart(2, '0')}:00` : `${timerSettings.minutes.toString().padStart(2, '0')}:00`}
+              </div>
+              <div className="mt-3 text-[10px] font-medium text-[var(--text-secondary)] bg-[var(--surface)] px-3.5 py-1.5 rounded-full inline-block border border-[var(--border-subtle)]">
+                {timerSettings.hours === 0 && timerSettings.minutes === 0 ? "Stopwatch" : "Countdown"}
+              </div>
             </div>
           </div>
           
           <button 
             onClick={toggleTimer}
-            className="h-16 px-10 rounded-full flex items-center justify-center gap-3 font-bold tracking-widest uppercase text-sm transition-transform active:scale-95 shadow-lg shadow-amber-600/20 bg-gradient-to-br from-amber-500 to-amber-700 text-white"
+            className="h-16 px-10 rounded-full flex items-center justify-center gap-3 font-bold tracking-widest uppercase text-sm transition-transform active:scale-95 shadow-lg text-white cursor-pointer"
+            style={{
+              backgroundColor: 'var(--accent)',
+              boxShadow: '0 10px 15px -3px var(--accent-shadow), 0 4px 6px -4px var(--accent-shadow)'
+            }}
           >
             <Play size={20} fill="currentColor" /> Start Chanting
           </button>
+          
+          <div className="w-full mt-8">
+            {children}
+          </div>
         </motion.div>
       ) : (
         <motion.div 
           initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} 
-          className="flex flex-col items-center w-full"
+          className="flex flex-col items-center w-full relative"
         >
-          {/* Timer Header */}
-          <div className="flex justify-between w-full max-w-xs mb-8 items-center px-6 py-3 bg-[var(--bg-card)] rounded-full border border-[var(--border-subtle)] shadow-sm">
-            <div className="flex items-center gap-2 text-[var(--accent)] font-serif text-2xl tracking-tight">
-              <Clock size={18} className="text-[var(--text-muted)]" />
-              {totalDurationMs > 0 ? formatTime(remainingMs) : formatTime(elapsedMs)}
-            </div>
-            <div className="flex items-center gap-2">
-              <button 
-                onClick={toggleTimer} 
-                className="w-10 h-10 flex items-center justify-center rounded-full bg-[var(--surface)] text-[var(--text-primary)] hover:text-[var(--accent)] transition-colors"
-              >
-                {isRunning ? <Pause fill="currentColor" size={16} /> : <Play fill="currentColor" size={16} />}
-              </button>
-              <button 
-                onClick={resetTimer} 
-                className="w-10 h-10 flex items-center justify-center rounded-full bg-[var(--surface)] text-[var(--text-secondary)] hover:text-red-500 transition-colors"
-              >
-                <RotateCcw size={16} />
-              </button>
-            </div>
-          </div>
+          {/* Sentinel element to detect scroll sticky stickiness */}
+          <div ref={sentinelRef} className="absolute top-0 h-px w-full pointer-events-none" />
 
-          {/* Display and Controls */}
-          <div className="flex items-center justify-center gap-6 mb-10 w-full max-w-xs">
-            <button
-              onClick={() => onCountChange(Math.max(0, currentCount - 1))}
-              className="w-12 h-12 rounded-full flex items-center justify-center shadow-sm border border-[var(--border-subtle)] active:scale-90 transition-transform bg-[var(--bg-card)]"
-            >
-              <Minus size={20} className="text-[var(--text-muted)]" />
-            </button>
-
-            <div className="text-center flex flex-col items-center">
-              <input
-                type="number"
-                value={manualValue}
-                onChange={(e) => handleManualChange(e.target.value)}
-                className="font-serif text-6xl font-medium tracking-tight bg-transparent text-center focus:outline-none w-32 text-[var(--text-primary)]"
-              />
-              <p className="text-[10px] font-black uppercase tracking-[0.2em] text-[var(--text-muted)] mt-1">
-                {t('chant.ofChants', { count: targetCount })}
-              </p>
-            </div>
-
-            <button
-              onClick={() => onCountChange(currentCount + 1)}
-              className="w-12 h-12 rounded-full flex items-center justify-center shadow-sm border border-[var(--border-subtle)] active:scale-90 transition-transform bg-[var(--bg-card)]"
-            >
-              <Plus size={20} className="text-[var(--text-muted)]" />
-            </button>
-          </div>
-
-          {/* Big Tap Button */}
-          <div className="flex flex-col items-center gap-6">
-            <div className="flex gap-3">
-              {[-10, 10, 108].map(num => (
-                <button
-                  key={num}
-                  onClick={() => onCountChange(Math.max(0, currentCount + num))}
-                  className="px-4 py-2 rounded-xl bg-[var(--bg-muted)] text-[10px] font-black tracking-widest text-[var(--text-muted)] border border-[var(--border-subtle)] hover:text-[var(--accent)] hover:border-[var(--accent)]/30 transition-all active:scale-95"
-                >
-                  {num > 0 ? '+' : ''}{num}
-                </button>
-              ))}
-            </div>
-            
+          {/* Big Tap Button & Actions Sticky Container */}
+          <div className={cn(
+            "flex flex-col items-center sticky top-16 z-30 pt-3 pb-5 bg-[var(--bg-main)]/95 backdrop-blur-sm w-[calc(100%+2rem)] -mx-4 px-4 gap-6 transition-all duration-300",
+            isStuck 
+              ? "border-b border-[var(--border-subtle)]/30 shadow-sm" 
+              : "border-b-transparent shadow-none"
+          )}>
             <motion.button
               animate={controls}
-              onClick={handleTap}
-              className="relative w-64 h-64 flex items-center justify-center group"
+              onTap={handleTap}
+              className={cn(
+                "relative w-64 h-64 flex items-center justify-center group cursor-pointer transition-all duration-300",
+                !isRunning && "opacity-40 pointer-events-none"
+              )}
             >
-              <div className="absolute inset-0 rounded-full border-2 border-amber-600/10" />
+              <svg className="absolute inset-0 w-full h-full transform -rotate-90 z-10 pointer-events-none" viewBox="0 0 256 256">
+                <circle cx="128" cy="128" r="120" stroke="var(--sm-surface)" strokeWidth="3" fill="none" className="opacity-40" />
+                <circle
+                  cx="128" cy="128" r="120"
+                  stroke="var(--accent)"
+                  strokeWidth="5"
+                  fill="none"
+                  strokeDasharray={circumference}
+                  strokeDashoffset={strokeDashoffset}
+                  strokeLinecap="round"
+                  className="transition-all duration-300 ease-linear"
+                />
+              </svg>
+              <div className="absolute inset-0 rounded-full border-2 border-[var(--accent)]/10" />
               <div className="absolute inset-4 rounded-full border border-white dark:border-slate-800 shadow-xl" />
-              <div className="absolute inset-8 rounded-full bg-gradient-to-br from-amber-500 to-amber-700 p-1 shadow-[0_0_40px_rgba(212,136,32,0.3)]">
-                <div className="w-full h-full rounded-full flex flex-col items-center justify-center bg-gradient-to-br from-amber-400 to-amber-600 relative overflow-hidden">
+              <div
+                className="absolute inset-8 rounded-full p-1"
+                style={{
+                  backgroundColor: 'var(--accent-shadow)',
+                  boxShadow: '0 0 40px var(--accent-shadow)'
+                }}
+              >
+                <div
+                  className="w-full h-full rounded-full flex flex-col items-center justify-center relative overflow-hidden"
+                  style={{
+                    backgroundColor: 'var(--accent)'
+                  }}
+                >
                   <motion.div
                     initial={false}
                     className="absolute inset-0 bg-white opacity-0"
                     whileTap={{ opacity: 0.15 }}
                   />
-                  <Hand size={48} className="text-white mb-2" />
-                  <span className="text-[0.65rem] font-black uppercase tracking-[0.3em] text-white">{t('chant.tapToChant')}</span>
+                  <Hand size={36} className="text-white mb-1" />
+                  <span className="text-2xl font-serif text-white tracking-wide mb-1">
+                    {totalDurationMs > 0 ? formatTime(remainingMs) : formatTime(elapsedMs)}
+                  </span>
+                  <span className="text-[0.55rem] font-black uppercase tracking-[0.3em] text-white/80">{t('chant.tapToChant')}</span>
                 </div>
               </div>
             </motion.button>
+
+            {/* Display and Controls (Sticky) */}
+            <div className="flex items-center justify-center gap-6 w-full max-w-xs">
+              <button
+                onClick={() => onCountChange(Math.max(0, currentCount - 1))}
+                disabled={!isRunning}
+                className={cn(
+                  "w-12 h-12 rounded-full flex items-center justify-center shadow-sm border border-[var(--border-subtle)] active:scale-90 transition-transform bg-[var(--bg-card)] cursor-pointer",
+                  !isRunning && "opacity-45 pointer-events-none"
+                )}
+              >
+                <Minus size={20} className="text-[var(--text-muted)]" />
+              </button>
+
+              <div className="text-center flex flex-col items-center">
+                <input
+                  type="number"
+                  value={manualValue}
+                  onChange={(e) => handleManualChange(e.target.value)}
+                  disabled={!isRunning}
+                  className="font-serif text-6xl font-medium tracking-tight bg-transparent text-center focus:outline-none w-32 text-[var(--text-primary)] disabled:opacity-50"
+                />
+                <p className="text-[10px] font-black uppercase tracking-[0.2em] text-[var(--text-muted)] mt-1">
+                  {t('chant.ofChants', { count: targetCount })}
+                </p>
+              </div>
+
+              <button
+                onClick={() => onCountChange(currentCount + 1)}
+                disabled={!isRunning}
+                className={cn(
+                  "w-12 h-12 rounded-full flex items-center justify-center shadow-sm border border-[var(--border-subtle)] active:scale-90 transition-transform bg-[var(--bg-card)] cursor-pointer",
+                  !isRunning && "opacity-45 pointer-events-none"
+                )}
+              >
+                <Plus size={20} className="text-[var(--text-muted)]" />
+              </button>
+            </div>
+
+            {/* Quick Increment Buttons */}
+            <div className="flex gap-3">
+              {[-10, 10, 108].map(num => (
+                <button
+                  key={num}
+                  onClick={() => onCountChange(Math.max(0, currentCount + num))}
+                  disabled={!isRunning}
+                  className={cn(
+                    "px-4 py-2 rounded-xl bg-[var(--bg-muted)] text-[10px] font-black tracking-widest text-[var(--text-muted)] border border-[var(--border-subtle)] hover:text-[var(--accent)] hover:border-[var(--accent)]/30 transition-all active:scale-95 cursor-pointer",
+                    !isRunning && "opacity-45 pointer-events-none"
+                  )}
+                >
+                  {num > 0 ? '+' : ''}{num}
+                </button>
+              ))}
+            </div>
+
+            {/* Action Buttons */}
+            <div className="flex items-center gap-3 w-full max-w-[280px]">
+              <button
+                onClick={resetTimer}
+                className="w-14 h-14 rounded-full flex items-center justify-center border transition-all active:scale-95 cursor-pointer shrink-0"
+                style={{
+                  backgroundColor: 'var(--surface)',
+                  borderColor: 'var(--border)',
+                  color: 'var(--text-secondary)'
+                }}
+                title="Cancel"
+              >
+                <X size={20} />
+              </button>
+
+              <button
+                onClick={toggleTimer}
+                className="w-14 h-14 rounded-full flex items-center justify-center border transition-all active:scale-95 cursor-pointer shrink-0"
+                style={{
+                  backgroundColor: 'var(--surface)',
+                  borderColor: 'var(--border)',
+                  color: 'var(--text-secondary)'
+                }}
+                title={isRunning ? 'Pause' : 'Resume'}
+              >
+                {isRunning ? <Pause size={20} fill="currentColor" /> : <Play size={20} fill="currentColor" />}
+              </button>
+
+              <button
+                onClick={handleCommit}
+                disabled={currentCount === 0 && elapsedMs < 60000}
+                className={cn(
+                  "flex-1 h-14 rounded-full flex items-center justify-center gap-2 font-bold tracking-widest uppercase text-xs transition-all shadow-lg active:scale-95 cursor-pointer",
+                  (currentCount > 0 || elapsedMs >= 60000)
+                    ? "text-white" 
+                    : "opacity-45 pointer-events-none"
+                )}
+                style={{
+                  backgroundColor: 'var(--accent)',
+                  boxShadow: (currentCount > 0 || elapsedMs >= 60000) ? '0 10px 15px -3px var(--accent-shadow), 0 4px 6px -4px var(--accent-shadow)' : 'none'
+                }}
+              >
+                {t('chant.logSession')}
+              </button>
+            </div>
           </div>
 
-          {/* Done Button */}
-          <button
-            onClick={handleCommit}
-            disabled={currentCount === 0 && elapsedMs < 60000}
-            className={cn(
-              "mt-10 px-12 py-4 rounded-full font-bold tracking-widest uppercase text-xs transition-all shadow-lg active:scale-95",
-              (currentCount > 0 || elapsedMs >= 60000)
-                ? "bg-slate-900 dark:bg-white text-white dark:text-slate-900" 
-                : "bg-slate-100 dark:bg-slate-800 text-slate-400 pointer-events-none"
-            )}
-          >
-            {t('chant.logSession')}
-          </button>
+          {children}
         </motion.div>
       )}
-
-      {/* Settings Modal */}
-      <AnimatePresence>
-        {showTimeSettings && (
-          <div className="fixed inset-0 z-[100] flex items-end sm:items-center justify-center p-4 backdrop-blur-md bg-black/40">
-            <motion.div
-              initial={{ opacity: 0, y: 100 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: 100 }}
-              className="w-full max-w-sm bg-white dark:bg-stone-950 rounded-[2.5rem] p-8 shadow-2xl border border-stone-200 dark:border-stone-800"
-            >
-              <div className="flex justify-between items-center mb-8">
-                <h3 className="font-serif text-2xl font-bold">Chant Duration</h3>
-                <button onClick={() => setShowTimeSettings(false)} className="text-stone-400"><X /></button>
-              </div>
-
-              <div className="flex items-center gap-4 mb-8">
-                <div className="flex-1 flex flex-col items-center gap-2">
-                  <div className="relative w-full">
-                    <select 
-                      value={timerSettings.hours}
-                      onChange={(e) => setTimerSettings({...timerSettings, hours: parseInt(e.target.value)})}
-                      className="w-full bg-stone-50 dark:bg-stone-900 px-4 py-4 rounded-2xl border-none outline-none font-serif text-3xl text-center text-amber-600 focus:ring-2 focus:ring-amber-500/20 appearance-none cursor-pointer"
-                    >
-                      {Array.from({ length: 24 }).map((_, i) => (
-                        <option key={`hour-${i}`} value={i}>{i.toString().padStart(2, '0')}</option>
-                      ))}
-                    </select>
-                    <span className="absolute -top-2 left-1/2 -translate-x-1/2 px-2 bg-white dark:bg-stone-950 text-[10px] font-black uppercase tracking-tighter text-stone-400 pointer-events-none">Hours</span>
-                  </div>
-                </div>
-                <span className="text-2xl font-serif text-stone-300">:</span>
-                <div className="flex-1 flex flex-col items-center gap-2">
-                  <div className="relative w-full">
-                    <select 
-                      value={timerSettings.minutes}
-                      onChange={(e) => setTimerSettings({...timerSettings, minutes: parseInt(e.target.value)})}
-                      className="w-full bg-stone-50 dark:bg-stone-900 px-4 py-4 rounded-2xl border-none outline-none font-serif text-3xl text-center text-amber-600 focus:ring-2 focus:ring-amber-500/20 appearance-none cursor-pointer"
-                    >
-                      {[0, 1, 5, 10, 15, 20, 25, 30, 45].map(m => (
-                        <option key={`min-${m}`} value={m}>{m.toString().padStart(2, '0')}</option>
-                      ))}
-                    </select>
-                    <span className="absolute -top-2 left-1/2 -translate-x-1/2 px-2 bg-white dark:bg-stone-950 text-[10px] font-black uppercase tracking-tighter text-stone-400 pointer-events-none">Minutes</span>
-                  </div>
-                </div>
-              </div>
-
-              <button 
-                onClick={() => setShowTimeSettings(false)}
-                className="w-full py-5 rounded-full font-black tracking-widest text-xs uppercase text-white shadow-xl transition-all active:scale-95 bg-amber-600"
-              >
-                Done
-              </button>
-            </motion.div>
-          </div>
-        )}
-      </AnimatePresence>
     </div>
   );
 }

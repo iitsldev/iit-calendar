@@ -5,7 +5,7 @@ import { UserChant, ChantSession, UserChantStats } from '../types';
 import { ChantCounter } from '../components/chanting/ChantCounter';
 import { ChantList } from '../components/chanting/ChantList';
 import { ChantInsights } from '../components/chanting/ChantInsights';
-import { Plus, X, BarChart2, List, Trash2, Edit3, Lock, LogIn, ChevronDown, ChevronUp, Settings as SettingsIcon } from 'lucide-react';
+import { Plus, X, BarChart2, List, Trash2, Edit3, Lock, LogIn, ChevronDown, ChevronUp, Settings2 } from 'lucide-react';
 import { isSameDay, subDays } from 'date-fns';
 import { cn } from '../lib/utils';
 import { useUI } from '../UIContext';
@@ -35,10 +35,12 @@ export function ChantsScreen({ settings }: { settings: Settings }) {
   const [sessions, setSessions] = useState<ChantSession[]>([]);
   const [selectedChantId, setSelectedChantId] = useState<string | null>(null);
   const [activeSessionCount, setActiveSessionCount] = useState(0);
-  const [view, setView] = useState<'counter' | 'list' | 'insights'>('counter');
+  const [view, setView] = useState<'counter' | 'insights' | 'config'>('counter');
   const [showAddModal, setShowAddModal] = useState(false);
   const [expandedPali, setExpandedPali] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [isStopwatch, setIsStopwatch] = useState(true);
+  const [timerSettings, setTimerSettings] = useState({ hours: 0, minutes: 15 });
 
   // New chant form
   const [newChant, setNewChant] = useState({ title: '', content: '', milestone: 108 });
@@ -213,25 +215,28 @@ export function ChantsScreen({ settings }: { settings: Settings }) {
         <div className="max-w-2xl w-full mx-auto space-y-6">
 
           {/* Mode Switcher */}
-          <div className="flex justify-center gap-2 p-1.5 rounded-full w-fit mx-auto border border-slate-100 dark:border-slate-800">
-            {[
-              { id: 'counter', icon: List, label: t('chant.chant') },
-              { id: 'insights', icon: BarChart2, label: t('chant.insights') }
-            ].map(m => (
-              <button
-                key={m.id}
-                onClick={() => setView(m.id as any)}
-                className={cn(
-                  "flex items-center gap-2 px-6 py-2.5 rounded-full text-[0.65rem] font-black uppercase tracking-widest transition-all",
-                  view === m.id
-                    ? "bg-saffron text-white shadow-md shadow-saffron/20"
-                    : "text-primary-300 dark:text-primary-700 hover:text-primary-600 dark:hover:text-primary-300"
-                )}
-              >
-                <m.icon size={14} />
-                {m.label}
-              </button>
-            ))}
+          <div className="h-14 flex items-center justify-center">
+            <div className="flex justify-center gap-2 p-1.5 rounded-full w-fit mx-auto border border-slate-100 dark:border-slate-800">
+              {[
+                { id: 'counter', icon: List, label: t('chant.chant') || 'Chant' },
+                { id: 'insights', icon: BarChart2, label: t('chant.insights') || 'Insights' },
+                { id: 'config', icon: Settings2, label: t('meditation.configure') || 'Configure' }
+              ].map(m => (
+                <button
+                  key={m.id}
+                  onClick={() => setView(m.id as any)}
+                  className={cn(
+                    "flex items-center gap-2 py-2.5 rounded-full text-[0.65rem] font-black uppercase tracking-widest transition-all cursor-pointer",
+                    view === m.id
+                      ? "bg-saffron text-white shadow-md shadow-saffron/20 px-5"
+                      : "text-primary-300 dark:text-primary-700 hover:text-primary-600 dark:hover:text-primary-300 px-3.5"
+                  )}
+                >
+                  <m.icon size={14} />
+                  {view === m.id && <span>{m.label}</span>}
+                </button>
+              ))}
+            </div>
           </div>
 
           <AnimatePresence mode="wait">
@@ -241,77 +246,41 @@ export function ChantsScreen({ settings }: { settings: Settings }) {
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -10 }}
-                className="space-y-8"
+                className="space-y-0"
               >
-                {/* Quick Stats Card */}
-                <div className="glass-card rounded-[2.5rem] p-6 bg-white/40 dark:bg-slate-900/40 border border-white/60 dark:border-slate-800 flex justify-between items-center">
-                  <div className="flex gap-4 items-center">
-                    <div className="w-12 h-12 rounded-2xl bg-amber-50 dark:bg-amber-900/20 flex items-center justify-center text-amber-600">
-                      <span className="font-bold text-lg">!</span>
-                    </div>
-                    <div>
-                      <p className="text-[0.6rem] font-black uppercase tracking-widest text-primary-300 dark:text-primary-700 mb-0.5">{t('chant.consecutivePractice')}</p>
-                      <p className="text-lg font-bold text-primary-200 dark:text-primary-800">{stats.streakDays} {t('chant.days')}</p>
-                    </div>
-                  </div>                <button
-                    onClick={() => setView('insights')}
-                    className="w-10 h-10 rounded-full flex items-center justify-center border border-slate-100 dark:border-slate-700 shadow-sm"
-                  >
-                    <BarChart2 size={18} className="text-primary-400 dark:text-primary-500" />
-                  </button>
-                </div>
-
-                {/* Selected Chant Display */}
-                {selectedChant && (
-                  <div className="glass-card rounded-[2.5rem] p-6 bg-white/40 dark:bg-slate-900/40 border border-white/60 dark:border-slate-800">
-                    <div
-                      className="flex justify-between items-center cursor-pointer select-none"
-                      onClick={() => setExpandedPali(!expandedPali)}
-                    >
-                      <h3 className="font-serif text-2xl text-stone-900 dark:text-stone-100 pr-4">
-                        <ConvertedText text={selectedChant.title} script={settings.paliScript} />
-                      </h3>
-                      <button className="w-10 h-10 flex-shrink-0 flex items-center justify-center rounded-full bg-white dark:bg-slate-800 shadow-sm border border-slate-100 dark:border-slate-700">
-                        {expandedPali ? <ChevronUp size={20} className="text-primary-400 dark:text-primary-500" /> : <ChevronDown size={20} className="text-primary-400 dark:text-primary-500" />}
-                      </button>
-                    </div>
-
-                    <AnimatePresence>
-                      {expandedPali && (selectedChant.content || (selectedChant as any).chant) && (
-                        <motion.div
-                          initial={{ height: 0, opacity: 0 }}
-                          animate={{ height: 'auto', opacity: 1 }}
-                          exit={{ height: 0, opacity: 0 }}
-                          className="overflow-hidden"
-                        >
-                          <div className="pt-6 mt-4 border-t border-slate-200 dark:border-slate-700 text-[var(--text-secondary)] whitespace-pre-wrap leading-relaxed text-lg">
-                            <ConvertedText text={selectedChant.content || (selectedChant as any).chant || ''} script={settings.paliScript} />
-                          </div>
-                        </motion.div>
-                      )}
-                    </AnimatePresence>
-                  </div>
-                )}
-
                 {selectedChant && (
                   <ChantCounter
                     currentCount={activeSessionCount}
                     onCountChange={setActiveSessionCount}
                     targetCount={selectedChant.milestone || 108}
                     onCommit={handleCommitSession}
-                  />
+                    timerSettings={isStopwatch ? { hours: 0, minutes: 0 } : timerSettings}
+                  >
+                    {/* Selected Chant Display */}
+                    <div 
+                      className="rounded-[2.5rem] p-8 border flex flex-col gap-6 mt-8 w-full"
+                      style={{
+                        backgroundColor: 'var(--bg-card)',
+                        borderColor: 'var(--border-subtle)'
+                      }}
+                    >
+                      <h3 className="font-serif text-2xl" style={{ color: 'var(--accent)' }}>
+                        <ConvertedText text={selectedChant.title} script={settings.paliScript} />
+                      </h3>
+                      {(selectedChant.content || (selectedChant as any).chant) && (
+                        <div 
+                          className="pt-6 border-t whitespace-pre-wrap leading-relaxed text-lg"
+                          style={{
+                            color: 'var(--text-secondary)',
+                            borderColor: 'var(--border-subtle)'
+                          }}
+                        >
+                          <ConvertedText text={selectedChant.content || (selectedChant as any).chant || ''} script={settings.paliScript} />
+                        </div>
+                      )}
+                    </div>
+                  </ChantCounter>
                 )}
-
-                <div className="pt-8 border-t border-slate-200 dark:border-slate-800">
-                  <h4 className="font-serif text-xl mb-4 text-stone-900 dark:text-stone-100">{t('chant.selectChant')}</h4>
-                  <ChantList
-                    chants={chants}
-                    selectedChantId={selectedChantId}
-                    onSelect={setSelectedChantId}
-                    onAddChant={() => setShowAddModal(true)}
-                    paliScript={settings.paliScript}
-                  />
-                </div>
               </motion.div>
             )}
 
@@ -325,12 +294,125 @@ export function ChantsScreen({ settings }: { settings: Settings }) {
                 <ChantInsights chants={chants} sessions={sessions} stats={stats} />
               </motion.div>
             )}
+
+            {view === 'config' && (
+              <motion.div
+                key="config"
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -10 }}
+                className="grid grid-cols-1 gap-6"
+              >
+                <div className="glass-card rounded-[2.5rem] p-6 bg-white/40 dark:bg-slate-900/40 border border-white/60 dark:border-slate-800 animate-in fade-in duration-500">
+                  <div className="flex justify-between items-center mb-6">
+                    <h3 className="font-serif text-xl text-stone-900 dark:text-stone-100">
+                      {t('meditation.sessionSettings') || 'Session Settings'}
+                    </h3>
+                    <Settings2 size={20} className="text-primary-400" />
+                  </div>
+
+                  <div className="space-y-6">
+                    {/* Stopwatch Mode Toggle */}
+                    <div className="flex justify-between items-center pb-2">
+                      <div>
+                        <h4 className="text-sm font-bold text-stone-900 dark:text-stone-100 leading-tight">Stopwatch Mode</h4>
+                        <p className="text-[10px] text-stone-500 dark:text-stone-400 mt-1">Chant without duration limit</p>
+                      </div>
+                      <button
+                        onClick={() => setIsStopwatch(!isStopwatch)}
+                        className={cn(
+                          "w-12 h-6 rounded-full transition-colors relative focus:outline-none flex-shrink-0 cursor-pointer",
+                          isStopwatch ? "bg-[var(--accent)]" : "bg-slate-200 dark:bg-slate-800"
+                        )}
+                      >
+                        <span
+                          className={cn(
+                            "absolute top-0.5 left-0.5 bg-white w-5 h-5 rounded-full transition-transform shadow-md",
+                            isStopwatch ? "translate-x-6" : "translate-x-0"
+                          )}
+                        />
+                      </button>
+                    </div>
+
+                    {/* Duration Section (Only visible if not stopwatch) */}
+                    <AnimatePresence initial={false}>
+                      {!isStopwatch && (
+                        <motion.div
+                          initial={{ height: 0, opacity: 0, marginTop: 0 }}
+                          animate={{ height: 'auto', opacity: 1, marginTop: 16 }}
+                          exit={{ height: 0, opacity: 0, marginTop: 0 }}
+                          className="overflow-hidden border-t border-slate-100 dark:border-slate-800 pt-4"
+                        >
+                          <label className="block text-[10px] font-black uppercase tracking-widest mb-3 text-stone-500 dark:text-stone-400">
+                            Chant Duration
+                          </label>
+                          <div className="flex items-center gap-4">
+                            <div className="flex-1 flex flex-col items-center gap-2">
+                              <div className="relative w-full">
+                                <select
+                                  value={timerSettings.hours}
+                                  onChange={(e) => setTimerSettings({ ...timerSettings, hours: parseInt(e.target.value) || 0 })}
+                                  className="w-full px-4 py-4 rounded-2xl border outline-none font-serif text-2xl text-center focus:ring-2 transition-all appearance-none cursor-pointer bg-white/60 dark:bg-slate-800/60 border-slate-200 dark:border-slate-700 text-saffron"
+                                >
+                                  {Array.from({ length: 24 }).map((_, i) => (
+                                    <option key={`hour-${i}`} value={i} className="bg-white dark:bg-slate-900 text-stone-900 dark:text-stone-100">
+                                      {i.toString().padStart(2, '0')}
+                                    </option>
+                                  ))}
+                                </select>
+                                <span className="absolute -top-2 left-1/2 -translate-x-1/2 px-2 text-[9px] font-black uppercase tracking-tighter pointer-events-none bg-white dark:bg-slate-900 text-stone-400">
+                                  Hours
+                                </span>
+                              </div>
+                            </div>
+                            <span className="text-2xl font-serif text-slate-300 dark:text-slate-700">:</span>
+                            <div className="flex-1 flex flex-col items-center gap-2">
+                              <div className="relative w-full">
+                                <select
+                                  value={timerSettings.minutes}
+                                  onChange={(e) => setTimerSettings({ ...timerSettings, minutes: parseInt(e.target.value) || 0 })}
+                                  className="w-full px-4 py-4 rounded-2xl border outline-none font-serif text-2xl text-center focus:ring-2 transition-all appearance-none cursor-pointer bg-white/60 dark:bg-slate-800/60 border-slate-200 dark:border-slate-700 text-saffron"
+                                >
+                                  {[0, 1, 5, 10, 15, 20, 25, 30, 45].map(m => (
+                                    <option key={`min-${m}`} value={m} className="bg-white dark:bg-slate-900 text-stone-900 dark:text-stone-100">
+                                      {m.toString().padStart(2, '0')}
+                                    </option>
+                                  ))}
+                                </select>
+                                <span className="absolute -top-2 left-1/2 -translate-x-1/2 px-2 text-[9px] font-black uppercase tracking-tighter pointer-events-none bg-white dark:bg-slate-900 text-stone-400">
+                                  Minutes
+                                </span>
+                              </div>
+                            </div>
+                          </div>
+                        </motion.div>
+                      )}
+                    </AnimatePresence>
+                  </div>
+                </div>
+
+                <div className="glass-card rounded-[2.5rem] p-6 bg-white/40 dark:bg-slate-900/40 border border-white/60 dark:border-slate-800">
+                  <div className="flex justify-between items-center mb-6">
+                    <h4 className="font-serif text-xl text-stone-900 dark:text-stone-100">{t('chant.selectChant')}</h4>
+                    <List size={20} className="text-primary-400" />
+                  </div>
+                  <ChantList
+                    chants={chants}
+                    selectedChantId={selectedChantId}
+                    onSelect={setSelectedChantId}
+                    onAddChant={() => setShowAddModal(true)}
+                    paliScript={settings.paliScript}
+                  />
+                </div>
+              </motion.div>
+            )}
           </AnimatePresence>
 
           {/* Add Modal */}
           {showAddModal && (
             <div
-              className="fixed inset-0 z-[100] flex items-center justify-center p-6 bg-slate-900/60 dark:bg-black/70 backdrop-blur-sm"
+              className="fixed inset-0 z-[100] flex items-center justify-center p-6 backdrop-blur-sm"
+              style={{ background: 'rgba(0,0,0,0.45)' }}
               onClick={(e) => {
                 if (e.target === e.currentTarget) setShowAddModal(false);
               }}
@@ -338,41 +420,57 @@ export function ChantsScreen({ settings }: { settings: Settings }) {
               <motion.div
                 initial={{ opacity: 0, scale: 0.9 }}
                 animate={{ opacity: 1, scale: 1 }}
-                className="w-full max-w-sm bg-white/90 dark:bg-slate-900/90 backdrop-blur-md rounded-[2.5rem] p-8 shadow-2xl space-y-6 border border-white/50 dark:border-slate-800"
+                className="w-full max-w-sm rounded-[2.5rem] p-8 shadow-2xl space-y-6 border"
+                style={{
+                  backgroundColor: 'var(--bg-card)',
+                  borderColor: 'var(--border-subtle)'
+                }}
               >
                 <div className="flex justify-between items-start gap-4">
-                  <h3 className="font-serif text-2xl text-stone-900 dark:text-stone-100 break-words min-w-0 pr-2">{t('chant.newChant')}</h3>
-                  <button onClick={() => setShowAddModal(false)} className="text-primary-400 dark:text-primary-500 flex-shrink-0 mt-1"><X /></button>
+                  <h3 className="font-serif text-2xl break-words min-w-0 pr-2" style={{ color: 'var(--text-primary)' }}>{t('chant.newChant')}</h3>
+                  <button onClick={() => setShowAddModal(false)} className="flex-shrink-0 mt-1" style={{ color: 'var(--accent)' }}><X /></button>
                 </div>
 
                 <div className="space-y-4">
                   <div>
-                    <label className="text-[0.65rem] font-black uppercase tracking-widest text-primary-300 dark:text-primary-700 block mb-2 px-1">{t('chant.chantName')}</label>
+                    <label className="text-[0.65rem] font-black uppercase tracking-widest block mb-2 px-1" style={{ color: 'var(--text-secondary)' }}>{t('chant.chantName')}</label>
                     <input
                       type="text"
                       value={newChant.title}
                       onChange={e => setNewChant({ ...newChant, title: e.target.value })}
                       placeholder="e.g. Itipiso"
-                      className="w-full px-5 py-4 rounded-2xl bg-slate-50 dark:bg-slate-800 text-stone-900 dark:text-stone-100 border-none focus:ring-2 focus:ring-saffron/20"
+                      className="w-full px-5 py-4 rounded-2xl text-stone-900 dark:text-stone-100 border focus:ring-2 focus:ring-[var(--accent)]/20"
+                      style={{
+                        backgroundColor: 'var(--bg-card-alt)',
+                        borderColor: 'var(--border-subtle)'
+                      }}
                     />
                   </div>
                   <div>
-                    <label className="text-[0.65rem] font-black uppercase tracking-widest text-primary-300 dark:text-primary-700 block mb-2 px-1">{t('chant.chantContent')}</label>
+                    <label className="text-[0.65rem] font-black uppercase tracking-widest block mb-2 px-1" style={{ color: 'var(--text-secondary)' }}>{t('chant.chantContent')}</label>
                     <textarea
                       value={newChant.content}
                       onChange={e => setNewChant({ ...newChant, content: e.target.value })}
                       placeholder="Enter Pali text..."
                       rows={4}
-                      className="w-full px-5 py-4 rounded-2xl bg-slate-50 dark:bg-slate-800 text-stone-900 dark:text-stone-100 border-none focus:ring-2 focus:ring-saffron/20 resize-none"
+                      className="w-full px-5 py-4 rounded-2xl text-stone-900 dark:text-stone-100 border focus:ring-2 focus:ring-[var(--accent)]/20 resize-none"
+                      style={{
+                        backgroundColor: 'var(--bg-card-alt)',
+                        borderColor: 'var(--border-subtle)'
+                      }}
                     />
                   </div>
                   <div>
-                    <label className="text-[0.65rem] font-black uppercase tracking-widest text-primary-300 dark:text-primary-700 block mb-2 px-1">{t('chant.milestone')}</label>
+                    <label className="text-[0.65rem] font-black uppercase tracking-widest block mb-2 px-1" style={{ color: 'var(--text-secondary)' }}>{t('chant.milestone')}</label>
                     <input
                       type="number"
                       value={newChant.milestone}
                       onChange={e => setNewChant({ ...newChant, milestone: parseInt(e.target.value) || 108 })}
-                      className="w-full px-5 py-4 rounded-2xl bg-slate-50 dark:bg-slate-800 text-stone-900 dark:text-stone-100 border-none focus:ring-2 focus:ring-saffron/20"
+                      className="w-full px-5 py-4 rounded-2xl text-stone-900 dark:text-stone-100 border focus:ring-2 focus:ring-[var(--accent)]/20"
+                      style={{
+                        backgroundColor: 'var(--bg-card-alt)',
+                        borderColor: 'var(--border-subtle)'
+                      }}
                     />
                   </div>
                 </div>
@@ -380,7 +478,11 @@ export function ChantsScreen({ settings }: { settings: Settings }) {
                 <button
                   onClick={handleAddChant}
                   disabled={!newChant.title}
-                  className="w-full py-5 bg-[#7f5700] text-white rounded-full font-black uppercase tracking-widest transition-all shadow-lg shadow-[#7f5700]/20 active:scale-95"
+                  className="w-full py-5 text-white rounded-full font-black uppercase tracking-widest transition-all shadow-lg active:scale-95"
+                  style={{
+                    backgroundColor: 'var(--accent)',
+                    boxShadow: '0 10px 15px -3px var(--accent-shadow), 0 4px 6px -4px var(--accent-shadow)'
+                  }}
                 >
                   {t('chant.createChant')}
                 </button>

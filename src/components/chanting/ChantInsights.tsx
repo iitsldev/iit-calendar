@@ -1,7 +1,7 @@
 import React from 'react';
 import { motion } from 'motion/react';
 import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip } from 'recharts';
-import { Award, Zap, TrendingUp, Calendar } from 'lucide-react';
+import { Award, Zap, TrendingUp, Calendar, Flame, Clock, BarChart2 } from 'lucide-react';
 import { UserChant, ChantSession, UserChantStats } from '../../types';
 import { cn } from '../../lib/utils';
 import { format, startOfDay, subDays, isSameDay } from 'date-fns';
@@ -43,41 +43,37 @@ export function ChantInsights({ chants, sessions, stats }: ChantInsightsProps) {
   });
 
   return (
-    <div className="space-y-8 pb-10">
-      {/* Overview Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <div className="glass-card rounded-[2.5rem] p-8 relative overflow-hidden bg-white/50 dark:bg-slate-900 shadow-sm border border-white/60 dark:border-slate-800">
-          <div className="flex justify-between items-start mb-4">
-            <h3 className="text-sm font-black uppercase tracking-[0.2em] text-slate-400">{t('chant.totalChants')}</h3>
-            <div className="p-3 bg-[#7f5700]/10 rounded-2xl text-[#7f5700]">
-              <TrendingUp size={20} />
-            </div>
+    <div className="space-y-6 pb-10">
+      {/* Stat cards (3 quick stats) */}
+      <div className="grid grid-cols-3 gap-3">
+        {[
+          { icon: Flame, value: stats.streakDays, label: t('chant.dayStreak') || 'Day Streak' },
+          { icon: TrendingUp, value: totalChants.toLocaleString(), label: t('chant.totalChants') || 'Total Chants' },
+          { icon: Clock, value: totalTimeHours > 0 ? `${totalTimeHours}h ${totalTimeRemainderMin}m` : `${totalTimeRemainderMin}m`, label: t('chant.totalTime') || 'Total Time' },
+        ].map(({ icon: Icon, value, label }) => (
+          <div
+            key={label}
+            className="rounded-2xl p-4 flex flex-col items-center justify-center text-center gap-1"
+            style={{ backgroundColor: 'var(--accent-subtle)', border: '1px solid var(--accent-muted)' }}
+          >
+            <Icon size={20} style={{ color: 'var(--accent)' }} />
+            <div className="text-2xl font-black" style={{ color: 'var(--accent)' }}>{value}</div>
+            <div className="text-[9px] font-bold uppercase tracking-wider" style={{ color: 'var(--text-muted)' }}>{label}</div>
           </div>
-          <div className="flex items-baseline gap-2">
-            <span className="font-serif text-5xl font-medium text-[#7f5700]">{totalChants.toLocaleString()}</span>
-            <span className="text-slate-400 font-bold uppercase text-[0.65rem] tracking-widest">{t('chant.completed')}</span>
-          </div>
-        </div>
-
-        <div className="glass-card rounded-[2.5rem] p-8 relative overflow-hidden bg-white/50 dark:bg-slate-900 shadow-sm border border-white/60 dark:border-slate-800">
-          <div className="flex justify-between items-start mb-4">
-            <h3 className="text-sm font-black uppercase tracking-[0.2em] text-slate-400">{t('chant.totalTime')}</h3>
-            <div className="p-3 bg-[#7f5700]/10 rounded-2xl text-[#7f5700]">
-              <Calendar size={20} />
-            </div>
-          </div>
-          <div className="flex items-baseline gap-2">
-            <span className="font-serif text-5xl font-medium text-[#7f5700]">
-              {totalTimeHours > 0 ? `${totalTimeHours}h ${totalTimeRemainderMin}m` : `${totalTimeRemainderMin}m`}
-            </span>
-            <span className="text-slate-400 font-bold uppercase text-[0.65rem] tracking-widest">{t('chant.chanted')}</span>
-          </div>
-        </div>
+        ))}
       </div>
 
       {/* Distribution Chart */}
-      <div className="glass-card rounded-[2.5rem] p-8 bg-white/50 dark:bg-slate-900 border border-white/60 dark:border-slate-800">
-        <h3 className="text-sm font-black uppercase tracking-[0.2em] text-slate-400 mb-8">{t('chant.chantDistribution')}</h3>
+      <div
+        className="rounded-[1.5rem] p-5"
+        style={{ backgroundColor: 'var(--bg-card, var(--bg-main))', border: '1px solid var(--border-subtle)' }}
+      >
+        <div className="flex items-center gap-2 mb-5">
+          <BarChart2 size={16} style={{ color: 'var(--accent)' }} />
+          <span className="text-xs font-black uppercase tracking-widest" style={{ color: 'var(--text-muted)' }}>
+            {t('chant.chantDistribution') || 'Chant Distribution'}
+          </span>
+        </div>
         <div className="flex flex-col md:flex-row items-center gap-10">
           <div className="w-48 h-48 relative">
             <ResponsiveContainer width="100%" height="100%">
@@ -115,13 +111,15 @@ export function ChantInsights({ chants, sessions, stats }: ChantInsightsProps) {
       </div>
 
       {/* Consistency Grid */}
-      <div className="glass-card rounded-[2.5rem] p-8 bg-white/50 dark:bg-slate-900 border border-white/60 dark:border-slate-800">
-        <div className="flex justify-between items-center mb-8">
-          <h3 className="text-sm font-black uppercase tracking-[0.2em] text-slate-400">{t('chant.practiceConsistency')}</h3>
-          <div className="flex items-center gap-2 px-3 py-1 bg-amber-50 dark:bg-amber-900/20 rounded-full border border-amber-100 dark:border-amber-900/40">
-            <Zap size={14} className="text-amber-500 fill-amber-500" />
-            <span className="text-[0.65rem] font-black text-amber-700 dark:text-amber-500 uppercase tracking-widest">{stats.streakDays} {t('chant.dayStreak')}</span>
-          </div>
+      <div
+        className="rounded-[1.5rem] p-5"
+        style={{ backgroundColor: 'var(--bg-card, var(--bg-main))', border: '1px solid var(--border-subtle)' }}
+      >
+        <div className="flex items-center gap-2 mb-5">
+          <Calendar size={16} style={{ color: 'var(--accent)' }} />
+          <span className="text-xs font-black uppercase tracking-widest" style={{ color: 'var(--text-muted)' }}>
+            {t('chant.practiceConsistency') || 'Practice Consistency'}
+          </span>
         </div>
         
         <div className="grid grid-cols-7 gap-2">
@@ -156,8 +154,16 @@ export function ChantInsights({ chants, sessions, stats }: ChantInsightsProps) {
       </div>
 
       {/* Milestones */}
-      <div className="glass-card rounded-[2.5rem] p-8 bg-white/50 dark:bg-slate-900 border border-white/60 dark:border-slate-800">
-        <h3 className="font-serif text-2xl text-slate-800 dark:text-slate-100 mb-2">{t('chant.milestones')}</h3>
+      <div
+        className="rounded-[1.5rem] p-5"
+        style={{ backgroundColor: 'var(--bg-card, var(--bg-main))', border: '1px solid var(--border-subtle)' }}
+      >
+        <div className="flex items-center gap-2 mb-5">
+          <Award size={16} style={{ color: 'var(--accent)' }} />
+          <span className="text-xs font-black uppercase tracking-widest" style={{ color: 'var(--text-muted)' }}>
+            {t('chant.milestones') || 'Milestones'}
+          </span>
+        </div>
         <p className="text-xs text-slate-400 mb-8 italic">"Your spiritual journey is blossoming beautifully."</p>
 
         <div className="space-y-6">
@@ -169,9 +175,9 @@ export function ChantInsights({ chants, sessions, stats }: ChantInsightsProps) {
               </div>
               <div className="h-2.5 w-full bg-slate-100 dark:bg-slate-800 rounded-full overflow-hidden">
                 <motion.div 
-                  initial={{ width: 0 }}
-                  animate={{ width: `${Math.min(100, (chant.totalCount / (chant.milestone || 1)) * 100)}%` }}
-                  className="h-full bg-gradient-to-r from-[#d48820] to-[#7f5700]" 
+                   initial={{ width: 0 }}
+                   animate={{ width: `${Math.min(100, (chant.totalCount / (chant.milestone || 1)) * 100)}%` }}
+                   className="h-full bg-gradient-to-r from-[#d48820] to-[#7f5700]" 
                 />
               </div>
             </div>
