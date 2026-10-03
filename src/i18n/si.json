@@ -22,7 +22,8 @@
     "today": "අද",
     "language": "භාෂාව",
     "appearance": "පෙනුම",
-    "script": "අක්ෂර"
+    "script": "අක්ෂර",
+    "endOfBook": "පොතේ අවසානය"
   },
   "calendar": {
     "yearSuffix": "බු.ව.",

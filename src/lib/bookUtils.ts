@@ -25,10 +25,14 @@ export function getScriptKey(paliScript: PaliScript): string {
   return SCRIPTS[paliScript] || Script.RO;
 }
 
+export { decodeHtmlEntities } from './htmlUtils';
+import { decodeHtmlEntities } from './htmlUtils';
+
 export function convertScriptText(text: string, scriptKey: string): string {
   if (!text || scriptKey === Script.RO) return text;
   try {
-    const baseScriptText = TextProcessor.convertFrom(text, Script.RO);
+    const decoded = decodeHtmlEntities(text);
+    const baseScriptText = TextProcessor.convertFrom(decoded, Script.RO);
     return TextProcessor.convert(baseScriptText, scriptKey);
   } catch {
     return text;
@@ -47,7 +51,7 @@ export function parseH3sFromHtml(htmlSnippet: string): H3Item[] {
     const rest = htmlSnippet.slice(match.index + match[0].length);
     const closeIdx = rest.indexOf('</h3>');
     const inner = closeIdx >= 0 ? rest.slice(0, closeIdx) : '';
-    const title = inner.replace(/<[^>]+>/g, '').trim();
+    const title = decodeHtmlEntities(inner.replace(/<[^>]+>/g, '').trim());
     items.push({ id, title, i18nKey });
   }
   return items;
@@ -63,7 +67,7 @@ export function parseBookSections(rawHtml: string): ParsedBook {
   while ((match = headingRegex.exec(rawHtml)) !== null) {
     const tag = match[1].toLowerCase() as 'h1' | 'h2';
     const id = match[3] || `section-${matches.length + 1}`;
-    const title = match[4].replace(/<[^>]+>/g, '').trim();
+    const title = decodeHtmlEntities(match[4].replace(/<[^>]+>/g, '').trim());
     matches.push({
       index: match.index,
       fullLength: match[0].length,

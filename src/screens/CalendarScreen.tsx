@@ -571,13 +571,13 @@ export function CalendarScreen({
                   return nextUposatha && (
                     <div
                       key="card-uposatha"
-                      className="card relative overflow-hidden"
+                      className="card relative overflow-hidden !p-0 shadow-sm"
                       style={{
                         background: 'var(--bg-card)',
                         borderColor: 'var(--border)',
                       }}
                     >
-                      <div className="flex items-center gap-2 mb-4">
+                      <div className="card-header">
                         <CalendarIcon size={13} style={{ color: 'var(--accent)', opacity: 0.7 }} />
                         <span className="label-eyebrow">
                           {t('calendar.upcomingUposatha')}
@@ -585,7 +585,7 @@ export function CalendarScreen({
                       </div>
 
                       <div className="relative z-10">
-                        <div className="flex justify-between items-start mb-4">
+                        <div className="p-4 flex justify-between items-start">
                           <div className="flex flex-col gap-1.5">
                             <p className="text-2xl font-bold leading-tight" style={{ color: 'var(--accent)' }}>
                               {format(nextUposatha.date, 'MMMM d')}
@@ -622,8 +622,10 @@ export function CalendarScreen({
                           </div>
                         </div>
 
-                        <div className="pt-3 flex justify-between w-full items-center text-center"
-                          style={{ borderTop: '1px solid var(--border)' }}>
+                        <div
+                          className="px-4 py-3 flex justify-between w-full items-center text-center"
+                          style={{ borderTop: '1px solid var(--border)' }}
+                        >
                           <MetaCell label={t('calendar.season')}>
                             <PaliText
                               text={uposathaInfo?.seas.season || ''}
@@ -874,13 +876,16 @@ export function CalendarScreen({
                   return (
                     <div
                       key="card-recitation"
-                      className="card space-y-4 relative overflow-hidden"
+                      className="card relative overflow-hidden !p-0 shadow-sm"
                       style={{
                         background: 'var(--bg-card)',
                         borderColor: 'var(--border)',
                       }}
                     >
-                      <button onClick={() => setPaliExpanded(!paliExpanded)} className="w-full flex items-center justify-between">
+                      <button
+                        onClick={() => setPaliExpanded(!paliExpanded)}
+                        className="w-full flex items-center justify-between card-header cursor-pointer transition-colors hover:bg-[var(--surface-hover)]"
+                      >
                         <div className="flex items-center gap-2">
                           <BookOpen size={13} style={{ color: 'var(--accent)', opacity: 0.7 }} />
                           <span className="label-eyebrow">
@@ -899,7 +904,7 @@ export function CalendarScreen({
                         {paliExpanded && (
                           <motion.div
                             initial={{ height: 0, opacity: 0 }} animate={{ height: 'auto', opacity: 1 }} exit={{ height: 0, opacity: 0 }}
-                            className="overflow-hidden"
+                            className="overflow-hidden p-6"
                           >
                             <pre
                               className="font-serif text-xl leading-[1.8] whitespace-pre-wrap italic text-center"

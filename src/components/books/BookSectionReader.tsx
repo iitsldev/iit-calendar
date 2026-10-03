@@ -2,7 +2,7 @@ import React, { useMemo } from 'react';
 import { BookOpen } from 'lucide-react';
 import { BookSection } from '../../types/book';
 import { TextProcessor, Script, buildDiacriticRegexPattern } from '../../lib/pali-script';
-import { SCRIPT_TO_LANG } from '../../lib/bookUtils';
+import { SCRIPT_TO_LANG, decodeHtmlEntities } from '../../lib/bookUtils';
 
 interface BookSectionReaderProps {
   sections?: BookSection[];
@@ -67,7 +67,8 @@ const SingleSection = React.memo(function SingleSection({
           if (part.length === 1 && /[\s,.;:!?]/.test(part)) return part;
 
           try {
-            const baseScriptText = TextProcessor.convertFrom(part, Script.RO);
+            const decodedPart = decodeHtmlEntities(part);
+            const baseScriptText = TextProcessor.convertFrom(decodedPart, Script.RO);
             return TextProcessor.convert(baseScriptText, scriptKey);
           } catch {
             return part;

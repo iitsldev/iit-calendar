@@ -20,7 +20,8 @@
     "today": "วันนี้",
     "language": "ภาษา",
     "appearance": "ลักษณะ",
-    "script": "อักษร"
+    "script": "อักษร",
+    "endOfBook": "จบบริบูรณ์"
   },
   "calendar": {
     "yearSuffix": "พ.ศ.",

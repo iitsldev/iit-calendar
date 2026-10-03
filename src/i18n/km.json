@@ -20,7 +20,8 @@
     "today": "ថ្ងៃនេះ",
     "language": "ភាសា",
     "appearance": "រូបរាង",
-    "script": "អក្សរ"
+    "script": "អក្សរ",
+    "endOfBook": "ចប់បរិបូណ៌"
   },
   "calendar": {
     "yearSuffix": "ព.ស.",

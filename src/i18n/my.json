@@ -20,7 +20,8 @@
     "today": "ယနေ့",
     "language": "ဘာသာစကား",
     "appearance": "အသွင်အပြင်",
-    "script": "က္ခရာ"
+    "script": "က္ခရာ",
+    "endOfBook": "စာအုပ်ပြီးဆုံးပါပြီ"
   },
   "calendar": {
     "yearSuffix": "သာသနာနှစ်",

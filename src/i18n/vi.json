@@ -20,7 +20,8 @@
     "today": "Hôm nay",
     "language": "Ngôn ngữ",
     "appearance": "Giao diện",
-    "script": "Ký tự"
+    "script": "Ký tự",
+    "endOfBook": "Hết sách"
   },
   "calendar": {
     "yearSuffix": "PL",

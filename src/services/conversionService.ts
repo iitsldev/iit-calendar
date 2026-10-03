@@ -1,5 +1,6 @@
 
 import { TextProcessor, Script } from '../lib/pali-script';
+import { decodeHtmlEntities } from '../lib/htmlUtils';
 
 export const SCRIPTS: Record<string, string> = {
   roman: Script.RO,
@@ -37,7 +38,8 @@ export async function convertPali(text: string, targetScript: string): Promise<s
     const result = parts.map((part, index) => {
       // Even indices are text content, odd are tags
       if (index % 2 === 0 && part.trim()) {
-        const baseSinhalaText = TextProcessor.convertFromMixed(part);
+        const decodedPart = decodeHtmlEntities(part);
+        const baseSinhalaText = TextProcessor.convertFromMixed(decodedPart);
         return TextProcessor.convert(baseSinhalaText, target);
       }
       return part;

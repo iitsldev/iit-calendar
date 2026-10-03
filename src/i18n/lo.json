@@ -20,7 +20,8 @@
     "today": "ມື້ນີ້",
     "language": "ພາສາ",
     "appearance": "ລັກສະນະ",
-    "script": "ຕົວອັກສອນ"
+    "script": "ຕົວອັກສອນ",
+    "endOfBook": "ຈົບບໍລິບູນ"
   },
   "calendar": {
     "yearSuffix": "ພ.ສ.",

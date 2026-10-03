@@ -286,52 +286,59 @@ export function SunDetails({
   ];
 
   return (
-    <div className="glass-card rounded-[2rem] p-4 overflow-hidden shadow-sm" style={{ background: 'var(--bg-card)', borderColor: 'var(--border)' }}>
-      <div className="flex justify-between items-center mb-6">
+    <div className="card overflow-hidden !p-0 shadow-sm" style={{ background: 'var(--bg-card)', borderColor: 'var(--border)' }}>
+      <button 
+        onClick={() => setExpanded(!expanded)}
+        className="w-full flex items-center justify-between card-header cursor-pointer transition-colors hover:bg-[var(--surface-hover)]"
+      >
         <div className="flex items-center gap-2">
           <Clock size={13} style={{ color: 'var(--accent)', opacity: 0.7 }} />
-          <span className="text-[10px] font-black uppercase tracking-[0.2em]" style={{ color: 'var(--text-muted)' }}>{t('sun.solarEvents')}</span>
+          <span className="label-eyebrow">{t('sun.solarEvents')}</span>
         </div>
-        <button 
-          onClick={() => setExpanded(!expanded)}
+        <div 
           className={cn("p-1.5 rounded-full transition-transform duration-300", expanded && "rotate-180")}
           style={{ background: 'var(--accent-subtle)', color: 'var(--accent)' }}
         >
           <ChevronDown size={14} />
-        </button>
+        </div>
+      </button>
+
+      <div className="p-4">
+        <div className="grid grid-cols-3 gap-0 relative">
+          <SunTimeItem 
+            icon={<Sunrise size="1.4em"/>} 
+            label={t('sun.dawn')} 
+            time={safeFormat(activeDawn, 'hh:mm a')} 
+            color="text-gold" 
+            active={expanded}
+          />
+          <SunTimeItem 
+            icon={<Sun size="1.4em"/>} 
+            label={t('sun.sunrise')} 
+            time={safeFormat(times.sunrise, 'hh:mm a')} 
+            color="text-saffron" 
+            hasBorder 
+            active={expanded}
+          />
+          <SunTimeItem 
+            icon={<Sunset size="1.4em"/>} 
+            label={t('sun.noon')} 
+            time={safeFormat(times.solarNoon, 'hh:mm a')} 
+            color="text-lotus" 
+            active={expanded}
+          />
+        </div>
       </div>
 
-      <div className="grid grid-cols-3 gap-0 relative">
-        <SunTimeItem 
-          icon={<Sunrise size="1.4em"/>} 
-          label={t('sun.dawn')} 
-          time={safeFormat(activeDawn, 'hh:mm a')} 
-          color="text-gold" 
-          active={expanded}
-        />
-        <SunTimeItem 
-          icon={<Sun size="1.4em"/>} 
-          label={t('sun.sunrise')} 
-          time={safeFormat(times.sunrise, 'hh:mm a')} 
-          color="text-saffron" 
-          hasBorder 
-          active={expanded}
-        />
-        <SunTimeItem 
-          icon={<Sunset size="1.4em"/>} 
-          label={t('sun.noon')} 
-          time={safeFormat(times.solarNoon, 'hh:mm a')} 
-          color="text-lotus" 
-          active={expanded}
-        />
-      </div>
-
-      {expanded && (
-        <motion.div
-          initial={{ height: 0, opacity: 0 }}
-          animate={{ height: 'auto', opacity: 1 }}
-          className="mt-8 pt-6 border-t border-slate-200/50 dark:border-stone-800/60 overflow-hidden space-y-8"
-        >
+      <AnimatePresence>
+        {expanded && (
+          <motion.div
+            initial={{ height: 0, opacity: 0 }}
+            animate={{ height: 'auto', opacity: 1 }}
+            exit={{ height: 0, opacity: 0 }}
+            className="overflow-hidden space-y-8 p-4 pt-6"
+            style={{ borderTop: '1px solid var(--border)' }}
+          >
           {/* Solar Arc Graphic */}
           <div className="w-full max-w-xl mx-auto px-2 pt-2">
             <div className="relative w-full h-20 sm:h-24 overflow-visible">
@@ -586,6 +593,7 @@ export function SunDetails({
           </div>
         </motion.div>
       )}
+      </AnimatePresence>
     </div>
   );
 }

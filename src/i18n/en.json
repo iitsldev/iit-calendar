@@ -24,7 +24,8 @@
     "today": "Today",
     "language": "Language",
     "appearance": "Appearance",
-    "script": "Script"
+    "script": "Script",
+    "endOfBook": "End of Book"
   },
   "calendar": {
     "yearSuffix": "BE",
