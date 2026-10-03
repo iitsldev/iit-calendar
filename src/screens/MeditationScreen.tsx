@@ -12,6 +12,7 @@ import { useI18n } from '../hooks/useI18n';
 import { useUI } from '../UIContext';
 import { SegmentedControl } from '../components/SegmentedControl';
 import { LabeledSelect } from '../components/LabeledSelect';
+import { Toggle } from '../components/Toggle';
 import { Button } from '../components/Button';
 import { Modal } from '../components/Modal';
 import { useMeditationTimer } from '../hooks/useMeditationTimer';
@@ -178,6 +179,7 @@ export function MeditationScreen() {
           alertMode,
           soundEnabled: alertMode !== 'vibrate',
           vibrationEnabled: alertMode !== 'sound',
+          isStopwatch: parsed.isStopwatch ?? false,
         };
       }
     } catch { }
@@ -192,11 +194,13 @@ export function MeditationScreen() {
       delaySeconds: 5,
       bellType: 'bowl',
       keepScreenOn: false,
+      isStopwatch: false,
     };
   });
 
+  const isStopwatch = !!settings.isStopwatch;
   const totalDurationMin = (settings.durationHours || 0) * 60 + (settings.durationMinutes || 0);
-  const totalDurationMs = totalDurationMin * 60 * 1000;
+  const totalDurationMs = isStopwatch ? 0 : totalDurationMin * 60 * 1000;
   const intervalMs = ((settings.intervalMinutes || 0) * 60 + (settings.intervalSeconds || 0)) * 1000;
 
   useEffect(() => {
@@ -218,6 +222,7 @@ export function MeditationScreen() {
 
   const {
     remainingMs,
+    elapsedMs,
     countdown,
     isRunning,
     isPaused,
@@ -260,13 +265,18 @@ export function MeditationScreen() {
     progressPercent,
   } = useMeditationInsights(stats.sessions, chartView, chartOffset);
 
-  const hours = Math.floor(remainingMs / 3600000);
-  const mins = Math.floor((remainingMs % 3600000) / 60000);
-  const secs = Math.floor((remainingMs % 60000) / 1000);
+  const displayMs = isStopwatch ? elapsedMs : remainingMs;
+  const hours = Math.floor(displayMs / 3600000);
+  const mins = Math.floor((displayMs % 3600000) / 60000);
+  const secs = Math.floor((displayMs % 60000) / 1000);
 
   const timeString = hours > 0
     ? `${hours}:${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`
     : `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+
+  const timerLabel = isStopwatch
+    ? (isRunning ? (t('meditation.elapsed') || 'ELAPSED') : (t('meditation.stopwatch') || 'STOPWATCH'))
+    : (t('meditation.remaining') || 'REMAINING');
 
   const isDistractionFree = isRunning || countdown > 0 || isPaused;
 
@@ -396,10 +406,10 @@ export function MeditationScreen() {
               >
                 <TimerDial
                   size={264}
-                  remainingMs={remainingMs}
+                  remainingMs={isStopwatch ? 0 : remainingMs}
                   totalDurationMs={totalDurationMs}
                   timeString={timeString}
-                  label={t('meditation.remaining') || 'REMAINING'}
+                  label={timerLabel}
                   isRunning={isRunning}
                   isPaused={isPaused}
                   isFinished={isFinished}
@@ -784,37 +794,62 @@ export function MeditationScreen() {
                   </div>
 
                   <div className="space-y-6">
-                    {/* Duration Section */}
-                    <div>
-                      <label className="block text-[10px] font-black uppercase tracking-widest mb-3" style={{ color: 'var(--sm-text-muted)' }}>
-                        {t('meditation.durationLabel')}
-                      </label>
-                      <div className="flex items-center gap-4">
-                        <div className="flex-1">
-                          <LabeledSelect
-                            value={settings.durationHours}
-                            onChange={(val) => setSettings({ ...settings, durationHours: parseInt(val) })}
-                            options={Array.from({ length: 24 }).map((_, i) => ({
-                              value: i,
-                              label: i.toString().padStart(2, '0')
-                            }))}
-                            badgeLabel="Hours"
-                          />
-                        </div>
-                        <span className="text-2xl font-serif" style={{ color: 'var(--sm-border)' }}>:</span>
-                        <div className="flex-1">
-                          <LabeledSelect
-                            value={settings.durationMinutes}
-                            onChange={(val) => setSettings({ ...settings, durationMinutes: parseInt(val) })}
-                            options={[0, 1, 5, 10, 15, 20, 25, 30, 35, 40, 45, 50, 55].map(m => ({
-                              value: m,
-                              label: m.toString().padStart(2, '0')
-                            }))}
-                            badgeLabel="Minutes"
-                          />
-                        </div>
+                    {/* Stopwatch Mode Toggle */}
+                    <div className="flex justify-between items-center pb-2">
+                      <div>
+                        <h4 className="font-serif text-sm font-bold text-[var(--sm-text-primary,var(--text-primary))] leading-tight">
+                          {t('meditation.stopwatchMode') || 'Stopwatch Mode'}
+                        </h4>
+                        <p className="text-[10px] text-stone-500 dark:text-stone-400 mt-1">
+                          {t('meditation.stopwatchDesc') || 'Meditate without duration limit'}
+                        </p>
                       </div>
+                      <Toggle
+                        value={isStopwatch}
+                        onToggle={() => setSettings(s => ({ ...s, isStopwatch: !s.isStopwatch }))}
+                      />
                     </div>
+
+                    {/* Duration Section (Only visible if not stopwatch) */}
+                    <AnimatePresence initial={false}>
+                      {!isStopwatch && (
+                        <motion.div
+                          initial={{ height: 0, opacity: 0, marginTop: 0 }}
+                          animate={{ height: 'auto', opacity: 1, marginTop: 16 }}
+                          exit={{ height: 0, opacity: 0, marginTop: 0 }}
+                          className="overflow-hidden border-t border-slate-100 dark:border-slate-800 pt-4"
+                        >
+                          <label className="block text-[10px] font-black uppercase tracking-widest mb-3" style={{ color: 'var(--sm-text-muted)' }}>
+                            {t('meditation.durationLabel')}
+                          </label>
+                          <div className="flex items-center gap-4">
+                            <div className="flex-1">
+                              <LabeledSelect
+                                value={settings.durationHours}
+                                onChange={(val) => setSettings({ ...settings, durationHours: parseInt(val) })}
+                                options={Array.from({ length: 24 }).map((_, i) => ({
+                                  value: i,
+                                  label: i.toString().padStart(2, '0')
+                                }))}
+                                badgeLabel="Hours"
+                              />
+                            </div>
+                            <span className="text-2xl font-serif" style={{ color: 'var(--sm-border)' }}>:</span>
+                            <div className="flex-1">
+                              <LabeledSelect
+                                value={settings.durationMinutes}
+                                onChange={(val) => setSettings({ ...settings, durationMinutes: parseInt(val) })}
+                                options={[0, 1, 5, 10, 15, 20, 25, 30, 35, 40, 45, 50, 55].map(m => ({
+                                  value: m,
+                                  label: m.toString().padStart(2, '0')
+                                }))}
+                                badgeLabel="Minutes"
+                              />
+                            </div>
+                          </div>
+                        </motion.div>
+                      )}
+                    </AnimatePresence>
 
                     {/* Interval Section */}
                     <div>

@@ -14,6 +14,7 @@ export interface MeditationTimerSettings {
   vibrationEnabled?: boolean;
   alertMode?: string;
   keepScreenOn?: boolean;
+  isStopwatch?: boolean;
 }
 
 /** Context passed from toggleTimer/init to the isRunning useEffect via ref. */
@@ -28,6 +29,7 @@ export function useMeditationTimer(
   settings: MeditationTimerSettings
 ) {
   const [remainingMs, setRemainingMs] = useState(totalDurationMs);
+  const [elapsedMs, setElapsedMs] = useState(0);
   const [countdown, setCountdown] = useState(0);
   const [isRunning, setIsRunning] = useState(false);
   const [isPaused, setIsPaused] = useState(false);
@@ -40,6 +42,9 @@ export function useMeditationTimer(
   // Ref to avoid stale closure in countdown interval
   const remainingMsRef = useRef(remainingMs);
   useEffect(() => { remainingMsRef.current = remainingMs; }, [remainingMs]);
+
+  const elapsedMsRef = useRef(0);
+  useEffect(() => { elapsedMsRef.current = elapsedMs; }, [elapsedMs]);
 
   // Ref to track countdown value inside the setInterval without going through state updater.
   const countdownValueRef = useRef(0);
@@ -94,10 +99,39 @@ export function useMeditationTimer(
       if (savedActive) {
         const active: ActiveMeditation = JSON.parse(savedActive);
         const elapsed = Date.now() - active.startTime;
-        if (elapsed < active.durationMs) {
+
+        if (active.isStopwatch) {
+          if (elapsed < 24 * 60 * 60 * 1000) {
+            setElapsedMs(elapsed);
+            elapsedMsRef.current = elapsed;
+            setRemainingMs(0);
+            remainingMsRef.current = 0;
+
+            const activeIntervalMs = active.intervalMs || 0;
+            let firstIntervalForWorker: number | undefined;
+            if (activeIntervalMs > 0) {
+              const firstDelay = active.firstIntervalDelayMs ?? activeIntervalMs;
+              if (elapsed < firstDelay) {
+                firstIntervalForWorker = firstDelay - elapsed;
+              } else {
+                const sinceFirst = elapsed - firstDelay;
+                firstIntervalForWorker = activeIntervalMs - (sinceFirst % activeIntervalMs);
+              }
+            }
+            startContextRef.current = { isRestore: true, firstIntervalDelayMs: firstIntervalForWorker };
+            setIsRunning(true);
+          } else {
+            localStorage.removeItem('active_meditation');
+            setRemainingMs(totalDurationMs);
+            setElapsedMs(0);
+            setIsRunning(false);
+          }
+        } else if (elapsed < active.durationMs) {
           const remaining = active.durationMs - elapsed;
           setRemainingMs(remaining);
           remainingMsRef.current = remaining;
+          setElapsedMs(elapsed);
+          elapsedMsRef.current = elapsed;
 
           // Calculate interval alignment for the foreground worker on restore (#1)
           const activeIntervalMs = active.intervalMs || 0;
@@ -117,6 +151,7 @@ export function useMeditationTimer(
         } else {
           // Stale session from a previous run — recheckMeditation already completed it if needed
           setRemainingMs(totalDurationMs);
+          setElapsedMs(0);
           setIsRunning(false);
         }
       }
@@ -129,6 +164,8 @@ export function useMeditationTimer(
   useEffect(() => {
     if (!isRunning && !isPaused && !isFinished && countdown === 0) {
       setRemainingMs(totalDurationMs);
+      setElapsedMs(0);
+      elapsedMsRef.current = 0;
     }
   }, [totalDurationMs, isRunning, isPaused, isFinished, countdown]);
 
@@ -150,7 +187,8 @@ export function useMeditationTimer(
           settingsRef.current.vibrationEnabled ?? true,
           settingsRef.current.bellType,
           ctx.firstIntervalDelayMs,
-          delayMs
+          delayMs,
+          settingsRef.current.isStopwatch
         );
       }
 
@@ -192,9 +230,18 @@ export function useMeditationTimer(
   }, [isRunning]); // intentionally omit countdown — the branch is captured at start time
 
   const startActualTimer = (ms: number, firstIntervalDelayMs?: number) => {
+    const isStopwatch = !!settingsRef.current.isStopwatch;
+    const baseElapsed = elapsedMsRef.current;
     alarmService.startForegroundTimer(
       ms,
-      rem => setRemainingMs(rem),
+      (tickVal) => {
+        if (isStopwatch) {
+          setElapsedMs(baseElapsed + tickVal);
+        } else {
+          setRemainingMs(tickVal);
+          setElapsedMs(totalDurationMs - tickVal);
+        }
+      },
       () => {
         handleComplete();
         // Use ref instead of the closed-over state value to get the current sentinel,
@@ -210,7 +257,8 @@ export function useMeditationTimer(
           bellSoundService.playBell(settingsRef.current.soundEnabled, settingsRef.current.bellType);
         }
       },
-      firstIntervalDelayMs
+      firstIntervalDelayMs,
+      isStopwatch
     );
   };
 
@@ -234,6 +282,8 @@ export function useMeditationTimer(
     setIsPaused(false);
     setIsFinished(false);
     setRemainingMs(totalDurationMs);
+    setElapsedMs(0);
+    elapsedMsRef.current = 0;
     setCountdown(0);
     if (wakeLockRef.current) wakeLockRef.current.release();
   };
@@ -245,11 +295,14 @@ export function useMeditationTimer(
     setIsPaused(false);
     if (wakeLockRef.current) wakeLockRef.current.release();
 
-    const elapsedMs = totalDurationMs - remainingMsRef.current;
-    const elapsedMin = Math.floor(elapsedMs / 60000);
+    const isStopwatch = !!settingsRef.current.isStopwatch;
+    const currentElapsed = isStopwatch ? elapsedMsRef.current : (totalDurationMs - remainingMsRef.current);
+    const elapsedMin = Math.floor(currentElapsed / 60000);
 
-    if (elapsedMin >= MIN_SESSION_MINUTES) {
-      await alarmService.completeActiveMeditation(elapsedMs);
+    const minRequired = isStopwatch ? 1 : MIN_SESSION_MINUTES;
+
+    if (elapsedMin >= minRequired) {
+      await alarmService.completeActiveMeditation(currentElapsed);
     } else {
       await alarmService.stopMeditation();
     }
@@ -266,7 +319,9 @@ export function useMeditationTimer(
     // Unlock and resume Web AudioContext on direct user interaction
     bellSoundService.initAudio();
 
-    if (!isRunning && !isPaused && (remainingMs === totalDurationMs || isFinished)) {
+    const isStopwatch = !!settings.isStopwatch;
+
+    if (!isRunning && !isPaused && (isStopwatch ? (elapsedMs === 0 || isFinished) : (remainingMs === totalDurationMs || isFinished))) {
       // Prompt for exact alarm permission on Android if missing
       await alarmService.checkAndPromptExactAlarm();
       if (settings.keepScreenOn) {
@@ -277,6 +332,8 @@ export function useMeditationTimer(
       setIsFinished(false);
       setRemainingMs(totalDurationMs);
       remainingMsRef.current = totalDurationMs;
+      setElapsedMs(0);
+      elapsedMsRef.current = 0;
       if (settings.delaySeconds > 0) {
         setCountdown(settings.delaySeconds);
       } else {
@@ -304,8 +361,8 @@ export function useMeditationTimer(
       }
 
       // Calculate interval alignment for resume (#1)
-      const elapsedMs = totalDurationMs - remainingMsRef.current;
-      const intervalElapsed = intervalMs > 0 ? elapsedMs % intervalMs : 0;
+      const currentElapsed = isStopwatch ? elapsedMsRef.current : (totalDurationMs - remainingMsRef.current);
+      const intervalElapsed = intervalMs > 0 ? currentElapsed % intervalMs : 0;
       const firstDelay = intervalMs > 0 ? intervalMs - intervalElapsed : undefined;
       startContextRef.current = { isRestore: false, firstIntervalDelayMs: firstDelay };
 
@@ -316,6 +373,7 @@ export function useMeditationTimer(
 
   return {
     remainingMs,
+    elapsedMs,
     countdown,
     isRunning,
     isPaused,

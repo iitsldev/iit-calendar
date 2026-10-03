@@ -3,12 +3,11 @@ import { motion, AnimatePresence } from 'motion/react';
 import { format } from 'date-fns';
 import { 
   Clock, 
-  ChevronUp,
   ChevronDown, 
   Sunrise, 
   Sun, 
-  Sunset,
-  X
+  Sunset, 
+  X 
 } from 'lucide-react';
 import { SunTimesCalculator } from '../lib/calendar/SunTimesCalculator';
 import { Settings } from '../types';
@@ -304,7 +303,7 @@ export function SunDetails({
 
       <div className="grid grid-cols-3 gap-0 relative">
         <SunTimeItem 
-          icon={<div className="relative"><Sunrise size="1.4em"/><ChevronUp size="0.75em" className="absolute -top-1 -right-1 text-gold"/></div>} 
+          icon={<Sunrise size="1.4em"/>} 
           label={t('sun.dawn')} 
           time={safeFormat(activeDawn, 'hh:mm a')} 
           color="text-gold" 

@@ -16,6 +16,7 @@ export interface ActiveMeditation {
   vibrationEnabled?: boolean;
   bellType?: string;
   firstIntervalDelayMs?: number;
+  isStopwatch?: boolean;
 }
 
 function getMeditationSoundAndChannel(soundEnabled = true, vibrationEnabled = true, bellType = 'bowl') {
@@ -224,7 +225,8 @@ class AlarmService {
     vibrationEnabled: boolean = true,
     bellType: string = 'bowl',
     firstIntervalDelayMs?: number,
-    startDelayMs: number = 0
+    startDelayMs: number = 0,
+    isStopwatch: boolean = false
   ): Promise<void> {
     // Cancel existing
     const intervalIds = Array.from({ length: 100 }, (_, i) => AlarmId.MEDITATION_INTERVAL + i);
@@ -232,12 +234,13 @@ class AlarmService {
 
     const active: ActiveMeditation = {
       startTime: Date.now(),
-      durationMs,
+      durationMs: isStopwatch ? 0 : durationMs,
       intervalMs,
       soundEnabled,
       vibrationEnabled,
       bellType,
-      firstIntervalDelayMs
+      firstIntervalDelayMs,
+      isStopwatch
     };
     localStorage.setItem('active_meditation', JSON.stringify(active));
 
@@ -261,17 +264,19 @@ class AlarmService {
       });
     }
 
-    // End Alarm
-    items.push({
-      id: AlarmId.MEDITATION_END,
-      title: "Meditation Complete",
-      body: "Your session has ended. May you be peaceful.",
-      at: endTime,
-      sound,
-      channelId,
-      allowWhileIdle: true,
-      exact: true
-    });
+    // End Alarm (only scheduled when not in stopwatch mode)
+    if (!isStopwatch) {
+      items.push({
+        id: AlarmId.MEDITATION_END,
+        title: "Meditation Complete",
+        body: "Your session has ended. May you be peaceful.",
+        at: endTime,
+        sound,
+        channelId,
+        allowWhileIdle: true,
+        exact: true
+      });
+    }
 
     // Intervals
     if (intervalMs > 0) {
@@ -279,7 +284,8 @@ class AlarmService {
       const firstDelay = baseDelay + startDelayMs;
       let nextInterval = active.startTime + firstDelay;
       let count = 0;
-      while (nextInterval < endTime.getTime() && count < 100) {
+      const maxTime = isStopwatch ? active.startTime + (12 * 60 * 60 * 1000) : endTime.getTime();
+      while (nextInterval < maxTime && count < 60) {
         items.push({
           id: AlarmId.MEDITATION_INTERVAL + count,
           title: "Meditation Interval",
@@ -334,6 +340,13 @@ class AlarmService {
     const active: ActiveMeditation = JSON.parse(saved);
     const now = Date.now();
     const elapsed = now - active.startTime;
+
+    if (active.isStopwatch) {
+      if (elapsed > 24 * 60 * 60 * 1000) {
+        localStorage.removeItem('active_meditation');
+      }
+      return;
+    }
 
     if (elapsed >= active.durationMs) {
       await this.completeActiveMeditation(active.durationMs);
@@ -448,18 +461,19 @@ class AlarmService {
 
   public startForegroundTimer(
     durationMs: number,
-    onTick: (remainingMs: number) => void,
+    onTick: (timeMs: number) => void,
     onComplete: () => void,
     intervalMs?: number,
     onInterval?: () => void,
-    firstIntervalDelayMs?: number
+    firstIntervalDelayMs?: number,
+    isStopwatch?: boolean
   ): void {
     if (this.worker) this.worker.terminate();
 
     this.worker = new Worker(new URL('./TimerWorker.ts', import.meta.url), { type: 'module' });
     this.worker.onmessage = (e) => {
-      const { type, remaining } = e.data;
-      if (type === 'tick') onTick(remaining);
+      const { type, remaining, elapsed } = e.data;
+      if (type === 'tick') onTick(isStopwatch ? elapsed : remaining);
       if (type === 'interval' && onInterval) onInterval();
       if (type === 'done') {
         onComplete();
@@ -467,7 +481,13 @@ class AlarmService {
       }
     };
 
-    this.worker.postMessage({ type: 'start', durationMs, intervalMs, firstIntervalDelayMs: firstIntervalDelayMs ?? intervalMs });
+    this.worker.postMessage({
+      type: 'start',
+      durationMs,
+      intervalMs,
+      firstIntervalDelayMs: firstIntervalDelayMs ?? intervalMs,
+      isStopwatch: !!isStopwatch
+    });
   }
 
   public stopForegroundTimer(): void {

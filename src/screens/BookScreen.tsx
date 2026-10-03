@@ -6,7 +6,7 @@ import { useUI } from '../UIContext';
 import { Settings } from '../types';
 import { Button } from '../components/Button';
 import { ScreenIconInner } from '../components/common/ScreenIcon';
-import { BookItem, SearchResultItem } from '../types/book';
+import { BookItem, BookSection, SearchResultItem } from '../types/book';
 import {
   booksList,
   getBookHtml,
@@ -40,6 +40,7 @@ export function BookScreen({ settings, isActive = true }: { settings: Settings; 
   const [selectedBookId, setSelectedBookId] = useState<string | null>(null);
   const [selectedH1Title, setSelectedH1Title] = useState<string | null>(null);
   const [selectedSectionId, setSelectedSectionId] = useState<string | null>(null);
+  const [loadedRange, setLoadedRange] = useState<{ start: number; end: number }>({ start: 0, end: 0 });
 
   const [showToc, setShowToc] = useState(false);
   const [isSearchFocused, setIsSearchFocused] = useState(false);
@@ -49,6 +50,12 @@ export function BookScreen({ settings, isActive = true }: { settings: Settings; 
 
   const contentRef = useRef<HTMLDivElement>(null);
   const tocRef = useRef<HTMLDivElement>(null);
+  const isProgrammaticScrollRef = useRef(false);
+  const scrollTimeoutRef = useRef<any>(null);
+  const activeSectionIdRef = useRef<string | null>(null);
+  activeSectionIdRef.current = selectedSectionId;
+  const loadedRangeRef = useRef(loadedRange);
+  loadedRangeRef.current = loadedRange;
 
   const selectedBook = useMemo(() => {
     return booksList.find(b => b.id === selectedBookId) || null;
@@ -63,6 +70,9 @@ export function BookScreen({ settings, isActive = true }: { settings: Settings; 
     if (!rawHtml) return { h1Groups: [], allSections: [] };
     return parseBookSections(rawHtml);
   }, [rawHtml]);
+
+  const parsedBookRef = useRef(parsedBook);
+  parsedBookRef.current = parsedBook;
 
   // Build comprehensive search index across selected book (or all books if in catalog view)
   const searchIndex = useMemo(() => {
@@ -92,30 +102,59 @@ export function BookScreen({ settings, isActive = true }: { settings: Settings; 
     }
   }, [parsedBook, selectedBookId, selectedH1Title]);
 
-  const scrollToContainerTop = () => {
+  const scrollToContainerTop = (behavior: ScrollBehavior = 'instant') => {
     const container = document.getElementById('tab-book');
     if (container) {
-      container.scrollTo({ top: 0, behavior: 'instant' });
+      container.scrollTo({ top: 0, behavior });
       container.scrollTop = 0;
     }
-    window.scrollTo({ top: 0, behavior: 'instant' });
+    window.scrollTo({ top: 0, behavior });
   };
 
-  // Auto-scroll to top whenever navigation state changes
+  const scrollToSection = (sectionId: string, behavior: ScrollBehavior = 'smooth') => {
+    const container = document.getElementById('tab-book');
+    const findEl = () =>
+      document.getElementById(sectionId) ||
+      document.getElementById(`section-container-${sectionId}`) ||
+      document.querySelector(`[data-section-id="${sectionId}"]`);
+
+    const performScroll = () => {
+      const el = findEl();
+      if (el && container) {
+        const topPos = el.getBoundingClientRect().top + container.scrollTop - container.getBoundingClientRect().top - 80;
+        container.scrollTo({ top: Math.max(0, topPos), behavior });
+        return true;
+      } else if (el) {
+        el.scrollIntoView({ behavior, block: 'start' });
+        return true;
+      }
+      return false;
+    };
+
+    if (!performScroll()) {
+      setTimeout(performScroll, 50);
+    }
+  };
+
+  // Auto-scroll to top only when switching books
+  const prevBookIdRef = useRef<string | null>(selectedBookId);
   useEffect(() => {
-    scrollToContainerTop();
-  }, [selectedBookId, selectedH1Title, selectedSectionId]);
+    if (selectedBookId !== prevBookIdRef.current) {
+      prevBookIdRef.current = selectedBookId;
+      scrollToContainerTop('instant');
+    }
+  }, [selectedBookId]);
 
   const scrollToId = (id?: string) => {
     setShowToc(false);
     setTimeout(() => {
       if (id) {
-        const el = document.getElementById(id);
+        const el = document.getElementById(id) || document.querySelector(`[data-section-id="${id}"]`);
         const container = document.getElementById('tab-book');
         if (el) {
           if (container) {
             const topPos = el.getBoundingClientRect().top + container.scrollTop - container.getBoundingClientRect().top - 80;
-            container.scrollTo({ top: topPos, behavior: 'smooth' });
+            container.scrollTo({ top: Math.max(0, topPos), behavior: 'smooth' });
           } else {
             el.scrollIntoView({ behavior: 'smooth', block: 'start' });
           }
@@ -148,6 +187,108 @@ export function BookScreen({ settings, isActive = true }: { settings: Settings; 
     if (!selectedSection) return -1;
     return parsedBook.allSections.findIndex(s => s.id === selectedSection.id);
   }, [selectedSection, parsedBook]);
+
+  const loadedSections = useMemo(() => {
+    if (!selectedSectionId || parsedBook.allSections.length === 0) return [];
+    const start = Math.max(0, Math.min(loadedRange.start, parsedBook.allSections.length - 1));
+    const end = Math.max(start, Math.min(loadedRange.end, parsedBook.allSections.length - 1));
+    return parsedBook.allSections.slice(start, end + 1);
+  }, [loadedRange, parsedBook.allSections, selectedSectionId]);
+
+  // Infinite scroll listener & active section tracker on tab-book container
+  useEffect(() => {
+    if (!selectedSectionId || !isActive) return;
+
+    const container = document.getElementById('tab-book');
+    if (!container) return;
+
+    let ticking = false;
+
+    const handleScroll = () => {
+      const { start, end } = loadedRangeRef.current;
+      const allSections = parsedBookRef.current.allSections;
+      const scrollRemaining = container.scrollHeight - container.scrollTop - container.clientHeight;
+
+      // 1. Check if near bottom to load next section automatically
+      if (scrollRemaining < 900 && end < allSections.length - 1) {
+        setLoadedRange(prev => {
+          if (prev.end < allSections.length - 1) {
+            return { ...prev, end: prev.end + 1 };
+          }
+          return prev;
+        });
+      }
+
+      // 2. Active section tracking (if not currently in programmatic smooth scroll)
+      if (!isProgrammaticScrollRef.current) {
+        const containerRect = container.getBoundingClientRect();
+        const probeY = containerRect.top + 130;
+
+        const loadedSlice = allSections.slice(start, end + 1);
+        let matchedSection: BookSection | null = null;
+
+        if (container.scrollTop < 60 && loadedSlice.length > 0) {
+          matchedSection = loadedSlice[0];
+        } else if (scrollRemaining < 60 && loadedSlice.length > 0) {
+          matchedSection = loadedSlice[loadedSlice.length - 1];
+        } else {
+          for (const sec of loadedSlice) {
+            const el = document.getElementById(`section-container-${sec.id}`) ||
+                       document.querySelector(`[data-section-id="${sec.id}"]`);
+            if (el) {
+              const rect = el.getBoundingClientRect();
+              if (rect.top <= probeY && rect.bottom > probeY) {
+                matchedSection = sec;
+                break;
+              }
+            }
+          }
+        }
+
+        if (matchedSection && matchedSection.id !== activeSectionIdRef.current) {
+          activeSectionIdRef.current = matchedSection.id;
+          setSelectedSectionId(matchedSection.id);
+          setSelectedH1Title(matchedSection.h1Title);
+        }
+      }
+    };
+
+    const onScroll = () => {
+      if (!ticking) {
+        window.requestAnimationFrame(() => {
+          handleScroll();
+          ticking = false;
+        });
+        ticking = true;
+      }
+    };
+
+    container.addEventListener('scroll', onScroll, { passive: true });
+    return () => {
+      container.removeEventListener('scroll', onScroll);
+    };
+  }, [selectedSectionId, isActive]);
+
+  // Ensure content fills screen if first loaded section is very short
+  useEffect(() => {
+    if (!selectedSectionId) return;
+    const container = document.getElementById('tab-book');
+    if (!container) return;
+
+    const timer = setTimeout(() => {
+      const scrollRemaining = container.scrollHeight - container.scrollTop - container.clientHeight;
+      if (scrollRemaining < 700 && loadedRange.end < parsedBook.allSections.length - 1) {
+        setLoadedRange(prev => {
+          if (prev.end < parsedBook.allSections.length - 1) {
+            return { ...prev, end: prev.end + 1 };
+          }
+          return prev;
+        });
+      }
+    }, 150);
+
+    return () => clearTimeout(timer);
+  }, [loadedRange, selectedSectionId, parsedBook.allSections.length]);
 
   useEffect(() => {
     if (showToc && selectedSectionId && tocRef.current) {
@@ -182,7 +323,7 @@ export function BookScreen({ settings, isActive = true }: { settings: Settings; 
     }, 100);
 
     return () => clearTimeout(timer);
-  }, [searchTerm, selectedSection]);
+  }, [searchTerm, loadedSections, selectedSection]);
 
   const navigateMatch = (direction: 'next' | 'prev') => {
     if (totalMatches === 0 || !contentRef.current) return;
@@ -213,6 +354,9 @@ export function BookScreen({ settings, isActive = true }: { settings: Settings; 
     if (item.type === 'h1') {
       setSelectedSectionId(null);
     } else if (item.sectionId) {
+      const idx = parsedBook.allSections.findIndex(s => s.id === item.sectionId);
+      const targetIdx = idx >= 0 ? idx : 0;
+      setLoadedRange({ start: targetIdx, end: targetIdx });
       setSelectedSectionId(item.sectionId);
     }
 
@@ -231,21 +375,51 @@ export function BookScreen({ settings, isActive = true }: { settings: Settings; 
 
   const goToPrevSection = () => {
     if (currentSectionIndex > 0) {
-      const prevSec = parsedBook.allSections[currentSectionIndex - 1];
+      const prevIndex = currentSectionIndex - 1;
+      const prevSec = parsedBook.allSections[prevIndex];
+      if (!prevSec) return;
+
+      isProgrammaticScrollRef.current = true;
+      if (scrollTimeoutRef.current) clearTimeout(scrollTimeoutRef.current);
+      scrollTimeoutRef.current = setTimeout(() => {
+        isProgrammaticScrollRef.current = false;
+      }, 700);
+
+      activeSectionIdRef.current = prevSec.id;
       setSelectedH1Title(prevSec.h1Title);
       setSelectedSectionId(prevSec.id);
       setSearchTerm('');
-      scrollToContainerTop();
+
+      if (prevIndex < loadedRange.start) {
+        setLoadedRange(prev => ({ ...prev, start: Math.min(prev.start, prevIndex) }));
+      }
+
+      scrollToSection(prevSec.id, 'smooth');
     }
   };
 
   const goToNextSection = () => {
     if (currentSectionIndex >= 0 && currentSectionIndex < parsedBook.allSections.length - 1) {
-      const nextSec = parsedBook.allSections[currentSectionIndex + 1];
+      const nextIndex = currentSectionIndex + 1;
+      const nextSec = parsedBook.allSections[nextIndex];
+      if (!nextSec) return;
+
+      isProgrammaticScrollRef.current = true;
+      if (scrollTimeoutRef.current) clearTimeout(scrollTimeoutRef.current);
+      scrollTimeoutRef.current = setTimeout(() => {
+        isProgrammaticScrollRef.current = false;
+      }, 700);
+
+      activeSectionIdRef.current = nextSec.id;
       setSelectedH1Title(nextSec.h1Title);
       setSelectedSectionId(nextSec.id);
       setSearchTerm('');
-      scrollToContainerTop();
+
+      if (nextIndex > loadedRange.end) {
+        setLoadedRange(prev => ({ ...prev, end: Math.max(prev.end, nextIndex) }));
+      }
+
+      scrollToSection(nextSec.id, 'smooth');
     }
   };
 
@@ -344,6 +518,7 @@ export function BookScreen({ settings, isActive = true }: { settings: Settings; 
                 onClick={() => {
                   setSelectedH1Title(null);
                   setSelectedSectionId(null);
+                  scrollToContainerTop('instant');
                 }}
                 className={cn(
                   "transition-colors",
@@ -359,7 +534,10 @@ export function BookScreen({ settings, isActive = true }: { settings: Settings; 
                 <>
                   <ChevronRight size={12} className="text-[var(--text-muted)] flex-shrink-0" />
                   <button
-                    onClick={() => setSelectedSectionId(null)}
+                    onClick={() => {
+                      setSelectedSectionId(null);
+                      scrollToContainerTop('instant');
+                    }}
                     className={cn(
                       "transition-colors",
                       selectedSectionId === null
@@ -394,6 +572,8 @@ export function BookScreen({ settings, isActive = true }: { settings: Settings; 
               setSelectedH1Title(null);
               setSelectedSectionId(null);
               setSearchTerm('');
+              setLoadedRange({ start: 0, end: 0 });
+              scrollToContainerTop('instant');
             }}
             t={t}
           />
@@ -402,7 +582,10 @@ export function BookScreen({ settings, isActive = true }: { settings: Settings; 
           <BookVolumeList
             h1Groups={parsedBook.h1Groups}
             scriptKey={scriptKey}
-            onSelectH1={(h1Title) => setSelectedH1Title(h1Title)}
+            onSelectH1={(h1Title) => {
+              setSelectedH1Title(h1Title);
+              scrollToContainerTop('instant');
+            }}
           />
         ) : !selectedSection ? (
           /* Level 2: H2 Sections List Page */
@@ -410,11 +593,18 @@ export function BookScreen({ settings, isActive = true }: { settings: Settings; 
             selectedH1Group={selectedH1Group}
             allSections={parsedBook.allSections}
             scriptKey={scriptKey}
-            onSelectSection={(sectionId) => setSelectedSectionId(sectionId)}
+            onSelectSection={(sectionId) => {
+              const idx = parsedBook.allSections.findIndex(s => s.id === sectionId);
+              const targetIdx = idx >= 0 ? idx : 0;
+              setLoadedRange({ start: targetIdx, end: targetIdx });
+              setSelectedSectionId(sectionId);
+              scrollToContainerTop('instant');
+            }}
           />
         ) : (
           /* Level 3: Section Reader View */
           <BookSectionReader
+            sections={loadedSections}
             selectedSection={selectedSection}
             scriptKey={scriptKey}
             searchTerm={searchTerm}
@@ -422,6 +612,9 @@ export function BookScreen({ settings, isActive = true }: { settings: Settings; 
             t={t}
             tFor={tFor}
             contentRef={contentRef}
+            totalBookSections={parsedBook.allSections.length}
+            hasNextSection={loadedRange.end < parsedBook.allSections.length - 1}
+            bookTitle={selectedBook ? getBookTitle(selectedBook, t) : undefined}
           />
         )}
       </div>
@@ -440,6 +633,7 @@ export function BookScreen({ settings, isActive = true }: { settings: Settings; 
           setSelectedH1Title(null);
           setSelectedSectionId(null);
           setSearchTerm('');
+          scrollToContainerTop('instant');
         }}
         onToggleToc={() => setShowToc(true)}
         currentSectionIndex={currentSectionIndex}
@@ -477,21 +671,42 @@ export function BookScreen({ settings, isActive = true }: { settings: Settings; 
           setSelectedH1Title(h1Title);
           setSelectedSectionId(null);
           setShowToc(false);
+          scrollToContainerTop('instant');
         }}
         onSelectSection={(h1Title, sectionId) => {
+          const idx = parsedBook.allSections.findIndex(s => s.id === sectionId);
+          const targetIdx = idx >= 0 ? idx : 0;
           setSelectedH1Title(h1Title);
           setSelectedSectionId(sectionId);
           setShowToc(false);
-          window.scrollTo({ top: 0, behavior: 'smooth' });
+
+          if (targetIdx >= loadedRange.start && targetIdx <= loadedRange.end) {
+            scrollToSection(sectionId, 'smooth');
+          } else {
+            setLoadedRange({ start: targetIdx, end: targetIdx });
+            scrollToContainerTop('instant');
+          }
         }}
         onSelectH3={(h1Title, sectionId, h3Id) => {
+          const idx = parsedBook.allSections.findIndex(s => s.id === sectionId);
+          const targetIdx = idx >= 0 ? idx : 0;
           setSelectedH1Title(h1Title);
           setSelectedSectionId(sectionId);
           setShowToc(false);
-          if (h3Id) {
-            scrollToId(h3Id);
+
+          if (targetIdx >= loadedRange.start && targetIdx <= loadedRange.end) {
+            if (h3Id) {
+              scrollToId(h3Id);
+            } else {
+              scrollToSection(sectionId, 'smooth');
+            }
           } else {
-            window.scrollTo({ top: 0, behavior: 'smooth' });
+            setLoadedRange({ start: targetIdx, end: targetIdx });
+            if (h3Id) {
+              scrollToId(h3Id);
+            } else {
+              scrollToContainerTop('instant');
+            }
           }
         }}
         t={t}
