@@ -157,7 +157,16 @@ export default function App() {
 
   const [currentDate, setCurrentDate] = React.useState(new Date());
   const [selectedDate, setSelectedDate] = React.useState(new Date());
-  const [activeTab, setActiveTab] = React.useState('calendar');
+  const [activeTab, setActiveTab] = React.useState(() => {
+    if (typeof window !== 'undefined') {
+      const param = new URLSearchParams(window.location.search).get('tab');
+      const mapped = param === 'books' ? 'book' : param;
+      if (mapped && ['calendar', 'meditation', 'chants', 'book', 'study'].includes(mapped)) {
+        return mapped;
+      }
+    }
+    return 'calendar';
+  });
   const { showSettings, setShowSettings } = useUI();
 
   const handleTabClick = (tab: string) => {
