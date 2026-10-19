@@ -181,7 +181,7 @@ export const TRANSLATIONS: Record<SupportedLanguage, LandingTranslation> = {
   },
 
   si: {
-    brandName: 'IIT දින දර්ශනය',
+    brandName: 'Sati',
     institute: 'අන්තර්ජාතික ථෙරවාද බෞද්ධ ආයතනය (IIT)',
     badge: 'පැවිදි සහ ගිහි ප්‍රතිපත්ති සහයක',
     heroTitle: 'ධර්ම ප්‍රතිපදාව සහ විනයානුකූල දිවිපෙවෙත සඳහා නිහඬ සහයකයෙක්.',
@@ -288,7 +288,7 @@ export const TRANSLATIONS: Record<SupportedLanguage, LandingTranslation> = {
   },
 
   my: {
-    brandName: 'IIT ပြက္ခဒိန်',
+    brandName: 'Sati',
     institute: 'အပြည်ပြည်ဆိုင်ရာ ထေရဝါဒ ဗုဒ္ဓတက္ကသိုလ် (IIT)',
     badge: 'ရဟန်းနှင့် လူပုဂ္ဂိုလ်များအတွက် လမ်းညွှန်',
     heroTitle: 'တရားဓမ္မကျင့်ကြံမှုနှင့် ဝိနည်းတော်အတွက် အေးချမ်းသောအဖော်မွန်။',
@@ -395,7 +395,7 @@ export const TRANSLATIONS: Record<SupportedLanguage, LandingTranslation> = {
   },
 
   th: {
-    brandName: 'IIT ปฏิทิน',
+    brandName: 'Sati',
     institute: 'สถาบันเถรวาทนานาชาติ (IIT)',
     badge: 'เพื่อนคู่คิดสำหรับพระภิกษุและพุทธศาสนิกชน',
     heroTitle: 'เพื่อนร่วมทางอันสงบเพื่อการปฏิบัติธรรมและพระวินัย.',
@@ -502,7 +502,7 @@ export const TRANSLATIONS: Record<SupportedLanguage, LandingTranslation> = {
   },
 
   vi: {
-    brandName: 'Lịch IIT',
+    brandName: 'Sati',
     institute: 'Viện Phật học Nguyên thủy Quốc tế (IIT)',
     badge: 'Đồng hành cùng Tăng chúng & Phật tử',
     heroTitle: 'Người bạn đồng hành an tịnh cho việc tu học và Giới luật.',
@@ -609,7 +609,7 @@ export const TRANSLATIONS: Record<SupportedLanguage, LandingTranslation> = {
   },
 
   km: {
-    brandName: 'ប្រតិទិន IIT',
+    brandName: 'Sati',
     institute: 'វិទ្យាស្ថានថេរវាទអន្តរជាតិ (IIT)',
     badge: 'មគ្គុទ្ទេសក៍សម្រាប់ព្រះសង្ឃ និងពុទ្ធបរិស័ទ',
     heroTitle: 'មិត្តដ៏ស្ងប់ស្ងាត់សម្រាប់ការប្រតិបត្តិធម៌ និងការគោរពវិន័យ.',
@@ -716,7 +716,7 @@ export const TRANSLATIONS: Record<SupportedLanguage, LandingTranslation> = {
   },
 
   lo: {
-    brandName: 'ປະຕິທິນ IIT',
+    brandName: 'Sati',
     institute: 'ສະຖາບັນເຖຣະວາດສາກົນ (IIT)',
     badge: 'ເພື່ອນຄູ່ຄິດສຳລັບພຣະສົງ ແລະ ຊາວພຸດ',
     heroTitle: 'ເພື່ອນຮ່ວມທາງອັນສະຫງົບ ເພື່ອການປະຕິບັດທັມ ແລະ ພຣະວິນັຍ.',
