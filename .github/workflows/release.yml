@@ -86,7 +86,7 @@ jobs:
             RAW_VER="${{ github.ref_name }}"
           fi
           VERSION="${RAW_VER#v}"
-          pnpm exec capacitor-set-version set -v "$VERSION" -b ${{ github.run_number }}
+          pnpm exec capacitor-set-version set -v "$VERSION" -b "$(node scripts/version-code.mjs "$VERSION")"
       - name: Build Web
         run: pnpm build
       - name: Generate Icons
