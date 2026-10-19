@@ -15,7 +15,8 @@ import {
   parseBookSections,
   parseBookSearchIndex,
   getSearchResults,
-  getBookTitle
+  getBookTitle,
+  shouldSkipTopicsFirst
 } from '../lib/bookUtils';
 import { BookshelfGrid } from '../components/books/BookshelfGrid';
 import { BookVolumeList } from '../components/books/BookVolumeList';
@@ -136,14 +137,21 @@ export function BookScreen({ settings, isActive = true }: { settings: Settings; 
     }
   };
 
-  // Auto-scroll to top only when switching books
+  // Auto-scroll to top only when switching books and auto-select first section if showTopicsFirst is disabled
   const prevBookIdRef = useRef<string | null>(selectedBookId);
   useEffect(() => {
     if (selectedBookId !== prevBookIdRef.current) {
       prevBookIdRef.current = selectedBookId;
+      if (selectedBook && shouldSkipTopicsFirst(selectedBook) && selectedSectionId === null && parsedBook.allSections.length > 0) {
+        const firstGroup = parsedBook.h1Groups[0];
+        const firstSection = parsedBook.allSections[0];
+        if (firstGroup) setSelectedH1Title(firstGroup.h1Title);
+        if (firstSection) setSelectedSectionId(firstSection.id);
+        setLoadedRange({ start: 0, end: 0 });
+      }
       scrollToContainerTop('instant');
     }
-  }, [selectedBookId]);
+  }, [selectedBookId, selectedBook, parsedBook]);
 
   const scrollToId = (id?: string) => {
     setShowToc(false);
@@ -516,8 +524,14 @@ export function BookScreen({ settings, isActive = true }: { settings: Settings; 
             <nav className="flex items-center justify-center flex-wrap gap-1.5 text-xs text-[var(--text-muted)] font-medium max-w-3xl mx-auto px-2 text-center mt-1">
               <button
                 onClick={() => {
-                  setSelectedH1Title(null);
-                  setSelectedSectionId(null);
+                  if (shouldSkipTopicsFirst(selectedBook)) {
+                    setSelectedBookId(null);
+                    setSelectedH1Title(null);
+                    setSelectedSectionId(null);
+                  } else {
+                    setSelectedH1Title(null);
+                    setSelectedSectionId(null);
+                  }
                   scrollToContainerTop('instant');
                 }}
                 className={cn(
@@ -568,11 +582,23 @@ export function BookScreen({ settings, isActive = true }: { settings: Settings; 
           <BookshelfGrid
             books={booksList}
             onSelectBook={(bookId) => {
+              const targetBook = booksList.find(b => b.id === bookId);
               setSelectedBookId(bookId);
-              setSelectedH1Title(null);
-              setSelectedSectionId(null);
               setSearchTerm('');
-              setLoadedRange({ start: 0, end: 0 });
+
+              if (shouldSkipTopicsFirst(targetBook)) {
+                const bookHtml = targetBook ? getBookHtml(targetBook.file) : '';
+                const parsed = parseBookSections(bookHtml);
+                const firstGroup = parsed.h1Groups[0];
+                const firstSection = parsed.allSections[0];
+                setSelectedH1Title(firstGroup ? firstGroup.h1Title : null);
+                setSelectedSectionId(firstSection ? firstSection.id : null);
+                setLoadedRange({ start: 0, end: 0 });
+              } else {
+                setSelectedH1Title(null);
+                setSelectedSectionId(null);
+                setLoadedRange({ start: 0, end: 0 });
+              }
               scrollToContainerTop('instant');
             }}
             t={t}

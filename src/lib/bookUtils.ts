@@ -13,6 +13,11 @@ const htmlModules = import.meta.glob<string>('../data/books/*.html', {
 
 export const booksList: BookItem[] = rawBooksMetadata as BookItem[];
 
+export function shouldSkipTopicsFirst(book?: BookItem | null): boolean {
+  if (!book) return false;
+  return book.showTopicsFirst === false;
+}
+
 export function getBookHtml(fileName: string): string {
   const matchKey = Object.keys(htmlModules).find(k => k.endsWith('/' + fileName) || k.endsWith(fileName));
   if (matchKey && htmlModules[matchKey]) {

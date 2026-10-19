@@ -9,6 +9,7 @@ export interface BookItem {
   coverImage?: string;
   coverColor?: string;
   accentColor?: string;
+  showTopicsFirst?: boolean;
 }
 
 export interface H3Item {

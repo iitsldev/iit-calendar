@@ -34,5 +34,18 @@
     "coverImage": "/covers/patimokkha.png",
     "coverColor": "linear-gradient(135deg, #881337 0%, #4c0519 55%, #1c0209 100%)",
     "accentColor": "#f59e0b"
+  },
+  {
+    "id": "patthana",
+    "file": "patthana.html",
+    "title": "Samanta Paṭṭhāna",
+    "titleKey": "common.patthana",
+    "subtitle": "Paccayuddeso & Paccayaniddeso",
+    "subtitleKey": "common.patthanaSubtitle",
+    "author": "IIT",
+    "coverImage": "/covers/patthana.png",
+    "coverColor": "linear-gradient(135deg, #064e3b 0%, #022c22 55%, #021a14 100%)",
+    "accentColor": "#34d399",
+    "showTopicsFirst": false
   }
 ]
