@@ -74,7 +74,7 @@ export interface LandingTranslation {
 
 export const TRANSLATIONS: Record<SupportedLanguage, LandingTranslation> = {
   en: {
-    brandName: 'IIT Calendar',
+    brandName: 'Sati',
     institute: 'International Institute of Theravada',
     badge: 'Monastic & Lay Practice Companion',
     heroTitle: 'A quiet companion for Dhamma practice and monastic observance.',
@@ -85,7 +85,7 @@ export const TRANSLATIONS: Record<SupportedLanguage, LandingTranslation> = {
     insideAppSubtitle: 'The core instruments for monastic Vinaya and contemplative life.',
     screens: {
       calendar: {
-        title: 'Lunar & Solar',
+        title: 'Be diligent (Appamāda)',
         subtitle: 'Uposatha & Sun Times',
         tag: 'Calendar',
         points: [
@@ -95,7 +95,7 @@ export const TRANSLATIONS: Record<SupportedLanguage, LandingTranslation> = {
         ],
       },
       meditation: {
-        title: 'Stillness',
+        title: 'Time for inner-Peace',
         subtitle: 'Meditation & Singing Bowl',
         tag: 'Stillness',
         points: [
@@ -105,7 +105,7 @@ export const TRANSLATIONS: Record<SupportedLanguage, LandingTranslation> = {
         ],
       },
       chants: {
-        title: 'Pāli Chants',
+        title: 'Opt to chant',
         subtitle: 'Multi-Script Recitation',
         tag: 'Chants',
         points: [
@@ -115,7 +115,7 @@ export const TRANSLATIONS: Record<SupportedLanguage, LandingTranslation> = {
         ],
       },
       books: {
-        title: 'Dhamma Books',
+        title: 'Make your screen time more wholesome',
         subtitle: 'Canonical Texts & Vinaya',
         tag: 'Reading',
         points: [
@@ -125,7 +125,7 @@ export const TRANSLATIONS: Record<SupportedLanguage, LandingTranslation> = {
         ],
       },
       study: {
-        title: 'Study Focus',
+        title: 'Progress through focus',
         subtitle: 'Focus Blocks & Reflection',
         tag: 'Study',
         points: [
@@ -192,7 +192,7 @@ export const TRANSLATIONS: Record<SupportedLanguage, LandingTranslation> = {
     insideAppSubtitle: 'විනයානුකූල පැවිදි දිවිය සහ සිත දියුණු කිරීම සඳහා වන මූලික මෙවලම්.',
     screens: {
       calendar: {
-        title: 'චන්ද්‍ර හා සූර්ය කාල',
+        title: 'අප්‍රමාදී වන්න (අප්පමාද)',
         subtitle: 'පොහොය හා විනය වේලාවන්',
         tag: 'දින දර්ශනය',
         points: [
@@ -202,7 +202,7 @@ export const TRANSLATIONS: Record<SupportedLanguage, LandingTranslation> = {
         ],
       },
       meditation: {
-        title: 'සමථ භාවනාව',
+        title: 'අභ්‍යන්තර සැනසුමට මොහොතක්',
         subtitle: 'භාවනා හා නාද සීනුව',
         tag: 'භාවනා',
         points: [
@@ -212,7 +212,7 @@ export const TRANSLATIONS: Record<SupportedLanguage, LandingTranslation> = {
         ],
       },
       chants: {
-        title: 'පාලි සජ්ඣායනා',
+        title: 'සජ්ඣායනයට නැඹුරු වන්න',
         subtitle: 'බහු අක්ෂර පරිවර්තනය',
         tag: 'සජ්ඣායනා',
         points: [
@@ -222,7 +222,7 @@ export const TRANSLATIONS: Record<SupportedLanguage, LandingTranslation> = {
         ],
       },
       books: {
-        title: 'ධර්ම පුස්තක',
+        title: 'තිර කාලය කුසලයට හරවන්න',
         subtitle: 'පාතිමොක්ඛය හා ධර්ම ග්‍රන්ථ',
         tag: 'කියවන්න',
         points: [
@@ -232,7 +232,7 @@ export const TRANSLATIONS: Record<SupportedLanguage, LandingTranslation> = {
         ],
       },
       study: {
-        title: 'ධර්ම අධ්‍යයනය',
+        title: 'අවධානයෙන් ඉදිරියට',
         subtitle: 'ධර්ම සාකච්ඡා හා මතක තබා ගැනීම',
         tag: 'අධ්‍යයනය',
         points: [

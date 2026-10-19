@@ -1,6 +1,6 @@
 {
   "$schema": "https://schema.tauri.app/config/2",
-  "productName": "IIT Calendar",
+  "productName": "Sati",
   "version": "0.1.0",
   "identifier": "com.iitcalendar.applet",
   "build": {
@@ -12,7 +12,7 @@
   "app": {
     "windows": [
       {
-        "title": "IIT Calendar",
+        "title": "Sati",
         "width": 800,
         "height": 600,
         "resizable": true,

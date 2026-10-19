@@ -22,7 +22,7 @@ export const AppleStoreButton: React.FC<{ url?: string; className?: string; id?:
       target="_blank"
       rel="noopener noreferrer"
       className={`store-badge ${className}`}
-      aria-label="Download IIT Calendar on the Apple App Store"
+      aria-label="Download Sati on the Apple App Store"
       id={id}
     >
       <svg
@@ -54,7 +54,7 @@ export const GooglePlayButton: React.FC<{ url?: string; className?: string; id?:
       target="_blank"
       rel="noopener noreferrer"
       className={`store-badge ${className}`}
-      aria-label="Get IIT Calendar on Google Play"
+      aria-label="Get Sati on Google Play"
       id={id}
     >
       <svg

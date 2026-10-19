@@ -29,7 +29,7 @@ export default function TriagePhoneFrame({
         {!imageError && imageSrc ? (
           <img
             src={imageSrc}
-            alt={`${screenTitle} screen — IIT Calendar mobile app interface`}
+            alt={`${screenTitle} screen — Sati mobile app interface`}
             className="phone-real-img"
             width={320}
             height={668}

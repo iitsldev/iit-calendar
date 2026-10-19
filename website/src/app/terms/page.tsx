@@ -5,14 +5,14 @@ import Link from 'next/link';
 export const metadata: Metadata = {
   title: 'End User License Agreement & Terms of Service',
   description:
-    'End User License Agreement (EULA) and Terms of Service for the IIT Calendar mobile application and website.',
+    'End User License Agreement (EULA) and Terms of Service for the Sati mobile application and website.',
   alternates: {
     canonical: '/terms',
   },
   openGraph: {
-    title: 'Terms of Service & EULA — IIT Calendar',
+    title: 'Terms of Service & EULA — Sati',
     description:
-      'End User License Agreement (EULA) and Terms of Service for IIT Calendar. Open-source, free, and privacy-first.',
+      'End User License Agreement (EULA) and Terms of Service for Sati. Open-source, free, and privacy-first.',
     url: 'https://iit.damsak.org/terms',
   },
 };
@@ -22,12 +22,12 @@ export default function TermsPage() {
     <div style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
       <header className="top-nav site-container" style={{ borderBottom: '1px solid var(--border-subtle)', paddingBottom: '20px' }}>
         <div className="brand-identity">
-          <Link href="/" className="brand-emblem" style={{ display: 'inline-block' }}>
-            <img src="/logo.png" alt="IIT Monastery Emblem" width={44} height={44} />
+          <Link href="/" className="brand-emblem" aria-label="Home">
+            <img src="/logo.png" alt="Sati App Icon" width={44} height={44} />
           </Link>
           <div className="brand-meta">
             <Link href="/" style={{ textDecoration: 'none' }}>
-              <span className="brand-name">IIT Calendar</span>
+              <span className="brand-name">Sati</span>
             </Link>
             <p>International Institute of Theravada</p>
           </div>
@@ -79,7 +79,7 @@ export default function TermsPage() {
                 1. Acceptance of Terms
               </h2>
               <p>
-                By downloading, installing, accessing, or using the IIT Calendar application, you agree to
+                By downloading, installing, accessing, or using the Sati application, you agree to
                 be bound by the terms and conditions of this agreement. If you do not agree to these terms,
                 do not install or use the application.
               </p>

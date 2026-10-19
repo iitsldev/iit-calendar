@@ -9,7 +9,7 @@ export function PrivacyScreen() {
         
         <h2 className="font-serif text-xl font-bold mt-6 mb-3 text-[var(--text-primary)]">1. Information Collection and Use</h2>
         <p className="mb-4">
-          The IIT Calendar application respects your privacy. We do not collect, store, or transmit any personally identifiable information to external servers. All data processed by this application remains on your device.
+          The Sati application respects your privacy. We do not collect, store, or transmit any personally identifiable information to external servers. All data processed by this application remains on your device.
         </p>
 
         <h2 className="font-serif text-xl font-bold mt-6 mb-3 text-[var(--text-primary)]">2. Location Data</h2>

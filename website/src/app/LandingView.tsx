@@ -50,7 +50,7 @@ export default function LandingView() {
             <header className="top-nav">
               <div className="brand-identity">
                 <div className="brand-emblem">
-                  <img src="/logo.png" alt="IIT Monastery Emblem" width={44} height={44} />
+                  <img src="/logo.png" alt="Sati App Icon" width={44} height={44} />
                 </div>
                 <div className="brand-meta">
                   <span className="brand-name">{t.brandName}</span>

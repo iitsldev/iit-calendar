@@ -6,7 +6,7 @@ dotenv.config();
 
 const config: CapacitorConfig = {
   "appId": "com.iitcalendar.applet",
-  "appName": "IIT Calendar",
+  "appName": "Sati",
   "webDir": "dist",
   "plugins": {
     "CapacitorUpdater": {

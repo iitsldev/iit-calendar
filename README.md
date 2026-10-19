@@ -1,4 +1,4 @@
-# IIT Calendar
+# Sati
 
 A comprehensive Buddhist calendar and spiritual practice companion app designed for monastics and lay practitioners. This app provides essential tools for daily life in a monastic or serious practice environment, supporting multiple traditions and languages.
 
@@ -14,7 +14,7 @@ A comprehensive Buddhist calendar and spiritual practice companion app designed 
 
 ## Privacy
 
-IIT Calendar is designed with a **local-first** philosophy. Your data—including settings, chanting history, and meditation statistics—is stored exclusively on your device.
+Sati is designed with a **local-first** philosophy. Your data—including settings, chanting history, and meditation statistics—is stored exclusively on your device.
 
 - **No Data Collection**: We do not collect or transmit your personal data to external servers.
 - **Local Storage**: All practice data stays within your device's local storage or native file system.

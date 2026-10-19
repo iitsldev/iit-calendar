@@ -5,14 +5,14 @@ import Link from 'next/link';
 export const metadata: Metadata = {
   title: 'Privacy Policy',
   description:
-    'IIT Calendar is 100% offline, free, and privacy-first. We do not collect, store, or transmit any personal data.',
+    'Sati is 100% offline, free, and privacy-first. We do not collect, store, or transmit any personal data.',
   alternates: {
     canonical: '/privacy',
   },
   openGraph: {
-    title: 'Privacy Policy — IIT Calendar',
+    title: 'Privacy Policy — Sati',
     description:
-      'IIT Calendar is 100% offline, free, and privacy-first. We do not collect, store, or transmit any personal data.',
+      'Sati is 100% offline, free, and privacy-first. We do not collect, store, or transmit any personal data.',
     url: 'https://iit.damsak.org/privacy',
   },
 };
@@ -22,12 +22,12 @@ export default function PrivacyPage() {
     <div style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
       <header className="top-nav site-container" style={{ borderBottom: '1px solid var(--border-subtle)', paddingBottom: '20px' }}>
         <div className="brand-identity">
-          <Link href="/" className="brand-emblem" style={{ display: 'inline-block' }}>
-            <img src="/logo.png" alt="IIT Monastery Emblem" width={44} height={44} />
+          <Link href="/" className="brand-emblem" aria-label="Home">
+            <img src="/logo.png" alt="Sati App Icon" width={44} height={44} />
           </Link>
           <div className="brand-meta">
             <Link href="/" style={{ textDecoration: 'none' }}>
-              <span className="brand-name">IIT Calendar</span>
+              <span className="brand-name">Sati</span>
             </Link>
             <p>International Institute of Theravada</p>
           </div>
@@ -79,7 +79,7 @@ export default function PrivacyPage() {
                 1. Information Collection and Use
               </h2>
               <p>
-                The IIT Calendar application respects your privacy completely. We do not collect, store,
+                The Sati application respects your privacy completely. We do not collect, store,
                 or transmit any personally identifiable information to external servers. All data processed
                 by this application remains exclusively on your device.
               </p>

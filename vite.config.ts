@@ -12,11 +12,11 @@ export default defineConfig(({mode}) => {
       tailwindcss(),
       VitePWA({
         registerType: 'prompt',
-        includeAssets: ['logo.png', 'bell.wav'],
+        includeAssets: ['logo.png', 'emblem.png', 'bell.wav'],
         manifest: {
-          name: 'IIT Calendar',
-          short_name: 'IITCal',
-          description: 'IIT Calendar Application',
+          name: 'Sati',
+          short_name: 'Sati',
+          description: 'Sati — Buddhist Practice & Monastic Companion',
           theme_color: '#ffffff',
           icons: [
             {

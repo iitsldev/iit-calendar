@@ -1,5 +1,5 @@
 {
-  "name": "IIT Calendar",
+  "name": "Sati",
   "description": "A serene cross-platform Buddhist calendar app with Uposatha tracking, astronomical sun times, and Pali chants, designed with a elegant glassmorphism aesthetic.",
   "requestFramePermissions": ["geolocation"],
   "majorCapabilities": []

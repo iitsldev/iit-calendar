@@ -2,8 +2,8 @@ import type { MetadataRoute } from 'next';
 
 export default function manifest(): MetadataRoute.Manifest {
   return {
-    name: 'IIT Calendar — Buddhist Practice & Monastic Companion',
-    short_name: 'IIT Calendar',
+    name: 'Sati — Buddhist Practice & Monastic Companion',
+    short_name: 'Sati',
     description:
       'Astronomical solar calculations for Vinaya observance, multi-tradition Uposatha tracking, multi-script Pāli chanting, and serene meditation timers. 100% offline, free, and privacy-first.',
     start_url: '/',

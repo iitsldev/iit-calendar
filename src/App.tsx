@@ -316,7 +316,7 @@ function PlaceholderTab({ icon, title, text }: { icon: React.ReactNode, title: s
       className="flex flex-col items-center justify-center py-20 text-center"
     >
       <div className="w-[192px] h-[192px] flex items-center justify-center mb-8 overflow-hidden">
-        <img src="/logo.png" alt="IIT Logo" className="w-[144px] h-[144px] object-contain opacity-20" />
+        <img src="/emblem.png" alt="IIT Emblem" className="w-[144px] h-[144px] object-contain opacity-20" />
       </div>          <h2 className="font-serif text-3xl font-bold text-slate-800 dark:text-slate-200 mb-4">{title}</h2>
       <p className="text-slate-400 dark:text-slate-500 max-w-sm leading-relaxed">{text}</p>
       <button className="mt-10 px-8 py-4 bg-white dark:bg-slate-800 rounded-full text-sm font-black text-saffron uppercase tracking-widest border border-saffron/20 shadow-sm active:scale-95 transition-all">Coming Soon</button>

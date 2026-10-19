@@ -38,10 +38,10 @@ export function LegalModal({ show, onClose }: { show: boolean; onClose: () => vo
           <div className="space-y-6">
             <section className="space-y-3">
               <h3 className="font-bold text-base mb-2" style={{ color: 'var(--text-primary)' }}>
-                {t('settings.legal.aboutTitle') || 'About IIT Calendar'}
+                {t('settings.legal.aboutTitle') || 'About Sati'}
               </h3>
               <p className="text-sm leading-relaxed" style={{ color: 'var(--text-secondary)' }}>
-                {t('settings.legal.aboutP1') || 'IIT Calendar has been developed as an effort to support the Dhamma community, with the kind guidance, advice, and encouragement of Ven. Werapitiye Devananda Thera.'}
+                {t('settings.legal.aboutP1') || 'Sati has been developed as an effort to support the Dhamma community, with the kind guidance, advice, and encouragement of Ven. Werapitiye Devananda Thera.'}
               </p>
               <p className="text-sm leading-relaxed" style={{ color: 'var(--text-secondary)' }}>
                 {t('settings.legal.aboutP2') || 'This application is dedicated to all members of the Sangha and devotees who strive to preserve, practise, and share the Dhamma.'}
@@ -83,11 +83,11 @@ export function LegalModal({ show, onClose }: { show: boolean; onClose: () => vo
         {section === 'privacy' && (
           <div className="space-y-4">
             <h3 className="font-bold text-base" style={{ color: 'var(--text-primary)' }}>Privacy Policy</h3>
-            <p>This Privacy Policy describes how your personal information is handled in IIT Calendar.</p>
+            <p>This Privacy Policy describes how your personal information is handled in Sati.</p>
 
             <h4 className="font-bold" style={{ color: 'var(--text-primary)' }}>1. Data Storage</h4>
             <p>
-              IIT Calendar is a "local-first" application. All your data, including settings, chanting history,
+              Sati is a "local-first" application. All your data, including settings, chanting history,
               and meditation statistics, is stored exclusively on your device using local storage or native file systems.
             </p>
 

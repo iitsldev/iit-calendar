@@ -11,13 +11,15 @@ export const viewport: Viewport = {
 export const metadata: Metadata = {
   metadataBase: new URL('https://iit.damsak.org'),
   title: {
-    default: 'IIT Calendar — Buddhist Lunar Calendar, Vinaya Solar Calculations & Chanting Companion',
-    template: '%s | IIT Calendar',
+    default: 'Sati — Buddhist Lunar Calendar, Vinaya Solar Calculations & Chanting Companion',
+    template: '%s | Sati',
   },
   description:
     'A quiet, reverent companion app for Buddhist monastics and lay practitioners. Astronomical solar calculations for Vinaya observance, multi-tradition Uposatha tracking, multi-script Pāli chanting, and serene meditation timers. 100% offline, free, and privacy-first.',
-  applicationName: 'IIT Calendar',
+  applicationName: 'Sati',
   keywords: [
+    'Sati',
+    'Sati App',
     'IIT Calendar',
     'Buddhist Calendar',
     'Theravada Calendar',
@@ -51,17 +53,17 @@ export const metadata: Metadata = {
     },
   },
   openGraph: {
-    title: 'IIT Calendar — Buddhist Practice & Monastic Companion',
+    title: 'Sati — Buddhist Practice & Monastic Companion',
     description:
       'Astronomical solar calculations for Vinaya observance, multi-tradition Uposatha tracking, multi-script Pāli chanting, and serene stillness timers. 100% offline and free.',
     url: 'https://iit.damsak.org',
-    siteName: 'IIT Calendar',
+    siteName: 'Sati',
     images: [
       {
         url: '/logo.png',
         width: 512,
         height: 512,
-        alt: 'IIT Calendar Monastery Emblem',
+        alt: 'Sati Monastery Emblem',
       },
     ],
     locale: 'en_US',
@@ -69,7 +71,7 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: 'summary',
-    title: 'IIT Calendar — Buddhist Practice & Monastic Companion',
+    title: 'Sati — Buddhist Practice & Monastic Companion',
     description:
       'Astronomical solar calculations for Vinaya observance, multi-tradition Uposatha tracking, multi-script Pāli chanting, and serene stillness timers. 100% offline and free.',
     images: ['/logo.png'],
@@ -89,7 +91,7 @@ export const metadata: Metadata = {
   },
   appleWebApp: {
     capable: true,
-    title: 'IIT Calendar',
+    title: 'Sati',
     statusBarStyle: 'default',
   },
   formatDetection: {
@@ -104,7 +106,7 @@ const jsonLd = {
       '@type': 'WebSite',
       '@id': 'https://iit.damsak.org/#website',
       url: 'https://iit.damsak.org',
-      name: 'IIT Calendar',
+      name: 'Sati',
       description: 'Buddhist Lunar Calendar, Vinaya Solar Calculations & Chanting Companion',
       publisher: {
         '@id': 'https://iit.damsak.org/#organization',
@@ -122,7 +124,7 @@ const jsonLd = {
     {
       '@type': 'MobileApplication',
       '@id': 'https://iit.damsak.org/#app',
-      name: 'IIT Calendar',
+      name: 'Sati',
       operatingSystem: 'iOS, Android',
       applicationCategory: 'LifestyleApplication',
       applicationSubCategory: 'ReligiousApplication',

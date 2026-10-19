@@ -113,7 +113,7 @@ export function SettingsModal({
     };
 
     const jsonStr = JSON.stringify(backup, null, 2);
-    const fileName = `iit_calendar_backup_${new Date().toISOString().slice(0, 10)}.json`;
+    const fileName = `sati_backup_${new Date().toISOString().slice(0, 10)}.json`;
 
     if (Capacitor.isNativePlatform()) {
       try {
@@ -126,8 +126,8 @@ export function SettingsModal({
         });
 
         await Share.share({
-          title: 'IIT Calendar Backup',
-          text: 'IIT Calendar backup data',
+          title: 'Sati Backup',
+          text: 'Sati backup data',
           url: result.uri,
           dialogTitle: 'Export Backup',
         });

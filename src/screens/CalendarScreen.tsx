@@ -324,8 +324,8 @@ export function CalendarScreen({
 
           {/* IIT Logo centered on top of the orbits */}
           <img
-            src="/logo.png"
-            alt="IIT Logo"
+            src="/emblem.png"
+            alt="IIT Emblem"
             className="relative z-10 w-20 h-20 sm:w-28 sm:h-28 object-contain drop-shadow-lg select-none pointer-events-none"
           />
         </div>
@@ -338,7 +338,7 @@ export function CalendarScreen({
         {/* Title & Tagline info inside the card */}
         <div className="px-2 text-center flex flex-col items-center relative w-full pr-12 pl-12">
           <h1 className="font-serif text-3xl font-bold text-[var(--text-primary)] leading-none mb-1.5">
-            IIT Calendar
+            Sati
           </h1>
           <Button
             onClick={() => setShowSettings(true)}
