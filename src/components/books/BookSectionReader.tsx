@@ -26,6 +26,23 @@ interface SingleSectionProps {
   tFor: (lang: string, key: string) => string;
 }
 
+export const CHAPTER_SEPARATOR_HTML =
+  '<div class="my-10 flex items-center justify-center gap-3 opacity-35 dark:opacity-25" aria-hidden="true" data-no-transliterate="true">' +
+  '<div class="h-px w-14 bg-gradient-to-r from-transparent to-amber-600 dark:to-amber-400"></div>' +
+  '<div class="w-1.5 h-1.5 rounded-full bg-amber-600 dark:bg-amber-400"></div>' +
+  '<div class="h-px w-14 bg-gradient-to-l from-transparent to-amber-600 dark:to-amber-400"></div>' +
+  '</div>';
+
+export function ChapterSeparator() {
+  return (
+    <div className="my-10 flex items-center justify-center gap-3 opacity-35 dark:opacity-25" aria-hidden="true">
+      <div className="h-px w-14 bg-gradient-to-r from-transparent to-amber-600 dark:to-amber-400" />
+      <div className="w-1.5 h-1.5 rounded-full bg-amber-600 dark:bg-amber-400" />
+      <div className="h-px w-14 bg-gradient-to-l from-transparent to-amber-600 dark:to-amber-400" />
+    </div>
+  );
+}
+
 const SingleSection = React.memo(function SingleSection({
   section,
   scriptKey,
@@ -98,6 +115,9 @@ const SingleSection = React.memo(function SingleSection({
         html = html.replace(regex, (match) => `<mark class="bg-amber-200 dark:bg-amber-500/40 text-slate-900 dark:text-white rounded px-0.5 ring-1 ring-amber-400/50 transition-all duration-300">${match}</mark>`);
       }
     }
+
+    // Transform any <hr> tags into the decorative chapter separator
+    html = html.replace(/<hr\s*\/?>/gi, CHAPTER_SEPARATOR_HTML);
 
     return html;
   }, [section, scriptKey, searchTerm, language, tFor]);
@@ -230,11 +250,7 @@ export function BookSectionReader({
           />
 
           {idx < sectionsToRender.length - 1 && (
-            <div className="my-10 flex items-center justify-center gap-3 opacity-35 dark:opacity-25" aria-hidden="true">
-              <div className="h-px w-14 bg-gradient-to-r from-transparent to-amber-600 dark:to-amber-400" />
-              <div className="w-1.5 h-1.5 rounded-full bg-amber-600 dark:bg-amber-400" />
-              <div className="h-px w-14 bg-gradient-to-l from-transparent to-amber-600 dark:to-amber-400" />
-            </div>
+            <ChapterSeparator />
           )}
         </React.Fragment>
       ))}
