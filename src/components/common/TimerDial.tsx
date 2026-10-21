@@ -23,6 +23,12 @@ interface TimerDialProps {
   countdown?: number;
   /** Countdown label */
   countdownLabel?: string;
+  /** Optional custom class for digits */
+  digitsClassName?: string;
+  /** Optional custom class for status pill */
+  labelClassName?: string;
+  /** Optional custom inline style for status pill */
+  labelStyle?: React.CSSProperties;
   /** Custom className for the container */
   className?: string;
 }
@@ -38,6 +44,9 @@ export function TimerDial({
   isFinished = false,
   countdown = 0,
   countdownLabel = 'STARTING IN',
+  digitsClassName,
+  labelClassName,
+  labelStyle,
   className,
 }: TimerDialProps) {
   const center = size / 2;
@@ -89,6 +98,15 @@ export function TimerDial({
   const timeSegments = useMemo(() => {
     return timeString.split(':');
   }, [timeString]);
+
+  // Compute adaptive font size so 3-segment (hh:mm:ss) strings never overflow the bezel
+  const computedDigitsClass = useMemo(() => {
+    if (digitsClassName) return digitsClassName;
+    const len = timeString.length;
+    if (len >= 8) return "text-2xl sm:text-3xl";
+    if (len >= 6) return "text-3xl sm:text-4xl";
+    return "text-4xl sm:text-5xl";
+  }, [digitsClassName, timeString.length]);
 
   const uniqueId = useMemo(() => Math.random().toString(36).substring(2, 9), []);
 
@@ -265,8 +283,11 @@ export function TimerDial({
           <div className="flex flex-col items-center justify-center text-center">
             {/* Status / Remaining / Duration Pill */}
             <div
-              className="inline-flex items-center px-2.5 py-0.5 rounded-full text-[10px] font-extrabold uppercase tracking-[0.25em] mb-2 border transition-colors shadow-xs"
-              style={{
+              className={cn(
+                "inline-flex items-center px-2.5 py-0.5 rounded-full text-[10px] font-extrabold uppercase tracking-[0.25em] mb-2 border transition-colors shadow-xs",
+                labelClassName
+              )}
+              style={labelStyle || {
                 backgroundColor: isPaused
                   ? 'rgba(234, 179, 8, 0.12)'
                   : isFinished
@@ -284,15 +305,18 @@ export function TimerDial({
                   : 'var(--text-muted)',
               }}
             >
-              {isFinished
+              {label || (isFinished
                 ? 'COMPLETE'
                 : isPaused
                 ? 'PAUSED'
-                : label}
+                : '')}
             </div>
 
             {/* Center Clock Digits */}
-            <div className="flex items-baseline justify-center font-serif text-4xl sm:text-5xl font-semibold tracking-tight text-[var(--text-primary)] leading-none tabular-nums">
+            <div className={cn(
+              "flex items-baseline justify-center font-serif font-semibold tracking-tight text-[var(--text-primary)] leading-none tabular-nums px-2",
+              computedDigitsClass
+            )}>
               {timeSegments.map((segment, index) => (
                 <React.Fragment key={index}>
                   <span>{segment}</span>

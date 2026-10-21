@@ -1,6 +1,7 @@
 import puppeteer from 'puppeteer-core';
 import path from 'path';
 import fs from 'fs';
+import http from 'http';
 import { fileURLToPath } from 'url';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
@@ -20,7 +21,28 @@ const screens = [
   { name: 'study', tab: 'study' },
 ];
 
+async function findRunningUrl() {
+  if (process.env.APP_URL) return process.env.APP_URL;
+  const candidatePorts = [3001, 3000, 5173];
+  for (const port of candidatePorts) {
+    const isRunning = await new Promise((resolve) => {
+      const req = http.get(`http://localhost:${port}/`, (res) => {
+        resolve(res.statusCode === 200 || res.statusCode === 304);
+      });
+      req.on('error', () => resolve(false));
+      req.setTimeout(1000, () => {
+        req.destroy();
+        resolve(false);
+      });
+    });
+    if (isRunning) return `http://localhost:${port}`;
+  }
+  return 'http://localhost:3000';
+}
+
 async function capture() {
+  const baseUrl = await findRunningUrl();
+  console.log(`Using base URL: ${baseUrl}`);
   console.log('Launching Chrome...');
   const browser = await puppeteer.launch({
     executablePath: CHROME_PATH,
@@ -41,7 +63,7 @@ async function capture() {
   });
 
   const context = browser.defaultBrowserContext();
-  await context.overridePermissions('http://localhost:5173', ['geolocation']);
+  await context.overridePermissions(baseUrl, ['geolocation']);
 
   const page = await browser.newPage();
 
@@ -71,7 +93,7 @@ async function capture() {
   });
 
   for (const screen of screens) {
-    const url = `http://localhost:5173/?tab=${screen.tab}`;
+    const url = `${baseUrl}/?tab=${screen.tab}`;
     console.log(`Navigating to ${url}...`);
     await page.goto(url, { waitUntil: 'networkidle0', timeout: 30000 });
 

@@ -15,7 +15,9 @@
     "cap:set-version": "capacitor-set-version set -v $npm_package_version -b $(node scripts/version-code.mjs)",
     "version": "capacitor-set-version set -v $npm_package_version -b $(node scripts/version-code.mjs) && git add android/app/build.gradle ios/App/App/Info.plist package.json package-lock.json 2>/dev/null || true",
     "cap:open:android": "npx cap open android",
-    "cap:open:ios": "npx cap open ios"
+    "cap:open:ios": "npx cap open ios",
+    "screenshots:tablet": "node scripts/capture-tablet-screenshots.mjs",
+    "screenshots:phone": "node scripts/capture-screenshots.mjs"
   },
   "dependencies": {
     "@capacitor/android": "^8.3.2",

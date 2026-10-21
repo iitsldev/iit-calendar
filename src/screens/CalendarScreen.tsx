@@ -358,8 +358,10 @@ export function CalendarScreen({
           </div>
         </div>
 
-        {/* ── Calendar Grid Section ─────────────────────────────────────────── */}
-        <section
+        {/* ── Calendar & Cards wrapper matching Meditation, Chants, and Study ── */}
+        <div className="max-w-2xl w-full mx-auto space-y-6">
+          {/* ── Calendar Grid Section ─────────────────────────────────────────── */}
+          <section
           className="card-lg relative overflow-hidden p-4 sm:p-6"
           style={{
             background: 'color-mix(in srgb, var(--surface) 100%, transparent)',
@@ -1138,6 +1140,7 @@ export function CalendarScreen({
             </div>
           </motion.div>
         </AnimatePresence>
+      </div>
 
         <CardOrderModal
           show={showOrderModal}

@@ -362,20 +362,22 @@ export function StudyScreen() {
           </p>
         </div>
 
-        {/* Tab Strip — Timer / Insights / Configs */}
-        <div className="h-14 flex items-center justify-center">
-          <SegmentedControl
-            options={[
-              { id: 'timer', icon: Clock, label: t('study.timer') || 'Timer' },
-              { id: 'insights', icon: BarChart2, label: t('study.insights') || 'Insights' },
-              { id: 'configs', icon: Settings2, label: t('study.configs') || 'Settings' },
-            ]}
-            value={view}
-            onChange={(val) => setView(val as any)}
-          />
-        </div>
+        {/* ── Study Content wrapper matching Meditation & Chants ── */}
+        <div className="max-w-2xl w-full mx-auto space-y-6">
+          {/* Tab Strip — Timer / Insights / Configs */}
+          <div className="h-14 flex items-center justify-center">
+            <SegmentedControl
+              options={[
+                { id: 'timer', icon: Clock, label: t('study.timer') || 'Timer' },
+                { id: 'insights', icon: BarChart2, label: t('study.insights') || 'Insights' },
+                { id: 'configs', icon: Settings2, label: t('study.configs') || 'Settings' },
+              ]}
+              value={view}
+              onChange={(val) => setView(val as any)}
+            />
+          </div>
 
-        {/* ── Study Content by Tab ── */}
+          {/* ── Study Content by Tab ── */}
         <AnimatePresence mode="wait">
           {view === 'timer' && (
             <motion.div
@@ -657,5 +659,6 @@ export function StudyScreen() {
         </AnimatePresence>
       </div>
     </div>
-  );
+  </div>
+);
 }

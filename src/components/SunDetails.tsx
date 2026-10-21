@@ -7,7 +7,8 @@ import {
   Sunrise, 
   Sun, 
   Sunset, 
-  X 
+  X,
+  Timer
 } from 'lucide-react';
 import { SunTimesCalculator } from '../lib/calendar/SunTimesCalculator';
 import { Settings } from '../types';
@@ -15,6 +16,7 @@ import { useI18n } from '../hooks/useI18n';
 import { cn } from '../lib/utils';
 import { alarmService } from '../services/alarm/AlarmService';
 import { Toggle } from './Toggle';
+import { SolarCountdownModal } from './SolarCountdownModal';
 import { LocalNotifications } from '@capacitor/local-notifications';
 import { Capacitor } from '@capacitor/core';
 
@@ -116,6 +118,7 @@ export function SunDetails({
   const times = calculator.getStandardTimes(date);
   const currentTime = new Date();
   const [selectedPhase, setSelectedPhase] = React.useState<number | null>(null);
+  const [showNoonCountdown, setShowNoonCountdown] = React.useState(false);
 
   const playPreviewBeep = () => {
     try {
@@ -328,6 +331,21 @@ export function SunDetails({
             active={expanded}
           />
         </div>
+
+        {/* Long button beneath all three suns */}
+        <button
+          type="button"
+          onClick={() => setShowNoonCountdown(true)}
+          className="mt-3.5 w-full flex items-center justify-center gap-2 py-2 px-4 rounded-xl font-bold text-xs uppercase tracking-wider transition-all duration-200 border cursor-pointer shadow-2xs hover:scale-[1.01] active:scale-[0.99] select-none"
+          style={{
+            backgroundColor: 'var(--accent-subtle)',
+            borderColor: 'var(--border-subtle)',
+            color: 'var(--accent)',
+          }}
+        >
+          <Timer size={14} className="shrink-0 opacity-80" />
+          <span>{t('sun.countdownToNoon') || 'Count down to Noon'}</span>
+        </button>
       </div>
 
       <AnimatePresence>
@@ -541,8 +559,14 @@ export function SunDetails({
           </div>
 
           <div className="grid grid-cols-2 gap-y-6 gap-x-8 p-6 rounded-[2rem]" style={{ background: 'var(--accent-subtle)', border: '1px solid var(--border)' }}>
-            <DetailRow label={t('sun.traditionDawn')} value={safeFormat(activeDawn, 'hh:mm:ss a')} />
-            <DetailRow label={t('sun.solarNoon')} value={safeFormat(times.solarNoon, 'hh:mm:ss a')} />
+            <DetailRow 
+              label={t('sun.traditionDawn')} 
+              value={safeFormat(activeDawn, 'hh:mm:ss a')} 
+            />
+            <DetailRow 
+              label={t('sun.solarNoon')} 
+              value={safeFormat(times.solarNoon, 'hh:mm:ss a')} 
+            />
             {/* Solar Noon Alert Row */}
             <div className="col-span-2 sm:col-span-1 mt-2 flex items-center justify-between p-4 rounded-2xl bg-saffron/5 border border-saffron/20">
               <div className="flex items-center gap-3">
@@ -594,6 +618,14 @@ export function SunDetails({
         </motion.div>
       )}
       </AnimatePresence>
+
+      <SolarCountdownModal
+        show={showNoonCountdown}
+        onClose={() => setShowNoonCountdown(false)}
+        settings={settings}
+        calculator={calculator}
+        date={date}
+      />
     </div>
   );
 }
