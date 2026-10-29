@@ -3,45 +3,211 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Privacy Policy - Sati</title>
+  <meta name="google-site-verification" content="WydCc_btFlhAVngJby8kygyAfdrvApdFznLUYpYClc8" />
+  <title>Privacy Policy — Sati</title>
   <style>
-    body {
-      font-family: system-ui, -apple-system, sans-serif;
-      line-height: 1.6;
-      max-width: 800px;
-      margin: 0 auto;
-      padding: 2rem;
-      color: #333;
-      background: #f9fafb;
+    :root {
+      --bg: #fdfbf7;
+      --card-bg: #ffffff;
+      --border: #e7e5e4;
+      --text: #1c1917;
+      --text-muted: #78716c;
+      --primary: #92400e;
+      --primary-hover: #78350f;
     }
     @media (prefers-color-scheme: dark) {
-      body {
-        background: #0f172a;
-        color: #f1f5f9;
+      :root {
+        --bg: #0c0a09;
+        --card-bg: #1c1917;
+        --border: #292524;
+        --text: #f5f5f4;
+        --text-muted: #a8a29e;
+        --primary: #f59e0b;
+        --primary-hover: #fbbf24;
       }
     }
-    h1 { font-size: 2rem; margin-bottom: 0.5rem; }
-    h2 { font-size: 1.5rem; margin-top: 2rem; margin-bottom: 1rem; }
-    p { margin-bottom: 1rem; }
+    * {
+      box-sizing: border-box;
+    }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      line-height: 1.7;
+      max-width: 740px;
+      margin: 0 auto;
+      padding: 3rem 1.5rem;
+      color: var(--text);
+      background-color: var(--bg);
+    }
+    header {
+      margin-bottom: 2.5rem;
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 1.5rem;
+    }
+    .kicker {
+      font-size: 0.82rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--text-muted);
+      margin-bottom: 0.5rem;
+      font-weight: 600;
+    }
+    h1 {
+      font-size: 2.4rem;
+      line-height: 1.15;
+      margin: 0 0 0.5rem 0;
+      color: var(--text);
+      font-weight: 700;
+      letter-spacing: -0.02em;
+    }
+    .effective-date {
+      color: var(--text-muted);
+      font-size: 0.92rem;
+      margin: 0;
+    }
+    h2 {
+      font-size: 1.3rem;
+      margin-top: 2.25rem;
+      margin-bottom: 0.75rem;
+      color: var(--text);
+      font-weight: 600;
+    }
+    p, ul {
+      margin-top: 0;
+      margin-bottom: 1.15rem;
+      font-size: 1rem;
+    }
+    ul {
+      padding-left: 1.4rem;
+    }
+    li {
+      margin-bottom: 0.5rem;
+    }
+    a {
+      color: var(--primary);
+      text-decoration: underline;
+      text-underline-offset: 3px;
+    }
+    a:hover {
+      color: var(--primary-hover);
+    }
+    code {
+      background-color: rgba(120, 113, 108, 0.1);
+      padding: 0.15rem 0.35rem;
+      border-radius: 4px;
+      font-size: 0.9em;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+    }
+    .contact-box {
+      margin-top: 1rem;
+      line-height: 1.8;
+    }
+    footer {
+      margin-top: 3.5rem;
+      padding-top: 1.5rem;
+      border-top: 1px solid var(--border);
+      font-size: 0.88rem;
+      color: var(--text-muted);
+      text-align: center;
+    }
   </style>
 </head>
 <body>
-  <h1>Privacy Policy</h1>
-  <p>Last updated: June 2026</p>
-  
-  <h2>1. Information Collection and Use</h2>
-  <p>The Sati application respects your privacy. We do not collect, store, or transmit any personally identifiable information to external servers. All data processed by this application remains on your device.</p>
+  <header>
+    <div class="kicker">Legal</div>
+    <h1>Privacy Policy</h1>
+    <p class="effective-date">Effective Date: October 29, 2026</p>
+  </header>
 
-  <h2>2. Location Data</h2>
-  <p>The application may request access to your location data (latitude and longitude) to calculate accurate sun times (dawn and solar noon) for your specific area. This location data is processed entirely locally on your device and is never sent to our servers or any third parties.</p>
+  <main>
+    <p>
+      Welcome, and thank you for your interest in Sati (&ldquo;Sati&rdquo;, &ldquo;we&rdquo;, &ldquo;us&rdquo;, or &ldquo;our&rdquo;). 
+      This Privacy Policy explains how the legal entity <strong>International Institute of Theravada</strong> collects, uses, 
+      and protects information in connection with the <strong>Sati</strong> mobile application 
+      (the &ldquo;App&rdquo;), 
+      our application website at <a href="https://sati.theravado.com/" target="_blank" rel="noopener noreferrer">https://sati.theravado.com/</a>, 
+      and our organization website at <a href="https://theravado.com/" target="_blank" rel="noopener noreferrer">https://theravado.com/</a>.
+    </p>
+    <p>
+      Sati is designed as an offline-first, reverent companion application for Buddhist monastics and lay practitioners. 
+      It provides astronomical solar calculations for Vinaya observance, multi-tradition Uposatha tracking, multi-script 
+      Pāli chanting, and meditation timers. We are deeply committed to user privacy, data minimization, and transparency.
+    </p>
 
-  <h2>3. Local Storage</h2>
-  <p>The application saves your preferences, settings, and downloaded content (like study materials or chants) locally on your device using local storage mechanisms. This data is not synced to the cloud or accessible by anyone else.</p>
+    <h2>1. Personal Information We Do Not Collect</h2>
+    <p>
+      We believe that spiritual practice should remain completely private. <strong>We do not collect, store, transmit, or monetize any personal information.</strong>
+    </p>
+    <ul>
+      <li><strong>No Account Registration:</strong> You are not required to create an account, register an email address, or provide any personal details to use the App.</li>
+      <li><strong>No Analytics or Tracking:</strong> We do not use third-party analytics platforms, user tracking tools, behavioral profiling, or advertising networks.</li>
+      <li><strong>No Cloud Syncing of Personal Activity:</strong> Your meditation sessions, chant bookmarks, notes, and usage history remain strictly on your device.</li>
+    </ul>
 
-  <h2>4. Changes to This Privacy Policy</h2>
-  <p>We may update our Privacy Policy from time to time. You are advised to review this page periodically for any changes.</p>
+    <h2>2. Device Permissions and On-Device Processing</h2>
+    <p>
+      The App requests access to certain device features solely to provide essential offline features:
+    </p>
+    <ul>
+      <li>
+        <strong>Location Data:</strong> To determine accurate sun times (such as dawn <em>Aruṇuggamana</em> and solar noon <em>Majjhanhike</em>) 
+        essential for monastic Vinaya meal rules, Sati may request access to your device&rsquo;s location coordinates (latitude and longitude). 
+        <strong>All astronomical calculations are performed entirely locally on your device</strong> using client-side algorithms. 
+        Your location coordinates are never sent to external servers or shared with any third party.
+      </li>
+      <li>
+        <strong>Notifications:</strong> If enabled, notification permissions are used solely to trigger on-device reminders (such as dawn alerts or meditation timer bells). The App does not send or receive remote push notifications.
+      </li>
+    </ul>
 
-  <h2>5. Contact Us</h2>
-  <p>If you have any questions or suggestions about our Privacy Policy, do not hesitate to send email to epitaka (at) gmail.com</p>
+    <h2>3. Local Storage and Data Retention</h2>
+    <p>
+      All application preferences, selected tradition settings, chanting audio downloads, and study texts are stored locally on your device using standard sandboxed storage mechanisms (Local Storage and IndexedDB). This data is stored only on your hardware and is never synced to external servers.
+    </p>
+
+    <h2>4. Data Deletion and Your Choices</h2>
+    <p>
+      Because no personal information is collected or transmitted to external servers, International Institute of Theravada does not hold or retain any of your personal data on remote servers.
+    </p>
+    <p>
+      You maintain complete control over all data stored on your device:
+    </p>
+    <ul>
+      <li>You can clear all stored preferences, bookmarks, and downloads at any time via your device settings (e.g., <em>Settings &gt; Apps &gt; Sati &gt; Storage &gt; Clear Data</em>).</li>
+      <li>Uninstalling the App permanently removes all locally saved data from your device.</li>
+    </ul>
+
+    <h2>5. Third-Party Services and Disclosures</h2>
+    <p>
+      We do not sell, rent, trade, or disclose your information to any third parties. There are no advertising SDKs, commercial trackers, or third-party marketing tools embedded within the App or Website.
+    </p>
+
+    <h2>6. Children&rsquo;s Privacy</h2>
+    <p>
+      The App and Website are intended for general audiences of all ages, including children. We do not knowingly collect, request, or maintain any personal information from children or any other users.
+    </p>
+
+    <h2>7. Changes to This Privacy Policy</h2>
+    <p>
+      We may update this Privacy Policy from time to time to reflect operational, legal, or regulatory updates. Any changes will be posted directly to this page with an updated effective date.
+    </p>
+
+    <h2>8. Contact Us</h2>
+    <p>
+      Unless otherwise indicated, <strong>International Institute of Theravada</strong> is the legal entity and developer responsible for the processing of information described in this Policy.
+    </p>
+    <p>
+      If you have any questions, comments, or requests regarding this Privacy Policy or our practices, please contact us:
+    </p>
+    <div class="contact-box">
+      <strong>International Institute of Theravada</strong><br>
+      App Website: <a href="https://sati.theravado.com/" target="_blank" rel="noopener noreferrer">https://sati.theravado.com/</a><br>
+      Organization Website: <a href="https://theravado.com/" target="_blank" rel="noopener noreferrer">https://theravado.com/</a><br>
+      Email: <a href="mailto:apps@theravado.com">apps@theravado.com</a>
+    </div>
+  </main>
+
+  <footer>
+    <p>© 2026 International Institute of Theravada. Distributed freely as Dāna.</p>
+  </footer>
 </body>
 </html>

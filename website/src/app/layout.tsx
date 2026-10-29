@@ -9,7 +9,7 @@ export const viewport: Viewport = {
 };
 
 export const metadata: Metadata = {
-  metadataBase: new URL('https://iit.damsak.org'),
+  metadataBase: new URL('https://sati.theravado.com'),
   title: {
     default: 'Sati — Buddhist Lunar Calendar, Vinaya Solar Calculations & Chanting Companion',
     template: '%s | Sati',
@@ -35,7 +35,7 @@ export const metadata: Metadata = {
     'Monastic Companion',
     'Buddhist Moon Phases',
   ],
-  authors: [{ name: 'International Institute of Theravada (IIT)', url: 'https://iit.damsak.org' }],
+  authors: [{ name: 'International Institute of Theravada (IIT)', url: 'https://theravado.com' }],
   creator: 'International Institute of Theravada',
   publisher: 'International Institute of Theravada',
   alternates: {
@@ -56,7 +56,7 @@ export const metadata: Metadata = {
     title: 'Sati — Buddhist Practice & Monastic Companion',
     description:
       'Astronomical solar calculations for Vinaya observance, multi-tradition Uposatha tracking, multi-script Pāli chanting, and serene stillness timers. 100% offline and free.',
-    url: 'https://iit.damsak.org',
+    url: 'https://sati.theravado.com',
     siteName: 'Sati',
     images: [
       {
@@ -97,6 +97,9 @@ export const metadata: Metadata = {
   formatDetection: {
     telephone: false,
   },
+  verification: {
+    google: 'WydCc_btFlhAVngJby8kygyAfdrvApdFznLUYpYClc8',
+  },
 };
 
 const jsonLd = {
@@ -104,26 +107,26 @@ const jsonLd = {
   '@graph': [
     {
       '@type': 'WebSite',
-      '@id': 'https://iit.damsak.org/#website',
-      url: 'https://iit.damsak.org',
+      '@id': 'https://sati.theravado.com/#website',
+      url: 'https://sati.theravado.com',
       name: 'Sati',
       description: 'Buddhist Lunar Calendar, Vinaya Solar Calculations & Chanting Companion',
       publisher: {
-        '@id': 'https://iit.damsak.org/#organization',
+        '@id': 'https://theravado.com/#organization',
       },
       inLanguage: ['en', 'si', 'my', 'th', 'vi', 'km', 'lo'],
     },
     {
       '@type': 'Organization',
-      '@id': 'https://iit.damsak.org/#organization',
+      '@id': 'https://theravado.com/#organization',
       name: 'International Institute of Theravada',
-      url: 'https://iit.damsak.org',
-      logo: 'https://iit.damsak.org/logo.png',
+      url: 'https://theravado.com',
+      logo: 'https://sati.theravado.com/logo.png',
       sameAs: ['https://github.com/iitsldev/iit-calendar'],
     },
     {
       '@type': 'MobileApplication',
-      '@id': 'https://iit.damsak.org/#app',
+      '@id': 'https://sati.theravado.com/#app',
       name: 'Sati',
       operatingSystem: 'iOS, Android',
       applicationCategory: 'LifestyleApplication',
@@ -138,11 +141,11 @@ const jsonLd = {
         'https://play.google.com/store/apps/details?id=com.iitcalendar.applet&pcampaignid=web_share',
       ],
       screenshot: [
-        'https://iit.damsak.org/screenshots/calendar.png',
-        'https://iit.damsak.org/screenshots/chants.png',
-        'https://iit.damsak.org/screenshots/meditation.png',
-        'https://iit.damsak.org/screenshots/books.png',
-        'https://iit.damsak.org/screenshots/study.png',
+        'https://sati.theravado.com/screenshots/calendar.png',
+        'https://sati.theravado.com/screenshots/chants.png',
+        'https://sati.theravado.com/screenshots/meditation.png',
+        'https://sati.theravado.com/screenshots/books.png',
+        'https://sati.theravado.com/screenshots/study.png',
       ],
       featureList: [
         'Astronomical Vinaya Solar Calculations (Arunuggamana Dawn, Majjhanhike Solar Noon)',
@@ -153,7 +156,7 @@ const jsonLd = {
         '100% Offline & Free Dāna Software without Ads or Tracking',
       ],
       author: {
-        '@id': 'https://iit.damsak.org/#organization',
+        '@id': 'https://theravado.com/#organization',
       },
     },
   ],

@@ -1,19 +1,20 @@
 import React from 'react';
 import type { Metadata } from 'next';
 import Link from 'next/link';
+import { PrivacyContent } from '../../../../src/components/legal/PrivacyContent';
 
 export const metadata: Metadata = {
   title: 'Privacy Policy',
   description:
-    'Sati is 100% offline, free, and privacy-first. We do not collect, store, or transmit any personal data.',
+    'Privacy Policy for Sati, published by International Institute of Theravada. 100% offline, free, and privacy-first. We do not collect, store, or transmit any personal data.',
   alternates: {
     canonical: '/privacy',
   },
   openGraph: {
-    title: 'Privacy Policy — Sati',
+    title: 'Privacy Policy — Sati | International Institute of Theravada',
     description:
-      'Sati is 100% offline, free, and privacy-first. We do not collect, store, or transmit any personal data.',
-    url: 'https://iit.damsak.org/privacy',
+      'Privacy Policy for Sati, published by International Institute of Theravada. 100% offline, free, and privacy-first.',
+    url: 'https://sati.theravado.com/privacy',
   },
 };
 
@@ -47,9 +48,12 @@ export default function PrivacyPage() {
         </Link>
       </header>
 
-      <main className="site-container" style={{ flex: 1, padding: '48px 24px', maxWidth: '760px' }}>
+      <main className="site-container" style={{ flex: 1, padding: '48px 24px', maxWidth: '740px' }}>
         <article>
           <header style={{ marginBottom: '32px' }}>
+            <p style={{ fontSize: '0.82rem', textTransform: 'uppercase', letterSpacing: '0.08em', color: 'var(--text-muted)', marginBottom: '8px', fontWeight: 600 }}>
+              Legal
+            </p>
             <h1
               style={{
                 fontFamily: 'var(--font-serif)',
@@ -61,106 +65,13 @@ export default function PrivacyPage() {
             >
               Privacy Policy
             </h1>
-            <p style={{ color: 'var(--text-muted)', fontSize: '0.9rem' }}>
-              Last updated: June 2026
+            <p style={{ color: 'var(--text-muted)', fontSize: '0.92rem' }}>
+              Effective Date: October 29, 2026
             </p>
           </header>
 
           <div style={{ color: 'var(--text-secondary)', lineHeight: 1.75, fontSize: '1.02rem' }}>
-            <section style={{ marginBottom: '28px' }}>
-              <h2
-                style={{
-                  fontFamily: 'var(--font-serif)',
-                  fontSize: '1.35rem',
-                  color: 'var(--text-primary)',
-                  marginBottom: '10px',
-                }}
-              >
-                1. Information Collection and Use
-              </h2>
-              <p>
-                The Sati application respects your privacy completely. We do not collect, store,
-                or transmit any personally identifiable information to external servers. All data processed
-                by this application remains exclusively on your device.
-              </p>
-            </section>
-
-            <section style={{ marginBottom: '28px' }}>
-              <h2
-                style={{
-                  fontFamily: 'var(--font-serif)',
-                  fontSize: '1.35rem',
-                  color: 'var(--text-primary)',
-                  marginBottom: '10px',
-                }}
-              >
-                2. Location Data
-              </h2>
-              <p>
-                The application may request access to your location data (latitude and longitude) to calculate
-                astronomically accurate solar events (dawn <em>Arunuggamana</em> and solar noon <em>Majjhanhike</em>)
-                for your specific area. This location data is processed entirely locally on your device and is never
-                sent to our servers or any third parties.
-              </p>
-            </section>
-
-            <section style={{ marginBottom: '28px' }}>
-              <h2
-                style={{
-                  fontFamily: 'var(--font-serif)',
-                  fontSize: '1.35rem',
-                  color: 'var(--text-primary)',
-                  marginBottom: '10px',
-                }}
-              >
-                3. Local Storage
-              </h2>
-              <p>
-                The application saves your preferences, settings, and downloaded content (such as study materials,
-                chant text scripts, and audio clips) locally on your device using local storage mechanisms.
-                This data is not synced to the cloud or accessible by anyone else.
-              </p>
-            </section>
-
-            <section style={{ marginBottom: '28px' }}>
-              <h2
-                style={{
-                  fontFamily: 'var(--font-serif)',
-                  fontSize: '1.35rem',
-                  color: 'var(--text-primary)',
-                  marginBottom: '10px',
-                }}
-              >
-                4. Changes to This Privacy Policy
-              </h2>
-              <p>
-                We may update our Privacy Policy from time to time. You are advised to review this page periodically
-                for any updates. Any changes will be posted directly to this page.
-              </p>
-            </section>
-
-            <section style={{ marginBottom: '28px' }}>
-              <h2
-                style={{
-                  fontFamily: 'var(--font-serif)',
-                  fontSize: '1.35rem',
-                  color: 'var(--text-primary)',
-                  marginBottom: '10px',
-                }}
-              >
-                5. Contact Us
-              </h2>
-              <p>
-                If you have any questions or suggestions regarding our Privacy Policy, please contact us at{' '}
-                <a
-                  href="mailto:[EMAIL_ADDRESS]"
-                  style={{ color: 'var(--saffron)', textDecoration: 'underline' }}
-                >
-                  apps@theravado.com
-                </a>
-                .
-              </p>
-            </section>
+            <PrivacyContent />
           </div>
         </article>
       </main>

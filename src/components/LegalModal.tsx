@@ -4,6 +4,8 @@ import { cn } from '../lib/utils';
 import { useI18n } from '../hooks/useI18n';
 import { Modal } from './Modal';
 import { SegmentedControl } from './SegmentedControl';
+import { PrivacyContent } from './legal/PrivacyContent';
+import { TermsContent } from './legal/TermsContent';
 
 export function LegalModal({ show, onClose }: { show: boolean; onClose: () => void }) {
   const { t } = useI18n();
@@ -83,61 +85,16 @@ export function LegalModal({ show, onClose }: { show: boolean; onClose: () => vo
         {section === 'privacy' && (
           <div className="space-y-4">
             <h3 className="font-bold text-base" style={{ color: 'var(--text-primary)' }}>Privacy Policy</h3>
-            <p>This Privacy Policy describes how your personal information is handled in Sati.</p>
-
-            <h4 className="font-bold" style={{ color: 'var(--text-primary)' }}>1. Data Storage</h4>
-            <p>
-              Sati is a "local-first" application. All your data, including settings, chanting history,
-              and meditation statistics, is stored exclusively on your device using local storage or native file systems.
-            </p>
-
-            <h4 className="font-bold" style={{ color: 'var(--text-primary)' }}>2. No Data Collection</h4>
-            <p>
-              We do not collect, store, or transmit any personal data to external servers. There are no analytics
-              or tracking scripts embedded in the application.
-            </p>
-
-            <h4 className="font-bold" style={{ color: 'var(--text-primary)' }}>3. Location Data</h4>
-            <p>
-              The app requests location access to calculate accurate solar events (dawn, noon, sunset) and lunar
-              dates based on your current coordinates. This data is used only for calculations within the app
-              and is not shared with anyone.
-            </p>
-
-            <h4 className="font-bold" style={{ color: 'var(--text-primary)' }}>4. Backups</h4>
-            <p>
-              When you use the "Export" feature, a file is generated on your device. You are responsible for
-              the security of your backup files.
-            </p>
+            <p className="text-xs text-[var(--text-tertiary)]">Effective Date: October 29, 2026</p>
+            <PrivacyContent />
           </div>
         )}
 
         {section === 'eula' && (
           <div className="space-y-4">
-            <h3 className="font-bold text-base" style={{ color: 'var(--text-primary)' }}>End User License Agreement</h3>
-
-            <h4 className="font-bold" style={{ color: 'var(--text-primary)' }}>1. Acceptance of Terms</h4>
-            <p>By using this application, you agree to the terms of this agreement.</p>
-
-            <h4 className="font-bold" style={{ color: 'var(--text-primary)' }}>2. License</h4>
-            <p>
-              This software is open-source. You may use it for personal, non-commercial purposes in accordance
-              with its open-source license.
-            </p>
-
-            <h4 className="font-bold" style={{ color: 'var(--text-primary)' }}>3. Disclaimer of Warranty</h4>
-            <p>
-              The application is provided "AS IS", without warranty of any kind, express or implied, including
-              but not limited to the warranties of merchantability, fitness for a particular purpose and
-              non-infringement.
-            </p>
-
-            <h4 className="font-bold" style={{ color: 'var(--text-primary)' }}>4. Limitation of Liability</h4>
-            <p>
-              In no event shall the authors or copyright holders be liable for any claim, damages or other
-              liability, whether in an action of contract, tort or otherwise, arising from, out of or in
-              connection with the software or the use or other dealings in the software.
-            </p>
+            <h3 className="font-bold text-base" style={{ color: 'var(--text-primary)' }}>Terms of Service</h3>
+            <p className="text-xs text-[var(--text-tertiary)]">Effective Date: October 29, 2026</p>
+            <TermsContent />
           </div>
         )}
       </div>

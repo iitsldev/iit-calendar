@@ -11,7 +11,7 @@ const config: CapacitorConfig = {
   "plugins": {
     "CapacitorUpdater": {
       "autoUpdate": "onLaunch",
-      "updateUrl": (process.env.APP_URL || 'https://iit.damsak.org').replace(/\/$/, '') + '/api/update',
+      "updateUrl": (process.env.APP_URL || 'https://sati.theravado.com').replace(/\/$/, '') + '/api/update',
       "statsUrl": ""
     }
   }

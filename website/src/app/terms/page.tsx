@@ -1,19 +1,20 @@
 import React from 'react';
 import type { Metadata } from 'next';
 import Link from 'next/link';
+import { TermsContent } from '../../../../src/components/legal/TermsContent';
 
 export const metadata: Metadata = {
-  title: 'End User License Agreement & Terms of Service',
+  title: 'Terms of Service',
   description:
-    'End User License Agreement (EULA) and Terms of Service for the Sati mobile application and website.',
+    'Terms of Service for the Sati mobile application and website, published by International Institute of Theravada.',
   alternates: {
     canonical: '/terms',
   },
   openGraph: {
-    title: 'Terms of Service & EULA — Sati',
+    title: 'Terms of Service — Sati | International Institute of Theravada',
     description:
-      'End User License Agreement (EULA) and Terms of Service for Sati. Open-source, free, and privacy-first.',
-    url: 'https://iit.damsak.org/terms',
+      'Terms of Service for Sati. Free, open-source, and privacy-first monastic companion software.',
+    url: 'https://sati.theravado.com/terms',
   },
 };
 
@@ -47,9 +48,12 @@ export default function TermsPage() {
         </Link>
       </header>
 
-      <main className="site-container" style={{ flex: 1, padding: '48px 24px', maxWidth: '760px' }}>
+      <main className="site-container" style={{ flex: 1, padding: '48px 24px', maxWidth: '740px' }}>
         <article>
           <header style={{ marginBottom: '32px' }}>
+            <p style={{ fontSize: '0.82rem', textTransform: 'uppercase', letterSpacing: '0.08em', color: 'var(--text-muted)', marginBottom: '8px', fontWeight: 600 }}>
+              Legal
+            </p>
             <h1
               style={{
                 fontFamily: 'var(--font-serif)',
@@ -59,111 +63,15 @@ export default function TermsPage() {
                 lineHeight: 1.2,
               }}
             >
-              End User License Agreement
+              Terms of Service
             </h1>
-            <p style={{ color: 'var(--text-muted)', fontSize: '0.9rem' }}>
-              Terms of Service · Last updated: June 2026
+            <p style={{ color: 'var(--text-muted)', fontSize: '0.92rem' }}>
+              Effective Date: October 29, 2026
             </p>
           </header>
 
           <div style={{ color: 'var(--text-secondary)', lineHeight: 1.75, fontSize: '1.02rem' }}>
-            <section style={{ marginBottom: '28px' }}>
-              <h2
-                style={{
-                  fontFamily: 'var(--font-serif)',
-                  fontSize: '1.35rem',
-                  color: 'var(--text-primary)',
-                  marginBottom: '10px',
-                }}
-              >
-                1. Acceptance of Terms
-              </h2>
-              <p>
-                By downloading, installing, accessing, or using the Sati application, you agree to
-                be bound by the terms and conditions of this agreement. If you do not agree to these terms,
-                do not install or use the application.
-              </p>
-            </section>
-
-            <section style={{ marginBottom: '28px' }}>
-              <h2
-                style={{
-                  fontFamily: 'var(--font-serif)',
-                  fontSize: '1.35rem',
-                  color: 'var(--text-primary)',
-                  marginBottom: '10px',
-                }}
-              >
-                2. License
-              </h2>
-              <p>
-                This software is open-source. You may use it for personal, non-commercial purposes in
-                accordance with its open-source license. The source code and content are freely available
-                on GitHub for anyone to use, share, and adapt for non-commercial purposes.
-              </p>
-            </section>
-
-            <section style={{ marginBottom: '28px' }}>
-              <h2
-                style={{
-                  fontFamily: 'var(--font-serif)',
-                  fontSize: '1.35rem',
-                  color: 'var(--text-primary)',
-                  marginBottom: '10px',
-                }}
-              >
-                3. Disclaimer of Warranty
-              </h2>
-              <p>
-                The application is provided &ldquo;AS IS&rdquo;, without warranty of any kind, express or implied,
-                including but not limited to the warranties of merchantability, fitness for a particular
-                purpose, and non-infringement. While every effort is made to ensure accurate astronomical
-                and calendar calculations, the developers and publishers make no guarantees regarding accuracy
-                under all regional conditions.
-              </p>
-            </section>
-
-            <section style={{ marginBottom: '28px' }}>
-              <h2
-                style={{
-                  fontFamily: 'var(--font-serif)',
-                  fontSize: '1.35rem',
-                  color: 'var(--text-primary)',
-                  marginBottom: '10px',
-                }}
-              >
-                4. Limitation of Liability
-              </h2>
-              <p>
-                In no event shall the authors or copyright holders be liable for any claim, damages, or other
-                liability, whether in an action of contract, tort, or otherwise, arising from, out of, or in
-                connection with the software or the use or other dealings in the software.
-              </p>
-            </section>
-
-            <section style={{ marginBottom: '28px' }}>
-              <h2
-                style={{
-                  fontFamily: 'var(--font-serif)',
-                  fontSize: '1.35rem',
-                  color: 'var(--text-primary)',
-                  marginBottom: '10px',
-                }}
-              >
-                5. Contact Information
-              </h2>
-              <p>
-                If you have questions regarding this End User License Agreement or the Terms of Service,
-                please contact us at{' '}
-                <a
-                  href="mailto:apps@theravado.com"
-                  style={{ color: 'var(--saffron)', textDecoration: 'underline' }}
-                >
-                  apps@theravado.com
-                </a>
-                .
-              </p>
-            </section>
+            <TermsContent />
           </div>
         </article>
       </main>

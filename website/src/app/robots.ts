@@ -9,7 +9,7 @@ export default function robots(): MetadataRoute.Robots {
         disallow: ['/api/'],
       },
     ],
-    sitemap: 'https://iit.damsak.org/sitemap.xml',
-    host: 'https://iit.damsak.org',
+    sitemap: 'https://sati.theravado.com/sitemap.xml',
+    host: 'https://sati.theravado.com',
   };
 }
