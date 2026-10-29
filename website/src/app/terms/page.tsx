@@ -1,7 +1,7 @@
 import React from 'react';
 import type { Metadata } from 'next';
 import Link from 'next/link';
-import { TermsContent } from '../../../../src/components/legal/TermsContent';
+import { TermsContent } from '@/components/legal/TermsContent';
 import SiteFooter from '../SiteFooter';
 
 export const metadata: Metadata = {
