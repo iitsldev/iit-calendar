@@ -5,6 +5,7 @@ import { AppleStoreButton, GooglePlayButton, STORE_LINKS } from './StoreButtons'
 import ScreenIcon from './ScreenIcon';
 import TriagePhoneFrame from './TriagePhoneFrame';
 import LanguageSwitcher from './LanguageSwitcher';
+import SiteFooter from './SiteFooter';
 import { SupportedLanguage, TRANSLATIONS } from './i18n';
 
 export default function LandingView() {
@@ -337,38 +338,7 @@ export default function LandingView() {
     </main>
 
       {/* ── Monastic Footer ────────────────────────────────────────────────── */}
-      <footer className="site-footer">
-        <div className="site-container">
-          <div className="blessing-text">{t.footer.blessing}</div>
-
-
-          <ul className="footer-nav">
-            <li>
-              <a href={STORE_LINKS.appleAppStore} target="_blank" rel="noopener noreferrer">
-                {t.footer.appStore}
-              </a>
-            </li>
-            <li>
-              <a href={STORE_LINKS.googlePlayStore} target="_blank" rel="noopener noreferrer">
-                {t.footer.googlePlay}
-              </a>
-            </li>
-            <li>
-              <a href="/privacy">{t.footer.privacyPolicy}</a>
-            </li>
-            <li>
-              <a href="/terms">{t.footer.terms}</a>
-            </li>
-            <li>
-              <a href={STORE_LINKS.gitHub} target="_blank" rel="noopener noreferrer">
-                {t.footer.github}
-              </a>
-            </li>
-          </ul>
-
-          <div className="footer-copyright" style={{ marginTop: '16px' }}>{t.footer.copyright}</div>
-        </div>
-      </footer>
+      <SiteFooter lang={lang} />
     </div>
   );
 }

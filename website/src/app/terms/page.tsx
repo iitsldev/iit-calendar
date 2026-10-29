@@ -2,6 +2,7 @@ import React from 'react';
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import { TermsContent } from '../../../../src/components/legal/TermsContent';
+import SiteFooter from '../SiteFooter';
 
 export const metadata: Metadata = {
   title: 'Terms of Service',
@@ -76,25 +77,7 @@ export default function TermsPage() {
         </article>
       </main>
 
-      <footer className="site-footer" style={{ marginTop: 'auto' }}>
-        <div className="site-container">
-          <div className="blessing-text">Sabbadānaṁ dhammadānaṁ jināti</div>
-          <ul className="footer-nav" style={{ marginTop: '12px' }}>
-            <li>
-              <Link href="/">Home</Link>
-            </li>
-            <li>
-              <Link href="/privacy">Privacy Policy</Link>
-            </li>
-            <li>
-              <Link href="/terms">Terms of Service</Link>
-            </li>
-          </ul>
-          <div className="footer-copyright" style={{ marginTop: '16px' }}>
-            © {new Date().getFullYear()} International Institute of Theravada (IIT). Distributed freely as Dāna.
-          </div>
-        </div>
-      </footer>
+      <SiteFooter />
     </div>
   );
 }
