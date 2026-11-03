@@ -39,7 +39,7 @@ struct DailyTimesProvider: TimelineProvider {
     }
 
     private func getTodayTimesEntry() -> DailyTimesEntry {
-        let sharedDefaults = UserDefaults(suiteName: "group.iit.calendar")
+        let sharedDefaults = UserDefaults(suiteName: "group.com.theravado.sati")
         guard let sunTimesRaw = sharedDefaults?.string(forKey: "sun_times"),
               let data = sunTimesRaw.data(using: .utf8) else {
             return DailyTimesEntry(date: Date(), dawnTime: "--:--", noonTime: "--:--")

@@ -7,7 +7,7 @@ import { meditationDbService } from '../services/MeditationDbService';
 import { chantService } from '../services/ChantService';
 import { studyDbService } from '../services/StudyDbService';
 
-const APP_GROUP = 'group.iit.calendar';
+const APP_GROUP = 'group.com.theravado.sati';
 
 export function useWidgetSync() {
   useEffect(() => {

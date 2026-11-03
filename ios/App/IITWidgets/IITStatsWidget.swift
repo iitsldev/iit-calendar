@@ -60,7 +60,7 @@ struct StatsProvider: TimelineProvider {
     }
 
     private func getStatsEntry() -> StatsEntry {
-        let sharedDefaults = UserDefaults(suiteName: "group.iit.calendar")
+        let sharedDefaults = UserDefaults(suiteName: "group.com.theravado.sati")
         
         let medStreak: Int
         let medMonth: Int
