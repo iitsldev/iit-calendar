@@ -21,7 +21,7 @@ public class StatsWidgetProvider extends AppWidgetProvider {
     public void onUpdate(Context context, AppWidgetManager appWidgetManager, int[] appWidgetIds) {
         Log.d(TAG, "onUpdate called for " + appWidgetIds.length + " widgets");
         try {
-            SharedPreferences prefs = context.getSharedPreferences("group.iit.calendar", Context.MODE_PRIVATE);
+            SharedPreferences prefs = context.getSharedPreferences("group.com.theravado.sati", Context.MODE_PRIVATE);
 
             String medStatsRaw = prefs.getString("meditation_stats", "{}");
             if (medStatsRaw == null) medStatsRaw = "{}";

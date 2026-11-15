@@ -7,24 +7,24 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		45FA00000c00000000000001 /* noon_5.wav in Resources */ = {isa = PBXBuildFile; fileRef = 45FA00000c00000000000002 /* noon_5.wav */; };
-		45FA00000b00000000000001 /* noon_4.wav in Resources */ = {isa = PBXBuildFile; fileRef = 45FA00000b00000000000002 /* noon_4.wav */; };
-		45FA00000a00000000000001 /* noon_3.wav in Resources */ = {isa = PBXBuildFile; fileRef = 45FA00000a00000000000002 /* noon_3.wav */; };
-		45FA00000900000000000001 /* noon_2.wav in Resources */ = {isa = PBXBuildFile; fileRef = 45FA00000900000000000002 /* noon_2.wav */; };
-		45FA00000800000000000001 /* noon_1.wav in Resources */ = {isa = PBXBuildFile; fileRef = 45FA00000800000000000002 /* noon_1.wav */; };
-		45FA00000700000000000001 /* noon_0.wav in Resources */ = {isa = PBXBuildFile; fileRef = 45FA00000700000000000002 /* noon_0.wav */; };
-		45FA00000600000000000001 /* bell_woodblock.wav in Resources */ = {isa = PBXBuildFile; fileRef = 45FA00000600000000000002 /* bell_woodblock.wav */; };
-		45FA00000500000000000001 /* bell_tibetan.wav in Resources */ = {isa = PBXBuildFile; fileRef = 45FA00000500000000000002 /* bell_tibetan.wav */; };
-		45FA00000400000000000001 /* bell_gong.wav in Resources */ = {isa = PBXBuildFile; fileRef = 45FA00000400000000000002 /* bell_gong.wav */; };
-		45FA00000300000000000001 /* bell_chime.wav in Resources */ = {isa = PBXBuildFile; fileRef = 45FA00000300000000000002 /* bell_chime.wav */; };
-		45FA00000200000000000001 /* bell_bowl.wav in Resources */ = {isa = PBXBuildFile; fileRef = 45FA00000200000000000002 /* bell_bowl.wav */; };
-		45FA00000100000000000001 /* bell_bell.wav in Resources */ = {isa = PBXBuildFile; fileRef = 45FA00000100000000000002 /* bell_bell.wav */; };
-		45FA00000000000000000001 /* bell.wav in Resources */ = {isa = PBXBuildFile; fileRef = 45FA00000000000000000002 /* bell.wav */; };
-		45FA00000d00000000000001 /* silent.wav in Resources */ = {isa = PBXBuildFile; fileRef = 45FA00000d00000000000002 /* silent.wav */; };
 		2FAD9763203C412B000D30F8 /* config.xml in Resources */ = {isa = PBXBuildFile; fileRef = 2FAD9762203C412B000D30F8 /* config.xml */; };
 		45CC49292FE13E2E00E7716A /* WidgetKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 45CC49282FE13E2D00E7716A /* WidgetKit.framework */; };
 		45CC492B2FE13E2E00E7716A /* SwiftUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 45CC492A2FE13E2E00E7716A /* SwiftUI.framework */; };
 		45CC493C2FE13E3300E7716A /* IITWidgetsExtension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 45CC49262FE13E2D00E7716A /* IITWidgetsExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		45FA00000000000000000001 /* bell.wav in Resources */ = {isa = PBXBuildFile; fileRef = 45FA00000000000000000002 /* bell.wav */; };
+		45FA00000100000000000001 /* bell_bell.wav in Resources */ = {isa = PBXBuildFile; fileRef = 45FA00000100000000000002 /* bell_bell.wav */; };
+		45FA00000200000000000001 /* bell_bowl.wav in Resources */ = {isa = PBXBuildFile; fileRef = 45FA00000200000000000002 /* bell_bowl.wav */; };
+		45FA00000300000000000001 /* bell_chime.wav in Resources */ = {isa = PBXBuildFile; fileRef = 45FA00000300000000000002 /* bell_chime.wav */; };
+		45FA00000400000000000001 /* bell_gong.wav in Resources */ = {isa = PBXBuildFile; fileRef = 45FA00000400000000000002 /* bell_gong.wav */; };
+		45FA00000500000000000001 /* bell_tibetan.wav in Resources */ = {isa = PBXBuildFile; fileRef = 45FA00000500000000000002 /* bell_tibetan.wav */; };
+		45FA00000600000000000001 /* bell_woodblock.wav in Resources */ = {isa = PBXBuildFile; fileRef = 45FA00000600000000000002 /* bell_woodblock.wav */; };
+		45FA00000700000000000001 /* noon_0.wav in Resources */ = {isa = PBXBuildFile; fileRef = 45FA00000700000000000002 /* noon_0.wav */; };
+		45FA00000800000000000001 /* noon_1.wav in Resources */ = {isa = PBXBuildFile; fileRef = 45FA00000800000000000002 /* noon_1.wav */; };
+		45FA00000900000000000001 /* noon_2.wav in Resources */ = {isa = PBXBuildFile; fileRef = 45FA00000900000000000002 /* noon_2.wav */; };
+		45FA00000a00000000000001 /* noon_3.wav in Resources */ = {isa = PBXBuildFile; fileRef = 45FA00000a00000000000002 /* noon_3.wav */; };
+		45FA00000b00000000000001 /* noon_4.wav in Resources */ = {isa = PBXBuildFile; fileRef = 45FA00000b00000000000002 /* noon_4.wav */; };
+		45FA00000c00000000000001 /* noon_5.wav in Resources */ = {isa = PBXBuildFile; fileRef = 45FA00000c00000000000002 /* noon_5.wav */; };
+		45FA00000d00000000000001 /* silent.wav in Resources */ = {isa = PBXBuildFile; fileRef = 45FA00000d00000000000002 /* silent.wav */; };
 		4D22ABE92AF431CB00220026 /* CapApp-SPM in Frameworks */ = {isa = PBXBuildFile; productRef = 4D22ABE82AF431CB00220026 /* CapApp-SPM */; };
 		50379B232058CBB4000EE86E /* capacitor.config.json in Resources */ = {isa = PBXBuildFile; fileRef = 50379B222058CBB4000EE86E /* capacitor.config.json */; };
 		504EC3081FED79650016851F /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 504EC3071FED79650016851F /* AppDelegate.swift */; };
@@ -59,25 +59,25 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
-		45FA00000c00000000000002 /* noon_5.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = noon_5.wav; sourceTree = "<group>"; };
-		45FA00000b00000000000002 /* noon_4.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = noon_4.wav; sourceTree = "<group>"; };
-		45FA00000a00000000000002 /* noon_3.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = noon_3.wav; sourceTree = "<group>"; };
-		45FA00000900000000000002 /* noon_2.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = noon_2.wav; sourceTree = "<group>"; };
-		45FA00000800000000000002 /* noon_1.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = noon_1.wav; sourceTree = "<group>"; };
-		45FA00000700000000000002 /* noon_0.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = noon_0.wav; sourceTree = "<group>"; };
-		45FA00000600000000000002 /* bell_woodblock.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = bell_woodblock.wav; sourceTree = "<group>"; };
-		45FA00000500000000000002 /* bell_tibetan.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = bell_tibetan.wav; sourceTree = "<group>"; };
-		45FA00000400000000000002 /* bell_gong.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = bell_gong.wav; sourceTree = "<group>"; };
-		45FA00000300000000000002 /* bell_chime.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = bell_chime.wav; sourceTree = "<group>"; };
-		45FA00000200000000000002 /* bell_bowl.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = bell_bowl.wav; sourceTree = "<group>"; };
-		45FA00000100000000000002 /* bell_bell.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = bell_bell.wav; sourceTree = "<group>"; };
-		45FA00000000000000000002 /* bell.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = bell.wav; sourceTree = "<group>"; };
-		45FA00000d00000000000002 /* silent.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = silent.wav; sourceTree = "<group>"; };
 		2FAD9762203C412B000D30F8 /* config.xml */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = config.xml; sourceTree = "<group>"; };
 		45CC49262FE13E2D00E7716A /* IITWidgetsExtension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = IITWidgetsExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
 		45CC49282FE13E2D00E7716A /* WidgetKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WidgetKit.framework; path = System/Library/Frameworks/WidgetKit.framework; sourceTree = SDKROOT; };
 		45CC492A2FE13E2E00E7716A /* SwiftUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SwiftUI.framework; path = System/Library/Frameworks/SwiftUI.framework; sourceTree = SDKROOT; };
 		45CC49422FE13EF300E7716A /* App.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = App.entitlements; sourceTree = "<group>"; };
+		45FA00000000000000000002 /* bell.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = bell.wav; sourceTree = "<group>"; };
+		45FA00000100000000000002 /* bell_bell.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = bell_bell.wav; sourceTree = "<group>"; };
+		45FA00000200000000000002 /* bell_bowl.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = bell_bowl.wav; sourceTree = "<group>"; };
+		45FA00000300000000000002 /* bell_chime.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = bell_chime.wav; sourceTree = "<group>"; };
+		45FA00000400000000000002 /* bell_gong.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = bell_gong.wav; sourceTree = "<group>"; };
+		45FA00000500000000000002 /* bell_tibetan.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = bell_tibetan.wav; sourceTree = "<group>"; };
+		45FA00000600000000000002 /* bell_woodblock.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = bell_woodblock.wav; sourceTree = "<group>"; };
+		45FA00000700000000000002 /* noon_0.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = noon_0.wav; sourceTree = "<group>"; };
+		45FA00000800000000000002 /* noon_1.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = noon_1.wav; sourceTree = "<group>"; };
+		45FA00000900000000000002 /* noon_2.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = noon_2.wav; sourceTree = "<group>"; };
+		45FA00000a00000000000002 /* noon_3.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = noon_3.wav; sourceTree = "<group>"; };
+		45FA00000b00000000000002 /* noon_4.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = noon_4.wav; sourceTree = "<group>"; };
+		45FA00000c00000000000002 /* noon_5.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = noon_5.wav; sourceTree = "<group>"; };
+		45FA00000d00000000000002 /* silent.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = silent.wav; sourceTree = "<group>"; };
 		50379B222058CBB4000EE86E /* capacitor.config.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = capacitor.config.json; sourceTree = "<group>"; };
 		504EC3041FED79650016851F /* App.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = App.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		504EC3071FED79650016851F /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
@@ -100,18 +100,7 @@
 /* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
-		45CC492C2FE13E2E00E7716A /* IITWidgets */ = {
-			isa = PBXFileSystemSynchronizedRootGroup;
-			exceptions = (
-				45CC49402FE13E3300E7716A /* PBXFileSystemSynchronizedBuildFileExceptionSet */,
-			);
-			explicitFileTypes = {
-			};
-			explicitFolders = (
-			);
-			path = IITWidgets;
-			sourceTree = "<group>";
-		};
+		45CC492C2FE13E2E00E7716A /* IITWidgets */ = {isa = PBXFileSystemSynchronizedRootGroup; exceptions = (45CC49402FE13E3300E7716A /* PBXFileSystemSynchronizedBuildFileExceptionSet */, ); explicitFileTypes = {}; explicitFolders = (); path = IITWidgets; sourceTree = "<group>"; };
 /* End PBXFileSystemSynchronizedRootGroup section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -375,13 +364,13 @@
 				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
 				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
 				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CODE_SIGN_ENTITLEMENTS = IITWidgets/IITWidgets.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = Q2NA36QJHX;
+				CURRENT_PROJECT_VERSION = 1002001;
+				DEVELOPMENT_TEAM = 2VX863B4ZS;
 				ENABLE_USER_SCRIPT_SANDBOXING = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu17;
-				CODE_SIGN_ENTITLEMENTS = IITWidgets/IITWidgets.entitlements;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = IITWidgets/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = IITWidgets;
@@ -393,10 +382,10 @@
 					"@executable_path/../../Frameworks",
 				);
 				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
-				MARKETING_VERSION = 1.0;
+				MARKETING_VERSION = 1.2.0;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
-				PRODUCT_BUNDLE_IDENTIFIER = com.iitcalendar.applet.IITWidgets;
+				PRODUCT_BUNDLE_IDENTIFIER = com.theravado.sati.IITWidgets;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
@@ -417,13 +406,13 @@
 				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
 				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
 				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CODE_SIGN_ENTITLEMENTS = IITWidgets/IITWidgets.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = Q2NA36QJHX;
+				CURRENT_PROJECT_VERSION = 1002001;
+				DEVELOPMENT_TEAM = 2VX863B4ZS;
 				ENABLE_USER_SCRIPT_SANDBOXING = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu17;
-				CODE_SIGN_ENTITLEMENTS = IITWidgets/IITWidgets.entitlements;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = IITWidgets/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = IITWidgets;
@@ -435,9 +424,9 @@
 					"@executable_path/../../Frameworks",
 				);
 				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
-				MARKETING_VERSION = 1.0;
+				MARKETING_VERSION = 1.2.0;
 				MTL_FAST_MATH = YES;
-				PRODUCT_BUNDLE_IDENTIFIER = com.iitcalendar.applet.IITWidgets;
+				PRODUCT_BUNDLE_IDENTIFIER = com.theravado.sati.IITWidgets;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
 				SWIFT_EMIT_LOC_STRINGS = YES;
@@ -564,7 +553,7 @@
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = Q2NA36QJHX;
+				DEVELOPMENT_TEAM = 2VX863B4ZS;
 				INFOPLIST_FILE = App/Info.plist;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.utilities";
 				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
@@ -574,7 +563,7 @@
 				);
 				MARKETING_VERSION = 1.0;
 				OTHER_SWIFT_FLAGS = "$(inherited) \"-D\" \"COCOAPODS\" \"-DDEBUG\"";
-				PRODUCT_BUNDLE_IDENTIFIER = com.iitcalendar.applet;
+				PRODUCT_BUNDLE_IDENTIFIER = com.theravado.sati;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
@@ -591,7 +580,7 @@
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = Q2NA36QJHX;
+				DEVELOPMENT_TEAM = 2VX863B4ZS;
 				INFOPLIST_FILE = App/Info.plist;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.utilities";
 				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
@@ -600,7 +589,7 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.iitcalendar.applet;
+				PRODUCT_BUNDLE_IDENTIFIER = com.theravado.sati;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "";
