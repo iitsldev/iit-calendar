@@ -5,6 +5,7 @@ import { cn } from '../../lib/utils';
 import { useI18n } from '../../hooks/useI18n';
 import { Button } from '../Button';
 import { TimerDial } from '../common/TimerDial';
+import { useUI } from '../../UIContext';
 
 interface ChantCounterProps {
   currentCount: number;
@@ -17,6 +18,7 @@ interface ChantCounterProps {
 
 export function ChantCounter({ currentCount, onCountChange, onCommit, targetCount, timerSettings, children }: ChantCounterProps) {
   const { t } = useI18n();
+  const { timerClaim, claimTimer } = useUI();
   const controls = useAnimation();
 
   // Timer states
@@ -98,7 +100,17 @@ export function ChantCounter({ currentCount, onCountChange, onCommit, targetCoun
       if (intervalRef.current) clearInterval(intervalRef.current);
     };
   }, [isRunning, totalDurationMs]);
+  // Starting a meditation pauses a running chant
+  useEffect(() => {
+    if (timerClaim && timerClaim.name !== 'chant' && isRunning) {
+      setIsRunning(false);
+    }
+  }, [timerClaim]);
+
   const toggleTimer = () => {
+    if (!isRunning) {
+      claimTimer('chant');
+    }
     if (!isRunning && !isFinished) {
       setIsRunning(true);
       startTimeRef.current = Date.now() - elapsedMs;
