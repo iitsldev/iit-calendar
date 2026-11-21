@@ -2,7 +2,7 @@ import React from 'react';
 
 // Store links can be updated to point to live store listings
 export const STORE_LINKS = {
-  appleAppStore: 'https://apps.apple.com/app/iit-calendar/id6470000000',
+  appleAppStore: 'https://apps.apple.com/app/sati-buddhist-calendar-timer/id6830255141',
   googlePlayStore: 'https://play.google.com/store/apps/details?id=com.iitcalendar.applet&pcampaignid=web_share',
   gitHub: 'https://github.com/iitsldev/iit-calendar',
 };

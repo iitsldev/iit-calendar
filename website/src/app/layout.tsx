@@ -137,7 +137,7 @@ const jsonLd = {
         priceCurrency: 'USD',
       },
       installUrl: [
-        'https://apps.apple.com/app/iit-calendar/id6470000000',
+        'https://apps.apple.com/app/sati-buddhist-calendar-timer/id6830255141',
         'https://play.google.com/store/apps/details?id=com.iitcalendar.applet&pcampaignid=web_share',
       ],
       screenshot: [
