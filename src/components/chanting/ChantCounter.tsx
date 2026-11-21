@@ -31,6 +31,8 @@ export function ChantCounter({ currentCount, onCountChange, onCommit, targetCoun
   const intervalRef = useRef<number | null>(null);
 
   const isStarted = isRunning || isFinished || elapsedMs > 0 || currentCount > 0;
+  // Counting works while the session runs and while it is paused (#14), but not after it has finished
+  const canCount = !isFinished;
 
   const [isStuck, setIsStuck] = useState(false);
   const sentinelRef = useRef<HTMLDivElement>(null);
@@ -126,7 +128,7 @@ export function ChantCounter({ currentCount, onCountChange, onCommit, targetCoun
   };
 
   const handleTap = () => {
-    if (!isRunning) return;
+    if (!canCount) return;
     onCountChange(currentCount + 1);
     controls.start({
       scale: [1, 0.95, 1],
@@ -195,7 +197,7 @@ export function ChantCounter({ currentCount, onCountChange, onCommit, targetCoun
               onTap={handleTap}
               className={cn(
                 "relative w-64 h-64 flex items-center justify-center group cursor-pointer transition-all duration-300",
-                !isRunning && "opacity-40 pointer-events-none"
+                !canCount && "opacity-40 pointer-events-none"
               )}
             >
               <svg className="absolute inset-0 w-full h-full transform -rotate-90 z-10 pointer-events-none" viewBox="0 0 256 256">
@@ -246,10 +248,10 @@ export function ChantCounter({ currentCount, onCountChange, onCommit, targetCoun
             <div className="flex items-center justify-center gap-6 w-full max-w-xs">
               <button
                 onClick={() => onCountChange(Math.max(0, currentCount - 1))}
-                disabled={!isRunning}
+                disabled={!canCount}
                 className={cn(
                   "w-12 h-12 rounded-full flex items-center justify-center shadow-sm border border-[var(--border-subtle)] active:scale-90 transition-transform bg-[var(--bg-card)] cursor-pointer",
-                  !isRunning && "opacity-45 pointer-events-none"
+                  !canCount && "opacity-45 pointer-events-none"
                 )}
               >
                 <Minus size={20} className="text-[var(--text-muted)]" />
@@ -259,7 +261,7 @@ export function ChantCounter({ currentCount, onCountChange, onCommit, targetCoun
                 <div
                   className={cn(
                     "font-serif text-6xl font-medium tracking-tight text-center min-w-32 text-[var(--text-primary)] select-none transition-opacity",
-                    !isRunning && "opacity-50"
+                    !canCount && "opacity-50"
                   )}
                 >
                   {currentCount}
@@ -271,10 +273,10 @@ export function ChantCounter({ currentCount, onCountChange, onCommit, targetCoun
 
               <button
                 onClick={() => onCountChange(currentCount + 1)}
-                disabled={!isRunning}
+                disabled={!canCount}
                 className={cn(
                   "w-12 h-12 rounded-full flex items-center justify-center shadow-sm border border-[var(--border-subtle)] active:scale-90 transition-transform bg-[var(--bg-card)] cursor-pointer",
-                  !isRunning && "opacity-45 pointer-events-none"
+                  !canCount && "opacity-45 pointer-events-none"
                 )}
               >
                 <Plus size={20} className="text-[var(--text-muted)]" />
@@ -287,10 +289,10 @@ export function ChantCounter({ currentCount, onCountChange, onCommit, targetCoun
                 <button
                   key={num}
                   onClick={() => onCountChange(Math.max(0, currentCount + num))}
-                  disabled={!isRunning}
+                  disabled={!canCount}
                   className={cn(
                     "px-4 py-2 rounded-xl bg-[var(--bg-muted)] text-[10px] font-black tracking-widest text-[var(--text-muted)] border border-[var(--border-subtle)] hover:text-[var(--accent)] hover:border-[var(--accent)]/30 transition-all active:scale-95 cursor-pointer",
-                    !isRunning && "opacity-45 pointer-events-none"
+                    !canCount && "opacity-45 pointer-events-none"
                   )}
                 >
                   {num > 0 ? '+' : ''}{num}
