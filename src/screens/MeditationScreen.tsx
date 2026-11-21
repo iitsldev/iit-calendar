@@ -49,7 +49,7 @@ function VolumeVibrateIcon({ size = 18, className = "" }: { size?: number; class
 
 export function MeditationScreen() {
   const { t } = useI18n();
-  const { setShowSettings } = useUI();
+  const { setShowSettings, timerClaim, claimTimer } = useUI();
 
   const [stats, setStats] = useState<{ sessions: MeditationSession[] }>({ sessions: [] });
   const [view, setView] = useState<'timer' | 'insights' | 'config'>('timer');
@@ -233,6 +233,20 @@ export function MeditationScreen() {
     resetTimer,
     toggleWakeLock,
   } = useMeditationTimer(totalDurationMs, intervalMs, settings);
+
+  // Starting a chant pauses a running meditation
+  useEffect(() => {
+    if (timerClaim && timerClaim.name !== 'meditation' && isRunning) {
+      toggleTimer();
+    }
+  }, [timerClaim]);
+
+  const toggleMeditation = () => {
+    if (!isRunning) {
+      claimTimer('meditation');
+    }
+    return toggleTimer();
+  };
 
   const cycleAlertMode = () => {
     const current = settings.alertMode || 'both';
@@ -435,7 +449,7 @@ export function MeditationScreen() {
                       </button>
 
                       <Button
-                        onClick={toggleTimer}
+                        onClick={toggleMeditation}
                         variant="primary"
                         size="lg"
                         icon={Play}
@@ -481,7 +495,7 @@ export function MeditationScreen() {
                       </Button>
 
                       <Button
-                        onClick={toggleTimer}
+                        onClick={toggleMeditation}
                         variant="primary"
                         size="lg"
                         icon={isRunning ? Pause : Play}
