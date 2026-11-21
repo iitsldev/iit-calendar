@@ -18,6 +18,7 @@ import { Toggle } from '../components/Toggle';
 import { LabeledSelect } from '../components/LabeledSelect';
 import { PaliText } from '../components/PaliText';
 import { Button } from '../components/Button';
+import { Modal } from '../components/Modal';
 import { ScreenIconInner } from '../components/common/ScreenIcon';
 
 export function ChantsScreen({ settings }: { settings: Settings }) {
@@ -35,6 +36,7 @@ export function ChantsScreen({ settings }: { settings: Settings }) {
   const [activeSessionCount, setActiveSessionCount] = useState(0);
   const [view, setView] = useState<'counter' | 'insights' | 'config'>('counter');
   const [showAddModal, setShowAddModal] = useState(false);
+  const [showChantPicker, setShowChantPicker] = useState(false);
   const [expandedPali, setExpandedPali] = useState(false);
   const [loading, setLoading] = useState(true);
   const [isStopwatch, setIsStopwatch] = useState<boolean>(() => {
@@ -308,51 +310,64 @@ export function ChantsScreen({ settings }: { settings: Settings }) {
             />
           </div>
 
-          <AnimatePresence mode="wait">
-            {view === 'counter' && (
-              <motion.div
-                key="counter"
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -10 }}
-                className="space-y-0"
+          {/* The counter stays mounted while Insights or Settings is open, so a session in progress keeps its time and count */}
+          <motion.div
+            initial={false}
+            animate={view === 'counter' ? { opacity: 1, y: 0 } : { opacity: 0, y: 10 }}
+            className={cn("space-y-0", view !== 'counter' && "hidden")}
+          >
+            {selectedChant && (
+              <ChantCounter
+                currentCount={activeSessionCount}
+                onCountChange={setActiveSessionCount}
+                targetCount={selectedChant.milestone || 108}
+                onCommit={handleCommitSession}
+                timerSettings={isStopwatch ? { hours: 0, minutes: 0 } : timerSettings}
               >
-                {selectedChant && (
-                  <ChantCounter
-                    currentCount={activeSessionCount}
-                    onCountChange={setActiveSessionCount}
-                    targetCount={selectedChant.milestone || 108}
-                    onCommit={handleCommitSession}
-                    timerSettings={isStopwatch ? { hours: 0, minutes: 0 } : timerSettings}
-                  >
-                    {/* Selected Chant Display */}
-                    <div 
-                      className="rounded-[2.5rem] p-8 border flex flex-col gap-6 w-full"
+                {/* Selected Chant Display */}
+                <div 
+                  className="rounded-[2.5rem] p-8 border flex flex-col gap-6 w-full"
+                  style={{
+                    backgroundColor: 'var(--bg-card)',
+                    borderColor: 'var(--border-subtle)'
+                  }}
+                >
+                  <div className="flex items-start justify-between gap-4">
+                    <h3 className="font-serif text-2xl" style={{ color: 'var(--accent)' }}>
+                      <PaliText text={getChantTitle(selectedChant, t)} script={settings.paliScript} isPali={isChantNamePali(selectedChant)} />
+                    </h3>
+                    <button
+                      type="button"
+                      onClick={() => setShowChantPicker(true)}
+                      className="shrink-0 w-10 h-10 rounded-full flex items-center justify-center border transition-all active:scale-95 cursor-pointer"
                       style={{
-                        backgroundColor: 'var(--bg-card)',
+                        backgroundColor: 'var(--surface)',
+                        borderColor: 'var(--border)',
+                        color: 'var(--text-secondary)'
+                      }}
+                      title={t('chant.selectChant') || 'Select Chant'}
+                      aria-label={t('chant.selectChant') || 'Select Chant'}
+                    >
+                      <List size={18} />
+                    </button>
+                  </div>
+                  {(selectedChant.content || (selectedChant as any).chant) && (
+                    <div 
+                      className="pt-6 border-t whitespace-pre-wrap leading-relaxed text-lg"
+                      style={{
+                        color: 'var(--text-secondary)',
                         borderColor: 'var(--border-subtle)'
                       }}
                     >
-                      <h3 className="font-serif text-2xl" style={{ color: 'var(--accent)' }}>
-                        <PaliText text={getChantTitle(selectedChant, t)} script={settings.paliScript} isPali={isChantNamePali(selectedChant)} />
-                      </h3>
-                      {(selectedChant.content || (selectedChant as any).chant) && (
-                        <div 
-                          className="pt-6 border-t whitespace-pre-wrap leading-relaxed text-lg"
-                          style={{
-                            color: 'var(--text-secondary)',
-                            borderColor: 'var(--border-subtle)'
-                          }}
-                        >
-                          <PaliText text={selectedChant.content || (selectedChant as any).chant || ''} script={settings.paliScript} />
-                        </div>
-                      )}
+                      <PaliText text={selectedChant.content || (selectedChant as any).chant || ''} script={settings.paliScript} />
                     </div>
-                  </ChantCounter>
-                )}
-              </motion.div>
+                  )}
+                </div>
+              </ChantCounter>
             )}
+          </motion.div>
 
+          <AnimatePresence mode="wait">
             {view === 'insights' && (
               <motion.div
                 key="insights"
@@ -450,6 +465,31 @@ export function ChantsScreen({ settings }: { settings: Settings }) {
               </motion.div>
             )}
           </AnimatePresence>
+
+          {/* Change the chant without leaving the counter */}
+          <Modal
+            show={showChantPicker}
+            onClose={() => setShowChantPicker(false)}
+            title={t('chant.selectChant') || 'Select Chant'}
+          >
+            <ChantList
+              chants={chants}
+              selectedChantId={selectedChantId}
+              onSelect={(id) => {
+                setSelectedChantId(id);
+                setShowChantPicker(false);
+              }}
+              onAddChant={() => {
+                setShowChantPicker(false);
+                handleOpenAddModal();
+              }}
+              onEditChant={(chant) => {
+                setShowChantPicker(false);
+                handleOpenEditModal(chant);
+              }}
+              paliScript={settings.paliScript}
+            />
+          </Modal>
 
           {/* Add / Edit Modal */}
           {showAddModal && (
